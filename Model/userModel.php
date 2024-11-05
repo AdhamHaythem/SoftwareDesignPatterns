@@ -59,7 +59,7 @@ class UserModel {
     }
 
     // Retrieve user information from the database by userID
-    public static function retrieve(DatabaseConnection $dbConnection, string $userID): ?UserModel {
+    public static function retrieve(string $userID): ?UserModel {
         $sql = "SELECT * FROM users WHERE userID = :userID";
         $params = [':userID' => $userID];
         
@@ -82,7 +82,7 @@ class UserModel {
     }
 
     // Update user information in the database
-    public static function update(DatabaseConnection $dbConnection, UserModel $user): bool {
+    public static function update(UserModel $user): bool {
         $sql = "UPDATE users SET 
                     username = :username, 
                     firstname = :firstname, 
@@ -108,7 +108,7 @@ class UserModel {
     }
 
     // Delete a user from the database by userID
-    public static function delete(DatabaseConnection $dbConnection, string $userID): bool {
+    public static function delete(string $userID): bool {
         $sql = "DELETE FROM users WHERE userID = :userID";
         $params = [':userID' => $userID];
 
