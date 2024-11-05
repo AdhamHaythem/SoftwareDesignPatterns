@@ -39,22 +39,22 @@ class UserModel {
     }
 
     // Methods
-    public function create(object $object): bool {
+    public static function create(object $object): bool {
         // Code to create a new user in the database
         return true;
     }
 
-    public function retrieve(string $key): object {
+    public static  function retrieve(string $key): object {
         // Code to retrieve user information from the database
         return new stdClass(); // Placeholder for returned object
     }
 
-    public function update(string $key): bool {
+    public static function update(string $key): bool {
         // Code to update user information in the database
         return true;
     }
 
-    public function delete(string $key): bool {
+    public static function delete(string $key): bool {
         // Code to delete a user from the database
         return true;
     }

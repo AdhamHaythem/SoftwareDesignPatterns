@@ -1,7 +1,6 @@
 <?php
 require_once 'DatabaseConnection.php';
 require_once 'InstructorModel.php';
-require_once 'student.php';
 
 class LessonModel {
     private int $lessonId;
@@ -71,20 +70,10 @@ class LessonModel {
     public function setDuration(int $duration): void {
         $this->duration = $duration;
     }
-    public function incrementViews(){
+
+    // Method to increment lesson views
+    public function incrementViews(): void {
         $this->lessonViews++;
-    }
-
-    // Additional Methods
-
-    // Start lesson (add any specific logic here)
-    public function startLesson(): void {
-        // Code to start the lesson
-    }
-
-    // End lesson (add any specific logic here)
-    public function endLesson(): void {
-        // Code to end the lesson
     }
 
     // View lesson details
@@ -92,7 +81,7 @@ class LessonModel {
         return "Lesson ID: {$this->lessonId}, Name: {$this->lessonName}, Subject: {$this->lessonSubject}";
     }
 
-    // Manage student views
+    // Add a student view
     public function addStudentView(StudentModel $student): void {
         $this->studentView[] = $student;
     }
