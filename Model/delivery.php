@@ -1,33 +1,34 @@
 <?php
 class Delivery {
     private static int $nextId = 1;  // Static property to keep track of the next unique ID
-    private int $deliveryId;         // Unique ID for each Delivery instance
-    private string $status;          // Represents the delivery status (e.g., 'pending', 'in_transit', 'delivered')
-    private string $item;            // Represents the item being delivered
-    private string $destination;     // Represents the destination of the delivery
+    private int $deliveryId;         
+    private string $status;         
+    private string $item;            
+    private string $destination;    
 
     public function __construct(string $status, string $item, string $destination) {
-        $this->deliveryId = self::$nextId++; // Assign and increment the unique ID
+        $this->deliveryId = self::$nextId++;
         $this->status = $status;
         $this->item = $item;
         $this->destination = $destination;
     }
+
     public function getDeliveryId(): int {
         return $this->deliveryId;
     }
+
     public function getStatus(): string {
         return $this->status;
     }
+
     public function setStatus(string $status): void {
         $this->status = $status;
     }
 
-    // Getter for item
     public function getItem(): string {
         return $this->item;
     }
 
-    // Getter for destination
     public function getDestination(): string {
         return $this->destination;
     }
@@ -38,7 +39,7 @@ class Delivery {
 <?php 
 require_once 'employee.php';
 
-class DeliveryPersonnel extends Employee {   
+class DeliveryPersonnel extends EmployeeModel {   
     private string $vehicleType;
     private int $deliveriesCompleted = 0;
     private array $currentLoad = []; // Array to hold Delivery objects
@@ -60,7 +61,6 @@ class DeliveryPersonnel extends Employee {
         int $workingHours,
         string $vehicleType
     ) {
-        // Call parent constructor to initialize Employee properties
         parent::__construct(
             $username,
             $firstname,
@@ -80,13 +80,11 @@ class DeliveryPersonnel extends Employee {
         $this->vehicleType = $vehicleType;
     }
 
-    // Method to add a delivery to the current load
     public function addDelivery(Delivery $delivery): void {
         $this->currentLoad[] = $delivery;
     }
 
-    // Method to mark a delivery as completed
-    public function completeDelivery(int $index): bool {
+    public function completeDelivery(int $index): bool { //M7tag a-call b ID
         if (isset($this->currentLoad[$index])) {
             $this->currentLoad[$index]->setStatus('delivered');
             $this->deliveriesCompleted++;
@@ -95,17 +93,14 @@ class DeliveryPersonnel extends Employee {
         return false;
     }
 
-    // Getter for deliveriesCompleted
     public function getDeliveriesCompleted(): int {
         return $this->deliveriesCompleted;
     }
 
-    // Getter for currentLoad
     public function getCurrentLoad(): array {
         return $this->currentLoad;
     }
 
-    // Getter for vehicleType
     public function getVehicleType(): string {
         return $this->vehicleType;
     }

@@ -2,7 +2,7 @@
 
 require_once 'User.php'; // Assuming the User class is defined in User.php
 
-class Employee extends User {
+class EmployeeModel extends UserModel {
     // Properties specific to Employee
     private string $title;
     private int $employeeId;
@@ -54,6 +54,12 @@ class Employee extends User {
 
     public function reportHoursWorked(int $hours): void {
         $this->workingHours += $hours;
+    }
+    public function getHoursWorked():int{
+        return $this->workingHours;
+    }
+    function getTitle():string{
+        return $this->title;
     }
 }
 

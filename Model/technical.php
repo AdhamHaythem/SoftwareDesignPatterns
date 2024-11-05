@@ -1,6 +1,6 @@
 <?php
 require_once 'employee.php';
-class technical extends Employee
+class technicalModel extends EmployeeModel
 {
     private array $skills;
     private array $certifications;
