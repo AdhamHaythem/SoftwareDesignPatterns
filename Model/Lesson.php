@@ -1,6 +1,7 @@
 <?php
 require_once 'DatabaseConnection.php';
 require_once 'InstructorModel.php';
+require_once 'student.php';
 
 class LessonModel {
     private int $lessonId;
@@ -92,7 +93,7 @@ class LessonModel {
     }
 
     // Manage student views
-    public function addStudentView(Student $student): void {
+    public function addStudentView(StudentModel $student): void {
         $this->studentView[] = $student;
     }
 }

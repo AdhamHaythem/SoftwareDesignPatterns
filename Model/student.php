@@ -84,11 +84,6 @@ class StudentModel extends UserModel {
         }
         return "In Progress";
     }
-
-    // Update method for observer pattern
-    public function update(): void {
-        // Code to handle updates, typically used in observer pattern
-    }
 }
 
 ?>
