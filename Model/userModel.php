@@ -1,4 +1,5 @@
 <?php
+require_once 'DatabaseConnection.php';
 
 class UserModel {
     // Properties
@@ -38,27 +39,83 @@ class UserModel {
         $this->dbConnection = $dbConnection;
     }
 
-    // Methods
-    public static function create(object $object): bool {
-        // Code to create a new user in the database
-        return true;
+    // Create a new user in the database
+    public static function create(UserModel $user): bool {
+        $sql = "INSERT INTO users (username, firstname, lastname, userID, email, usernameID, password, phoneNumber)
+                VALUES (:username, :firstname, :lastname, :userID, :email, :usernameID, :password, :phoneNumber)";
+        
+        $params = [
+            ':username' => $user->username,
+            ':firstname' => $user->firstname,
+            ':lastname' => $user->lastname,
+            ':userID' => $user->userID,
+            ':email' => $user->email,
+            ':usernameID' => $user->usernameID,
+            ':password' => password_hash($user->password, PASSWORD_DEFAULT), // Password hashing for security
+            ':phoneNumber' => $user->phoneNumber
+        ];
+
+        return $user->dbConnection->execute($sql, $params);
     }
 
-    public static  function retrieve(string $key): object {
-        // Code to retrieve user information from the database
-        return new stdClass(); // Placeholder for returned object
+    // Retrieve user information from the database by userID
+    public static function retrieve(DatabaseConnection $dbConnection, string $userID): ?UserModel {
+        $sql = "SELECT * FROM users WHERE userID = :userID";
+        $params = [':userID' => $userID];
+        
+        $result = $dbConnection->query($sql, $params); // Assuming query returns a single row as an associative array
+        if ($result) {
+            return new UserModel(
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['userID'],
+                $result['email'],
+                $result['usernameID'],
+                $result['password'],
+                [], // Populate with actual location data if needed
+                $result['phoneNumber'],
+                $dbConnection
+            );
+        }
+        return null; // Return null if user not found
     }
 
-    public static function update(string $key): bool {
-        // Code to update user information in the database
-        return true;
+    // Update user information in the database
+    public static function update(DatabaseConnection $dbConnection, UserModel $user): bool {
+        $sql = "UPDATE users SET 
+                    username = :username, 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    email = :email, 
+                    usernameID = :usernameID, 
+                    password = :password, 
+                    phoneNumber = :phoneNumber 
+                WHERE userID = :userID";
+        
+        $params = [
+            ':username' => $user->username,
+            ':firstname' => $user->firstname,
+            ':lastname' => $user->lastname,
+            ':email' => $user->email,
+            ':usernameID' => $user->usernameID,
+            ':password' => password_hash($user->password, PASSWORD_DEFAULT),
+            ':phoneNumber' => $user->phoneNumber,
+            ':userID' => $user->userID
+        ];
+
+        return $dbConnection->execute($sql, $params);
     }
 
-    public static function delete(string $key): bool {
-        // Code to delete a user from the database
-        return true;
+    // Delete a user from the database by userID
+    public static function delete(DatabaseConnection $dbConnection, string $userID): bool {
+        $sql = "DELETE FROM users WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        return $dbConnection->execute($sql, $params);
     }
 
+    // Other instance methods
     public function getFullName(): string {
         return $this->firstname . ' ' . $this->lastname;
     }
@@ -68,17 +125,23 @@ class UserModel {
     }
 
     public function isActive(): bool {
-        // Code to check if user is active
+        // Code to check if user is active, e.g., checking a status field in the database
         return true;
     }
 
     public function changePassword(string $oldPassword, string $newPassword): bool {
-        if ($this->password === $oldPassword) {
-            $this->password = $newPassword;
-            // Code to update password in the database
-            return true;
+        if (password_verify($oldPassword, $this->password)) { // Verifying the old password
+            $this->password = password_hash($newPassword, PASSWORD_DEFAULT); // Hashing the new password
+            // Update password in the database
+            $sql = "UPDATE users SET password = :password WHERE userID = :userID";
+            $params = [
+                ':password' => $this->password,
+                ':userID' => $this->userID
+            ];
+            return $this->dbConnection->execute($sql, $params);
         }
         return false;
     }
 }
 
+?>
