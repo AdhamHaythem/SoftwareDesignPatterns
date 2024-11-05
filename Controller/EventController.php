@@ -1,6 +1,8 @@
 <?php
 
 require_once '../Model/EventModel.php';
+require_once '../Model/VolunteeringEventModel.php';
+require_once '../Model/CampaignModel.php';
 require_once '../View/EventView.php';
 
 class EventController {
@@ -60,24 +62,24 @@ class EventController {
         return EventModel::retrieve($key);
     }
 
-    public function updateCampaign(array $object): bool {
-        $campaignModel = $this->retrieve($object['eventId']);
+    public function updateCampaign(array $updates): bool {
+        $campaignModel = $this->retrieve($updates['eventId']);
         if ($campaignModel) {
-            $campaignModel->update($object);
+            $campaignModel->updateCampaign($updates); 
             return true;
         }
         return false;
     }
-
-    public function updateVolunteeringEvent(array $object): bool {
-        $volunteeringEventModel = $this->retrieve($object['eventId']);
+    
+    public function updateVolunteeringEvent(array $updates): bool {
+        $volunteeringEventModel = $this->retrieve($updates['eventId']);
         if ($volunteeringEventModel) {
-            $volunteeringEventModel->update($object);
+            $volunteeringEventModel->updateVolunteeringEvent($updates); 
             return true;
         }
         return false;
     }
-
+    
     public function delete(int $key): bool {
         return EventModel::delete($key);
     }
@@ -169,36 +171,37 @@ if (isset($_POST['retrieveEvent'])) {
 }
 
 if (isset($_POST['updateEvent'])) {
-    if (isset($_POST['Campaign'])) {
-        if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
-            && !empty($_POST['location']) && !empty($_POST['time']) && !empty($_POST['target'])) {
+    $updates = [];
 
-            $object = [
-                'eventId' => $_POST['eventId'],
-                'eventName' => $_POST['eventName'],
-                'volunteers_needed' => $_POST['volunteers_needed'],
-                'location' => $_POST['location'],
-                'time' => $_POST['time'],
-                'target' => $_POST['target']
-            ];
+    if (!empty($_POST['eventId'])) {
+        if (isset($_POST['eventName'])) {
+            $updates['eventName'] = $_POST['eventName'];
+        }
+        if (isset($_POST['volunteers_needed'])) {
+            $updates['volunteers_needed'] = $_POST['volunteers_needed'];
+        }
+        if (isset($_POST['location'])) {
+            $updates['location'] = $_POST['location'];
+        }
+        if (isset($_POST['time'])) {
+            $updates['time'] = $_POST['time'];
+        }
 
-            $result = $eventController->updateCampaign($object);
-            echo json_encode(['success' => $result]);
-        } 
-    } elseif (isset($_POST['VolunteeringEvent'])) {
-        if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
-            && !empty($_POST['location']) && !empty($_POST['time'])) {
+        if (isset($_POST['Campaign'])) {
+            if (isset($_POST['target'])) {
+                $updates['target'] = $_POST['target'];
+            }
 
-            $object = [
-                'eventId' => $_POST['eventId'],
-                'eventName' => $_POST['eventName'],
-                'volunteers_needed' => $_POST['volunteers_needed'],
-                'location' => $_POST['location'],
-                'time' => $_POST['time']
-            ];
+            if (!empty($updates)) {
+                $result = $eventController->updateCampaign(array_merge(['eventId' => $_POST['eventId']], $updates));
+                echo json_encode(['success' => $result]);
+            }
 
-            $result = $eventController->updateVolunteeringEvent($object);
-            echo json_encode(['success' => $result]);
+        } elseif (isset($_POST['VolunteeringEvent'])) {
+            if (!empty($updates)) {
+                $result = $eventController->updateVolunteeringEvent(array_merge(['eventId' => $_POST['eventId']], $updates));
+                echo json_encode(['success' => $result]);
+            }
         }
     }
     exit;
