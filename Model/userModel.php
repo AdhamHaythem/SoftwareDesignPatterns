@@ -1,7 +1,7 @@
 <?php
 
 class User {
-    // Properties
+    
     private string $username;
     private string $firstname;
     private string $lastname;
@@ -9,11 +9,9 @@ class User {
     private string $email;
     private string $usernameID;
     private string $password;
-    private array $location; // List of Location objects
+    private array $location; 
     private int $phoneNumber;
-    private DatabaseConnection $dbConnection;
 
-    // Constructor
     public function __construct(
         string $username,
         string $firstname,
@@ -24,7 +22,7 @@ class User {
         string $password,
         array $location,
         int $phoneNumber,
-        DatabaseConnection $dbConnection
+      //  DatabaseConnection $dbConnection
     ) {
         $this->username = $username;
         $this->firstname = $firstname;
@@ -35,27 +33,22 @@ class User {
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
-        $this->dbConnection = $dbConnection;
+       // $this->dbConnection = $dbConnection;
     }
 
-    // Methods
     public function create(object $object): bool {
-        // Code to create a new user in the database
         return true;
     }
 
     public function retrieve(string $key): object {
-        // Code to retrieve user information from the database
-        return new stdClass(); // Placeholder for returned object
+        return new stdClass();
     }
 
     public function update(string $key): bool {
-        // Code to update user information in the database
         return true;
     }
 
     public function delete(string $key): bool {
-        // Code to delete a user from the database
         return true;
     }
 
@@ -68,14 +61,13 @@ class User {
     }
 
     public function isActive(): bool {
-        // Code to check if user is active
+
         return true;
     }
 
     public function changePassword(string $oldPassword, string $newPassword): bool {
         if ($this->password === $oldPassword) {
             $this->password = $newPassword;
-            // Code to update password in the database
             return true;
         }
         return false;
