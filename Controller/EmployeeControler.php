@@ -38,37 +38,7 @@ class InstructorController {
     }
 }
 
-class NewsCoordinatorController {
-    // Method to upload news
-    public function uploadNews(): bool {
-        // Logic to upload news
-        return true;
-    }
 
-    // Method to edit news
-    public function editNews(): bool {
-        // Logic to edit news
-        return true;
-    }
-
-    // Method to delete news
-    public function deleteNews(): bool {
-        // Logic to delete news
-        return true;
-    }
-
-    // Method to get all news
-    public function getAllNews(): array {
-        // Logic to retrieve all news articles
-        return []; // Replace with actual news articles
-    }
-
-    // Method to get news by category
-    public function getNewsByCategory(): array {
-        // Logic to get news articles by category
-        return []; // Replace with actual news articles
-    }
-}
 
 class TechnicalController {
     // Method to deploy software
@@ -103,24 +73,7 @@ class DeliveryPersonnelController {
     }
 }
 
-class AccountantController {
-    // Method to process donations
-    public function processDonations($params) {
-        // Logic to process donations
-        return $params; // Return donation processing info or status
-    }
 
-    // Method to generate financial reports
-    public function generateFinancialReports($params) {
-        // Logic to generate financial reports
-        return $params; // Return financial report info or status
-    }
-
-    // Method to manage budget
-    public function manageBudget(): void {
-        // Logic to manage budget
-    }
-}
 
 // Example POST handling for each controller action
 if (isset($_POST['action'])) {

@@ -59,7 +59,7 @@ class UserController{
     }
 
     function changePassword($userId,$old,$new)
-    {
+    { 
         $user = UserModel::retrieve($userId);
         $user->changePassword($old,$new);
     }
