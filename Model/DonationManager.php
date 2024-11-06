@@ -1,38 +1,52 @@
 <?php
 
-require_once 'Donation.php'; 
+require_once 'Donation.php';
+require_once 'Campaign.php';
 
 class DonationManager {
-    private array $donations = [];
-    private float $totalDonations = 0.0;
+    private array $donationsByDonor;
+    private float $totalDonations;
     private float $goalAmount;
-    private array $campaigns = [];
+    private array $campaigns;
 
-    public function __construct(array $donations = [], float $totalDonations = 0.0, float $goalAmount = 0.0, array $campaigns = []) {
-        $this->donations = $donations;
-        $this->totalDonations = $totalDonations;
+    public function __construct(float $goalAmount = 0.0, array $donations = [], array $campaigns = []) {
+        $this->donationsByDonor = $donations;
+        $this->totalDonations = 0.0;
+
+        foreach ($donations as $donorID => $donationList) {
+            foreach ($donationList as $donation) {
+                $this->totalDonations += $donation->getAmount();
+            }
+        }
+
         $this->goalAmount = $goalAmount;
         $this->campaigns = $campaigns;
     }
-    public function create(object $object): bool {
+
+    public static function create(object $object): bool {
         if ($object instanceof Donation) {
-            $this->donations[] = $object;
-            $this->totalDonations += $object->getAmount();
+            $donorID = $object->getDonorID();
+            if (!isset(self::$donationsByDonor[$donorID])) {
+                self::$donationsByDonor[$donorID] = [];
+            }
+            self::$donationsByDonor[$donorID][] = $object;
             return true;
-        } elseif ($object instanceof Campaign) {
-            $this->campaigns[] = $object;
+        } elseif ($object instanceof CampaignModel) {
+            self::$campaigns[] = $object;
             return true;
         }
         return false;
     }
 
-    public function retrieve(int $key): ?object {
-        foreach ($this->donations as $donation) {
-            if ($donation->getId() == $key) {
-                return $donation;
+    public static function retrieve(int $key): ?object {
+        foreach (self::$donationsByDonor as $donorID => $donations) {
+            foreach ($donations as $donation) {
+                if ($donation->getId() == $key) {
+                    return $donation;
+                }
             }
         }
-        foreach ($this->campaigns as $campaign) {
+        foreach (self::$campaigns as $campaign) {
             if ($campaign->getCampaignID() == $key) {
                 return $campaign;
             }
@@ -40,48 +54,77 @@ class DonationManager {
         return null;
     }
 
-    public function update(int $key): bool {
-        return true; 
-    }
 
-    public function delete(int $key): bool {
-        foreach ($this->donations as $index => $donation) {
-            if ($donation->getId() == $key) {
-                unset($this->donations[$index]);
-                return true;
+    public static function update(object $object): bool {
+        if ($object instanceof Donation) {
+            foreach (self::$donationsByDonor as $donorID => &$donations) {
+                foreach ($donations as &$donation) {
+                    if ($donation->getDonationID() == $object->getDonationID()) {
+                        $donation = $object;
+                        return true;
+                    }
+                }
+            }
+        } elseif ($object instanceof CampaignModel) {
+            foreach (self::$campaigns as &$campaign) {
+                if ($campaign->getCampaignID() == $object->getCampaignID()) {
+                    $campaign = $object;
+                    return true;
+                }
             }
         }
-        foreach ($this->campaigns as $index => $campaign) {
+        return false;
+    }
+
+
+    public static function delete(int $key): bool {
+        foreach (self::$donationsByDonor as $donorID => &$donations) {
+            foreach ($donations as $index => $donation) {
+                if ($donation->getId() == $key) {
+                    unset($donations[$index]);
+                    return true;
+                }
+            }
+        }
+        foreach (self::$campaigns as $index => $campaign) {
             if ($campaign->getCampaignID() == $key) {
-                unset($this->campaigns[$index]);
+                unset(self::$campaigns[$index]);
                 return true;
             }
         }
         return false;
     }
 
-    public function getDonationDetails(int $donationID): ?Donation {
-        foreach ($this->donations as $donation) {
-            if ($donation->getId() == $donationID) {
-                return $donation;
-            }
+    public function addDonationForDonor(int $donorID, Donation $donation): bool {
+        if (!isset($this->donationsByDonor[$donorID])) {
+            $this->donationsByDonor[$donorID] = [];
         }
-        return null;
+        $this->donationsByDonor[$donorID][] = $donation;
+        $this->totalDonations += $donation->getAmount();
+        return true;
     }
+
+    public function getDonationsByDonor(int $donorID): array {
+        return $this->donationsByDonor[$donorID] ?? [];
+    }
+
 
     public function calculateTotalDonations(): float {
         return $this->totalDonations;
     }
 
-    public function getDonationStatistics(Donation $donation): string {
-        return "Donation ID: {$donation->getId()}, Amount: {$donation->getAmount()}";
+    public function getDonationDetails(int $donationID): ?Donation {
+        foreach ($this->donationsByDonor as $donations) {
+            foreach ($donations as $donation) {
+                if ($donation->getId() == $donationID) {
+                    return $donation;
+                }
+            }
+        }
+        return null;
     }
 
-    public function editCampaigns(Campaign $campaign): bool {
-        return true; // Placeholder return value
-    }
-
-    public function getCampaignDetails(int $campaignID): ?Campaign {
+    public function getCampaignDetails(int $campaignID): ?CampaignModel {
         foreach ($this->campaigns as $campaign) {
             if ($campaign->getCampaignID() == $campaignID) {
                 return $campaign;
@@ -91,12 +134,11 @@ class DonationManager {
     }
 
     public function generateDonationReport(): array {
-        return $this->donations; // Returns a list of donations
-    }
-
-    public function addCampaign(DateTime $time, string $location): bool {
-        $campaignID = count($this->campaigns) + 1; // Generate a new campaign ID
-        $campaign = new Campaign($campaignID, $location, $time);
-        return $this->create($campaign);
+        $allDonations = [];
+        foreach ($this->donationsByDonor as $donations) {
+            $allDonations = array_merge($allDonations, $donations);
+        }
+        return $allDonations;
     }
 }
+?>

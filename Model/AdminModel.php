@@ -3,7 +3,7 @@
 require_once 'userModel.php';
 require_once 'DonationManager.php';
 
-class Admin extends User{
+class Admin extends UserModel{
     private int $adminID; 
     private DonationManager $donationManager; 
 
@@ -14,8 +14,8 @@ class Admin extends User{
 
     public function manageUsers(int $userID): void {
         echo "Managing user with ID: $userID\n";
-        $user = new User("username", "First", "Last", $userID, "user@example.com", "usernameID", "password", [], "phoneNumber");
-        $user -> update($userID);
+        $user = new UserModel("username", "First", "Last", $userID, "user@example.com", "usernameID", "password", [], "phoneNumber");
+        $user -> update($user);
     }
 
     public function generateReports(): string {

@@ -58,7 +58,6 @@ class LessonModel {
         return $this->views;
     }
 
-    // Setters
     public function setLessonName(string $lessonName): void {
         $this->lessonName = $lessonName;
     }
@@ -71,12 +70,10 @@ class LessonModel {
         $this->duration = $duration;
     }
 
-    // Method to increment lesson views
     public function incrementViews(): void {
         $this->lessonViews++;
     }
 
-    // View lesson details
     public function viewLessonDetails(): string {
         return "Lesson ID: {$this->lessonId}, Name: {$this->lessonName}, Subject: {$this->lessonSubject}";
     }

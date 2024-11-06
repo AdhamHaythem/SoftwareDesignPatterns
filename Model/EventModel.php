@@ -8,13 +8,12 @@ class Event {
     private array $volunteersList;
     private DatabaseConnection $dbConnection;
 
-    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID, DatabaseConnection $dbConnection) {
+    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
         $this->eventID = $eventID;
         $this->volunteersList = [];
-        $this->dbConnection = $dbConnection;
     }
 }    
 ?>    
