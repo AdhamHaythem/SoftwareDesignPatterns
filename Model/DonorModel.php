@@ -22,7 +22,6 @@ class Donor extends UserModel {
         string $firstname,
         string $lastname,
         string $email,
-        string $usernameID,
         string $password,
         array $location,
         int $phoneNumber,
@@ -30,7 +29,7 @@ class Donor extends UserModel {
         ISubject $eventData,
         ISubject $newsData
     ) {
-        parent::__construct($username, $firstname, $lastname, $userID, $email, $usernameID, $password, $location, $phoneNumber);
+        parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
         $this->donorID = $userID;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
@@ -51,6 +50,7 @@ class Donor extends UserModel {
     }
 
     public function joinEvent(IEvent $event): bool {
+        //lesaaaaaaa lamaaa n3ml interface ll event
         return true;
     }
 

@@ -32,12 +32,4 @@ class Donation {
         $this->amount = $amount;
     }
 }
-
-// Example usage
-$donation = new Donation(100.0, 1, 123); 
-
-echo "Initial Donation Amount: " . $donation->getAmount() . "\n"; // Output: 100.0
-echo "Donor ID: " . $donation->getDonorID() . "\n"; // Output: 123
-$newAmount = $donation->amountPaid(50.0); // Update the amount paid
-echo "Updated Donation Amount: " . $newAmount . "\n"; // Output: 150.0
 ?>

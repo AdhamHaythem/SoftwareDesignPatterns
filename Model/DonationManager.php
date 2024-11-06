@@ -2,6 +2,7 @@
 
 require_once 'Donation.php';
 require_once 'Campaign.php';
+require_once 'DonorModel';
 
 class DonationManager {
     private array $donationsByDonor;
@@ -54,7 +55,6 @@ class DonationManager {
         return null;
     }
 
-
     public static function update(object $object): bool {
         if ($object instanceof Donation) {
             foreach (self::$donationsByDonor as $donorID => &$donations) {
@@ -75,7 +75,6 @@ class DonationManager {
         }
         return false;
     }
-
 
     public static function delete(int $key): bool {
         foreach (self::$donationsByDonor as $donorID => &$donations) {
@@ -108,7 +107,6 @@ class DonationManager {
         return $this->donationsByDonor[$donorID] ?? [];
     }
 
-
     public function calculateTotalDonations(): float {
         return $this->totalDonations;
     }
@@ -140,5 +138,22 @@ class DonationManager {
         }
         return $allDonations;
     }
+
+    public function getDonationStatistics(): array {
+        $statistics = [];
+
+        foreach ($this->donationsByDonor as $donorID => $donations) {
+            foreach ($donations as $donation) {
+                $statistics[] = [
+                    'DonationID' => $donation->getId(),
+                    'Amount' => $donation->getAmount(),
+                    'DonorID' => $donorID
+                ];
+            }
+        }
+
+        return $statistics;
+    }
 }
+
 ?>
