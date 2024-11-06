@@ -37,11 +37,4 @@ class Admin extends UserModel{
     }
 }
 
-// Example usage
-$admin = new Admin(1);
-$admin->manageUsers(2);
-echo $admin->generateReports() . "\n";
-$admin->sendNotification(2);
-echo $admin->viewDonationStatistics() . "\n";
-
 ?>

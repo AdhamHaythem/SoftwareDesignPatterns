@@ -5,7 +5,6 @@ require_once 'User.php'; // Assuming the User class is defined in User.php
 class EmployeeModel extends UserModel {
     // Properties specific to Employee
     private string $title;
-    private int $employeeId;
     private int $salary;
     private int $workingHours;
 
@@ -16,13 +15,10 @@ class EmployeeModel extends UserModel {
         string $lastname,
         int $userID,
         string $email,
-        string $usernameID,
         string $password,
         array $location,
         int $phoneNumber,
-        DatabaseConnection $dbConnection,
         string $title,
-        int $employeeId,
         int $salary,
         int $workingHours
     ) {
@@ -33,16 +29,13 @@ class EmployeeModel extends UserModel {
             $lastname,
             $userID,
             $email,
-            $usernameID,
             $password,
             $location,
             $phoneNumber,
-            $dbConnection
         );
 
         // Initialize Employee-specific properties
         $this->title = $title;
-        $this->employeeId = $employeeId;
         $this->salary = $salary;
         $this->workingHours = $workingHours;
     }
