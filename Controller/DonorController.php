@@ -1,10 +1,16 @@
 <?php
 
-// + getDonationHistory(): List <Donation> 
-// + addDonation(amount:double): bool 
-// + joinEvent(): bool 
-// + getTotalDonations(): double
-// +setPaymentMethod(type:String):void
+require_once '../Model/DonorModel.php';
+require_once '../Model/VolunteeringEventStrategy.php';
+require_once '../Model/CampaignStrategy.php';
+require_once '../Model/RegularDonation.php';
+require_once '../Model/Clothes.php';
+require_once '../Model/CashDonation.php';
+require_once '../Model/Food.php';
+require_once '../Model/MedicalSupplies.php';
+require_once '../Model/Cash.php';
+require_once '../Model/Visa.php';
+require_once '../View/DonorView.php';
 class DonorController{
 
     public function getDonationHistory($donorId){
@@ -13,7 +19,10 @@ class DonorController{
         DonorView::displayDonationHistory($donationHistory);
     }    
 
-    public function getTotalDonations($donationId){}
+    public function getTotalDonations($donorId){
+        $donorModel = DonorModel::retrieve($donationId);
+        return $donorModel->getTotalDonations();
+    }
     
     public function joinEvent($strategy,$donorId){
         $donor= DonorModel::retrieve($donorId);
@@ -33,10 +42,15 @@ class DonorController{
 
     if (isset($_POST['getDonationHistory'])) {
         if(!empty($_POST['donorId'])){
-            $donorController->getDonationHistory($donorId);
+            $donorController->getDonationHistory($_POST['donorId']);
         }
     }
 
+    if (isset($_POST['getTotalDonations'])) {
+        if(!empty($_POST['donorId'])){
+            $donorController->getTotalDonations($_POST['donorId']);
+        }
+    }
 
     if (isset($_POST['addDonation'])) {
         $donation= new RegularDonation();
