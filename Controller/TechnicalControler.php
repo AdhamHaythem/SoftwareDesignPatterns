@@ -14,4 +14,12 @@ class TechnicalController {
     }
 }
 
+ // TechnicalController actions
+    $technicalController = new TechnicalController();
+    if ($_POST['action'] === 'deploySoftware') {
+        $technicalController->deploySoftware();
+    } elseif ($_POST['action'] === 'setupNewEmployeeSystem') {
+        $technicalController->setupNewEmployeeSystem();
+    }
+
 ?>
