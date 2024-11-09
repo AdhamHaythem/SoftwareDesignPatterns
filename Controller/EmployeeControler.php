@@ -24,15 +24,7 @@ if (isset($_POST['action'])) {
         $employeeController->reportHoursWorked((int)$_POST['hours']);
     }
 
-    // InstructorController actions
-    $instructorController = new InstructorController();
-    if ($_POST['action'] === 'startLesson') {
-        $instructorController->startLesson();
-    } elseif ($_POST['action'] === 'endLesson') {
-        $instructorController->endLesson();
-    } elseif ($_POST['action'] === 'enrollLesson') {
-        $instructorController->enrollLesson();
-    }
+   
 
     // NewsCoordinatorController actions
     $newsCoordinatorController = new NewsCoordinatorController();
@@ -48,24 +40,7 @@ if (isset($_POST['action'])) {
         $newsCoordinatorController->getNewsByCategory();
     }
 
-    // TechnicalController actions
-    $technicalController = new TechnicalController();
-    if ($_POST['action'] === 'deploySoftware') {
-        $technicalController->deploySoftware();
-    } elseif ($_POST['action'] === 'setupNewEmployeeSystem') {
-        $technicalController->setupNewEmployeeSystem();
-    }
-
-    // DeliveryPersonnelController actions
-    $deliveryPersonnelController = new DeliveryPersonnelController();
-    if ($_POST['action'] === 'scheduleDelivery' && isset($_POST['params'])) {
-        $deliveryPersonnelController->scheduleDelivery($_POST['params']);
-    } elseif ($_POST['action'] === 'trackDeliveries' && isset($_POST['params'])) {
-        $deliveryPersonnelController->trackDeliveries($_POST['params']);
-    } elseif ($_POST['action'] === 'updateRoute') {
-        $deliveryPersonnelController->updateRoute();
-    }
-
+  
     // AccountantController actions
     $accountantController = new AccountantController();
     if ($_POST['action'] === 'processDonations' && isset($_POST['params'])) {
