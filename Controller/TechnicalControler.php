@@ -1,4 +1,4 @@
-<?phph
+<?php
 
 class TechnicalController {
     // Method to deploy software
