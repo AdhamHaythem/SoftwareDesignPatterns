@@ -17,4 +17,19 @@ class DeliveryPersonnelController {
         // Logic to update delivery route
     }
 }
+
+
+// DeliveryPersonnelController actions
+    $deliveryPersonnelController = new DeliveryPersonnelController();
+    if ($_POST['action'] === 'scheduleDelivery' && isset($_POST['params'])) {
+        $deliveryPersonnelController->scheduleDelivery($_POST['params']);
+    } elseif ($_POST['action'] === 'trackDeliveries' && isset($_POST['params'])) {
+        $deliveryPersonnelController->trackDeliveries($_POST['params']);
+    } elseif ($_POST['action'] === 'updateRoute') {
+        $deliveryPersonnelController->updateRoute();
+    }
+
+
+
+
 ?>
