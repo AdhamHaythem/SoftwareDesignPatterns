@@ -26,6 +26,15 @@ class InstructorController {
     }
 }
 
+// InstructorController actions
+    $instructorController = new InstructorController();
+    if ($_POST['action'] === 'startLesson') {
+        $instructorController->startLesson();
+    } elseif ($_POST['action'] === 'endLesson') {
+        $instructorController->endLesson();
+    } elseif ($_POST['action'] === 'enrollLesson') {
+        $instructorController->enrollLesson();
+    }
 
     
    
