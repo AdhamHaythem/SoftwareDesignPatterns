@@ -13,68 +13,7 @@ class EmployeeController {
     }
 }
 
-class InstructorController {
-    private $view;
-
-    // Constructor to initialize InstructorView
-    public function __construct() {
-        $this->view = new InstructorView();
-    }
-
-    // Method to start lesson
-    public function startLesson(): void {
-        // Logic to start lesson
-    }
-
-    // Method to end lesson
-    public function endLesson(): void {
-        // Logic to end lesson
-    }
-
-    // Method to enroll in lesson
-    public function enrollLesson(): bool {
-        // Logic to enroll in a lesson
-        return true; // Return success or failure based on logic
-    }
-}
-
-
-
-class TechnicalController {
-    // Method to deploy software
-    public function deploySoftware(): bool {
-        // Logic to deploy software
-        return true;
-    }
-
-    // Method to set up new employee system
-    public function setupNewEmployeeSystem(): bool {
-        // Logic to set up a new employee system
-        return true;
-    }
-}
-
-class DeliveryPersonnelController {
-    // Method to schedule delivery
-    public function scheduleDelivery($params) {
-        // Logic to schedule a delivery
-        return $params; // Return the scheduled delivery info or status
-    }
-
-    // Method to track deliveries
-    public function trackDeliveries($params) {
-        // Logic to track deliveries
-        return $params; // Return delivery tracking info or status
-    }
-
-    // Method to update route
-    public function updateRoute(): void {
-        // Logic to update delivery route
-    }
-}
-
-
-
+ 
 // Example POST handling for each controller action
 if (isset($_POST['action'])) {
     // EmployeeController actions
