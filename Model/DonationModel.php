@@ -1,20 +1,19 @@
 <?php
 
-class Donation {
+abstract class Donation {
     private float $amount;
     private int $donationID;
+    private static int $donationIDincremental = 0;
     private int $donorID;
 
-    public function __construct(float $amount, int $donationID, int $donorID) {
+    public function __construct(float $amount, int $donorID) {
         $this->amount = $amount;
-        $this->donationID = $donationID;
+        $this->donationID = self::$donationIDincremental; // Assign current counter value
         $this->donorID = $donorID;
+        self::$donationIDincremental++; // Increment for the next instance
     }
 
-    public function amountPaid(float $amount): float {
-        $this->amount += $amount;
-        return $this->amount;
-    }
+    public abstract function amountPaid(float $amount): float;
 
     public function getDonorID(): int { 
         return $this->donorID;
@@ -32,4 +31,5 @@ class Donation {
         $this->amount = $amount;
     }
 }
+
 ?>
