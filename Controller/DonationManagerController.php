@@ -3,14 +3,10 @@ require_once '../Model/DonationModel.php';
 require_once '../Model/CampaignModel.php';
 require_once '../Model/DonorModel.php';
 require_once '../View/DonationManagerView.php';
+require_once '../Model/DonationManager.php';
 
 class DonationManagerController {
-    private $view;
-
-    public function __construct() {
-        $this->view = new DonationManagerView();
-    }
-
+   
     // Creates a new donation or campaign object
     public function create(array $object): bool {
         if (isset($object['type']) && $object['type'] === 'campaign') {
@@ -23,14 +19,15 @@ class DonationManagerController {
     }
 
     // Retrieves a specific donation or campaign by key
-    public function retrieve(string $key): ?object {
+    public function retrieve(string $key){
         $donationModel = DonationModel::retrieve($key);
         if ($donationModel) {
             return $donationModel;
         }
 
         $campaignModel = CampaignModel::retrieve($key);
-        return $campaignModel ? $campaignModel : null;
+        CampaignView::displayCampaignDetails($campaignModel);
+        
     }
 
     // Updates a specific donation or campaign
@@ -59,13 +56,17 @@ class DonationManagerController {
     }
 
     // Calculates the total amount of all donations
-    public function calculateTotalDonations(): float {
-        return DonationModel::calculateTotal();
+    public function calculateTotalDonations(){
+
+        $total = DonationManager::calculateTotalDonations();
+        DonationManagerView::totalDonations($total);
     }
 
     // Gets statistics for a specific donation
-    public function getDonationStatistics(Donation $donation): string {
-        return $donation->generateStatistics();
+    public function getDonationStatistics(Donation $donation) {
+        
+        $statistics =  DonationManager::getDonationStatistics();
+        DonationManagerView::displayDonationStatistics($statistics);
     }
 
     // Edits an existing campaign
@@ -78,20 +79,17 @@ class DonationManagerController {
         return CampaignModel::retrieve($campaignId);
     }
 
-    // Sends a donation confirmation to a donor
-    public function sendDonationConfirmation(Donor $donor, Donation $donation): bool {
-        return $this->view->sendConfirmation($donor, $donation);
-    }
 
     // Generates a report of all donations
-    public function generateDonationReport(): array {
-        return DonationModel::getAllDonations();
+    public function generateDonationReport() {
+        $report = DonationManger::generateDonationReport();
+        DonationManagerView::displayDonationReport($report);
     }
 
     // Adds a new campaign with specific time and location
-    public function addCampaign(string $time, string $location): bool {
-        $campaignModel = new CampaignModel();
-        return $campaignModel->create(['time' => $time, 'location' => $location]);
+    public function addCampaign($campaignID,$target,$title,$time,$location,$volunteersNeeded,$eventID) {
+        $campaignModel = new CampaignModel($campaignID,$target,$title,$time,$location,$volunteersNeeded,$eventID);
+        CampaignModel::create($campaignModel);
     }
 }
 
@@ -137,8 +135,8 @@ if (isset($_POST['calculateTotalDonations'])) {
 if (isset($_POST['getDonationStatistics'])) {
     $donation = $donationManagerController->retrieve($_POST['key']);
     if ($donation) {
-        $statistics = $donationManagerController->getDonationStatistics($donation);
-        echo json_encode(['success' => true, 'statistics' => $statistics]);
+        $donationManagerController->getDonationStatistics($donation);
+        
     }
     exit;
 }
