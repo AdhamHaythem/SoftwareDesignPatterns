@@ -1,8 +1,8 @@
 <?php
 require_once 'DatabaseConnection.php';
+require_once 'IMaintainable.php';
 
-class UserModel{
-    // Properties
+class UserModel implements IMaintainable {
     private string $username;
     private string $firstname;
     private string $lastname;
@@ -22,6 +22,7 @@ class UserModel{
         string $password,
         array $location,
         int $phoneNumber,
+        DatabaseConnection $dbConnection
     ) {
         $this->username = $username;
         $this->firstname = $firstname;
@@ -31,31 +32,35 @@ class UserModel{
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
+        $this->dbConnection = $dbConnection;
     }
 
-    public static function create(UserModel $user): bool {
+    public static function create($object): bool {
+        if (!$object instanceof UserModel) {
+            throw new InvalidArgumentException("Expected instance of UserModel");
+        }
+
         $sql = "INSERT INTO users (username, firstname, lastname, userID, email, password, phoneNumber)
                 VALUES (:username, :firstname, :lastname, :userID, :email, :password, :phoneNumber)";
         
-        $params = [
-            ':username' => $user->username,
-            ':firstname' => $user->firstname,
-            ':lastname' => $user->lastname,
-            ':userID' => $user->userID,
-            ':email' => $user->email,
-            ':password' => password_hash($user->password, PASSWORD_DEFAULT), // Password hashing for security
-            ':phoneNumber' => $user->phoneNumber
+        $params = [ //bn-map with actual parameters
+            ':username' => $object->username,
+            ':firstname' => $object->firstname,
+            ':lastname' => $object->lastname,
+            ':userID' => $object->userID,
+            ':email' => $object->email,
+            ':password' => password_hash($object->password, PASSWORD_DEFAULT),
+            ':phoneNumber' => $object->phoneNumber
         ];
 
-        return $user->dbConnection->execute($sql, $params); // Use $user->dbConnection
+        return $this->dbConnection->execute($sql, $params);
     }
 
-    // Retrieve user information from the database by userID
-    public static function retrieve(int $userID, DatabaseConnection $dbConnection): ?UserModel {
+    public static function retrieve($key): ?UserModel {
         $sql = "SELECT * FROM users WHERE userID = :userID";
-        $params = [':userID' => $userID];
+        $params = [':userID' => $key];
         
-        $result = $dbConnection->query($sql, $params); // Use $dbConnection
+        $result = $this->dbConnection->query($sql, $params);
         if ($result) {
             return new UserModel(
                 $result['username'],
@@ -66,13 +71,17 @@ class UserModel{
                 $result['password'],
                 [], // Populate with actual location data if needed
                 $result['phoneNumber'],
-                $dbConnection // Pass dbConnection to the model
+                $this->dbConnection
             );
         }
         return null;
     }
 
-    public static function update(UserModel $user): bool {
+    public static function update($object): bool {
+        if (!$object instanceof UserModel) {
+            throw new InvalidArgumentException("Expected instance of UserModel");
+        }
+
         $sql = "UPDATE users SET 
                     username = :username, 
                     firstname = :firstname, 
@@ -83,23 +92,23 @@ class UserModel{
                 WHERE userID = :userID";
         
         $params = [
-            ':username' => $user->username,
-            ':firstname' => $user->firstname,
-            ':lastname' => $user->lastname,
-            ':email' => $user->email,
-            ':password' => password_hash($user->password, PASSWORD_DEFAULT),
-            ':phoneNumber' => $user->phoneNumber,
-            ':userID' => $user->userID
+            ':username' => $object->username,
+            ':firstname' => $object->firstname,
+            ':lastname' => $object->lastname,
+            ':email' => $object->email,
+            ':password' => password_hash($object->password, PASSWORD_DEFAULT),
+            ':phoneNumber' => $object->phoneNumber,
+            ':userID' => $object->userID
         ];
 
-        return $user->dbConnection->execute($sql, $params); 
+        return $this->dbConnection->execute($sql, $params);
     }
 
-    public static function delete(int $userID, DatabaseConnection $dbConnection): bool {
+    public static function delete($key): bool {
         $sql = "DELETE FROM users WHERE userID = :userID";
-        $params = [':userID' => $userID];
+        $params = [':userID' => $key];
 
-        return $dbConnection->execute($sql, $params); // Use $dbConnection
+        return $this->dbConnection->execute($sql, $params);
     }
 
     public function getFullName(): string {
@@ -115,16 +124,16 @@ class UserModel{
     }
 
     public function changePassword(string $oldPassword, string $newPassword): bool {
-        if (password_verify($oldPassword, $this->password)) { // Verifying the old password
+        if (password_verify($oldPassword, $this->password)) { 
             $this->password = password_hash($newPassword, PASSWORD_DEFAULT);
             $sql = "UPDATE users SET password = :password WHERE userID = :userID";
             $params = [
                 ':password' => $this->password,
                 ':userID' => $this->userID
             ];
-            return $this->dbConnection->execute($sql, $params); // Use $this->dbConnection
+            return $this->dbConnection->execute($sql, $params);
         }
-        return false; // Return false if old password does not match
+        return false;
     }
 }
 
