@@ -1,6 +1,12 @@
 <?php
-require_once 'DatabaseConnection.php';
+
+require_once 'db_connection.php';
 require_once 'IMaintainable.php';
+require_once 'configurations.php';
+require_once 'data.php';
+
+
+
 
 class UserModel implements IMaintainable {
     private string $username;
@@ -11,8 +17,9 @@ class UserModel implements IMaintainable {
     private string $password;
     private array $location;
     private int $phoneNumber;
-    private DatabaseConnection $dbConnection;
+    private static DatabaseConnection $dbConnection;  
 
+    // Constructor to initialize the properties
     public function __construct(
         string $username,
         string $firstname,
@@ -32,18 +39,21 @@ class UserModel implements IMaintainable {
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
-        $this->dbConnection = $dbConnection;
+        $this->dbConnection = $dbConnection; 
     }
 
+    // Create a new user in the database
     public static function create($object): bool {
         if (!$object instanceof UserModel) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
 
+        $dbConnection = $object->dbConnection;
+
         $sql = "INSERT INTO users (username, firstname, lastname, userID, email, password, phoneNumber)
                 VALUES (:username, :firstname, :lastname, :userID, :email, :password, :phoneNumber)";
         
-        $params = [ //bn-map with actual parameters
+        $params = [
             ':username' => $object->username,
             ':firstname' => $object->firstname,
             ':lastname' => $object->lastname,
@@ -53,15 +63,25 @@ class UserModel implements IMaintainable {
             ':phoneNumber' => $object->phoneNumber
         ];
 
-        return $this->dbConnection->execute($sql, $params);
+        return $dbConnection->execute($sql, $params);
     }
 
     public static function retrieve($key): ?UserModel {
+
+        $config = [
+            'DB_HOST' => 'localhost',
+            'DB_USER' => 'root',
+            'DB_PASS' => '',
+            'DB_NAME' => 'sdp'
+        ];
+    
+        $dbConnection = new DatabaseConnection($config); 
+
         $sql = "SELECT * FROM users WHERE userID = :userID";
         $params = [':userID' => $key];
         
-        $result = $this->dbConnection->query($sql, $params);
-        if ($result) {
+        $result = $dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
             return new UserModel(
                 $result['username'],
                 $result['firstname'],
@@ -71,7 +91,7 @@ class UserModel implements IMaintainable {
                 $result['password'],
                 [],
                 $result['phoneNumber'],
-                $this->dbConnection
+                $dbConnection 
             );
         }
         return null;
@@ -81,7 +101,8 @@ class UserModel implements IMaintainable {
         if (!$object instanceof UserModel) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
-
+        $dbConnection = $object->dbConnection;
+    
         $sql = "UPDATE users SET 
                     username = :username, 
                     firstname = :firstname, 
@@ -91,26 +112,34 @@ class UserModel implements IMaintainable {
                     phoneNumber = :phoneNumber 
                 WHERE userID = :userID";
         
+
         $params = [
             ':username' => $object->username,
             ':firstname' => $object->firstname,
             ':lastname' => $object->lastname,
             ':email' => $object->email,
-            ':password' => password_hash($object->password, PASSWORD_DEFAULT),
+            ':password' => $object->password != '' ? password_hash($object->password, PASSWORD_DEFAULT) : $object->password,
             ':phoneNumber' => $object->phoneNumber,
             ':userID' => $object->userID
         ];
-
-        return $this->dbConnection->execute($sql, $params);
+    
+        return $dbConnection->execute($sql, $params);
     }
-
+   
     public static function delete($key): bool {
+        $config = [
+            'DB_HOST' => 'localhost',
+            'DB_USER' => 'root',
+            'DB_PASS' => '',
+            'DB_NAME' => 'sdp'
+        ];    
+        $dbConnection = new DatabaseConnection($config);
+
         $sql = "DELETE FROM users WHERE userID = :userID";
         $params = [':userID' => $key];
 
-        return $this->dbConnection->execute($sql, $params);
+        return $dbConnection->execute($sql, $params);
     }
-
     public function getFullName(): string {
         return $this->firstname . ' ' . $this->lastname;
     }
