@@ -7,15 +7,17 @@ require_once '../Model/DonationManager.php';
 
 class DonationManagerController {
    
-    // Creates a new donation or campaign object
-    public function create(array $object): bool {
-        if (isset($object['type']) && $object['type'] === 'campaign') {
-            $campaignModel = new CampaignModel();
-            return $campaignModel->create($object);
-        } else {
-            $donationModel = new DonationModel();
-            return $donationModel->create($object);
-        }
+    public function createCampaign($campaignId,$target,$title){
+        $campaignModel = new CampaignModel($campaignId,$target,$title);
+        donationManagerModel::create($campaignModel);
+    
+}
+
+    // Creates a new donation
+    public function createDonation($amount,$DonationID){
+            $donationModel = new DonationModel($amount,$DonationID);
+            donationManagerModel::create($donationModel);
+        
     }
 
     // Retrieves a specific donation or campaign by key
@@ -70,8 +72,9 @@ class DonationManagerController {
     }
 
     // Edits an existing campaign
-    public function editCampaign(Campaign $campaign): bool {
-        return $campaign->update();
+    public function editCampaign($campaignId){
+        $campaign = CampaignModel::retrieve($campaignId);
+        CampaignModel::update($campaign);
     }
 
     // Retrieves campaign details by Campaign ID
@@ -96,11 +99,22 @@ class DonationManagerController {
 // Handling form submissions and requests
 $donationManagerController = new DonationManagerController();
 
-if (isset($_POST['create'])) {
-    $result = $donationManagerController->create($_POST['object']);
+if (isset($_POST['createDonation'])) {
+
+    $result = $donationManagerController->createDonation($_POST['amount'],$_post['DonationID']);
     echo json_encode(['success' => $result]);
     exit;
 }
+
+
+if (isset($_POST['createCampaign'])) {
+
+    $result = $donationManagerController->createCampaign($_POST['campaignId'],$_post['target'],$_post['title']);
+    echo json_encode(['success' => $result]);
+    exit;
+}
+
+
 
 if (isset($_POST['retrieve'])) {
     $result = $donationManagerController->retrieve($_POST['key']);
@@ -142,9 +156,8 @@ if (isset($_POST['getDonationStatistics'])) {
 }
 
 if (isset($_POST['editCampaign'])) {
-    $campaign = $donationManagerController->getCampaignDetails((int)$_POST['campaignID']);
-    if ($campaign) {
-        $result = $donationManagerController->editCampaign($campaign);
+    if (!empty($_post['campaignId'])) {
+        $result = $donationManagerController->editCampaign($_post['campaignId']);
         echo json_encode(['success' => $result]);
     }
     exit;
@@ -167,7 +180,7 @@ if (isset($_POST['generateDonationReport'])) {
 }
 
 if (isset($_POST['addCampaign'])) {
-    $result = $donationManagerController->addCampaign($_POST['time'], $_POST['location']);
+    $result = $donationManagerController->addCampaign($_POST['campaignID'],$_POST['target'],$_POST['title'],$_POST['time'], $_POST['location'],$_POST['volunteersNeeded'],$_POST['eventID']);
     echo json_encode(['success' => $result]);
     exit;
 }
