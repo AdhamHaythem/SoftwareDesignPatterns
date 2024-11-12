@@ -50,7 +50,7 @@ class hrModel extends EmployeeModel {
     }
 
 
-    public function recruitVolunteer(DonorModel $donor){
+    public function recruitVolunteer(Donor $donor){
         $this->Donors[] = $donor;
     }
 
