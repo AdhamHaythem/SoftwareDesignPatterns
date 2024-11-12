@@ -23,8 +23,12 @@ class Admin extends UserModel {
 
     public function manageUsers(int $userID): void {
         echo "Managing user with ID: $userID\n";
-        $user = new UserModel("username", "First", "Last", $userID, "user@example.com", "password", [], "phoneNumber");
-        $user->update($user);
+        $user = $this->getUserByID($userID); 
+        if ($user) {
+            $user->update($user);
+        } else {
+            echo "User with ID $userID not found.\n";
+        }
     }
 
     public function generateReports(): string {

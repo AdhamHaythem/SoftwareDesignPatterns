@@ -69,7 +69,7 @@ class UserModel implements IMaintainable {
                 $result['userID'],
                 $result['email'],
                 $result['password'],
-                [], // Populate with actual location data if needed
+                [],
                 $result['phoneNumber'],
                 $this->dbConnection
             );

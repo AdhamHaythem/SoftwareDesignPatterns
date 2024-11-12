@@ -1,7 +1,7 @@
 <?php
 
 interface IObserver {
-    public function Update(): void;
+    public function UpdateDonor(): void;
 }
 
 ?>

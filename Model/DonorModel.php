@@ -2,7 +2,7 @@
 require_once 'User.php';
 require_once 'Donation.php';
 require_once 'Campaign.php';
-require_once 'PaymentStrategy.php';
+require_once 'IPaymentStrategy.php';
 require_once 'ISubject.php';
 require_once 'IObserver.php';
 require_once 'IEvent.php';
@@ -12,7 +12,7 @@ class Donor extends UserModel implements IObserver {
     private array $donationsHistory;
     private float $totalDonations;
     private array $campaignsJoined;
-    private PaymentStrategy $paymentMethod;
+    private IPaymentStrategy $paymentMethod;
     private ISubject $eventData;
     private ISubject $newsData;
 
@@ -25,7 +25,7 @@ class Donor extends UserModel implements IObserver {
         string $password,
         array $location,
         int $phoneNumber,
-        PaymentStrategy $paymentMethod,
+        IPaymentStrategy $paymentMethod,
         ISubject $eventData
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
@@ -57,11 +57,11 @@ class Donor extends UserModel implements IObserver {
         return $this->totalDonations;
     }
 
-    public function setPaymentMethod(PaymentStrategy $paymentMethod): void {
+    public function setPaymentMethod(IPaymentStrategy $paymentMethod): void {
         $this->paymentMethod = $paymentMethod;
     }
 
-    public function Update(): void {
+    public function UpdateDonor(): void {
         echo "Donor {$this->donorID} has been notified about the event update.\n";
         
         $this->totalDonations = 0.0;
@@ -74,7 +74,7 @@ class Donor extends UserModel implements IObserver {
         return $this->donorID;
     }
 
-    public function getPaymentMethod(): PaymentStrategy {
+    public function getPaymentMethod(): IPaymentStrategy {
         return $this->paymentMethod;
     }
 

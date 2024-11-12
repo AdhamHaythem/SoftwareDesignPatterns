@@ -14,16 +14,16 @@ class Event implements IMaintainable, ISubject {
     private int $volunteersNeeded;
     private int $eventID;
     private array $volunteersList;
-    private DatabaseConnection $dbConnection; 
+  //  private DatabaseConnection $dbConnection; 
     private IEvent $eventStrategy;
 
-    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID, DatabaseConnection $dbConnection, IEvent $eventStrategy) {
+    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID, IEvent $eventStrategy) {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
         $this->eventID = $eventID;
         $this->volunteersList = [];
-        $this->dbConnection = $dbConnection;
+    //    $this->dbConnection = $dbConnection;
         $this->eventStrategy = $eventStrategy; // Default strategy
     }
 

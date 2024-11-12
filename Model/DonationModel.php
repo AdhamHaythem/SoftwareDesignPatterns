@@ -32,4 +32,6 @@ class Donation {
         $this->amount = $amount;
     }
 }
+
+
 ?>
