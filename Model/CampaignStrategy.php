@@ -1,7 +1,7 @@
 <?php
 
 require_once 'IEvent.php';
-require_once 'Event.php';
+require_once 'EventModel.php';
 
 class CampaignStrategy implements IEvent {
 
