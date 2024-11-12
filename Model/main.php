@@ -1,7 +1,7 @@
 <?php
 require_once 'db_connection.php';
 require_once 'IEvent.php';
-require_once 'Event.php';
+require_once 'EventModel.php';
 require_once 'CampaignStrategy.php';
 require_once 'VolunteeringEventStrategy.php';
 
