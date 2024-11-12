@@ -30,6 +30,10 @@ class Admin extends UserModel {
             echo "User with ID $userID not found.\n";
         }
     }
+    
+    public function getUserByID(int $userID): ?UserModel {
+        return UserModel::retrieve($userID);
+    }
 
     public function generateReports(): string {
         $totalDonations = $this->donationManager->calculateTotalDonations();
