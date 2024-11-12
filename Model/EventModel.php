@@ -1,7 +1,7 @@
 // zawedyyyyyyyyyyyy ba2yy el functions of strategiessssssssssssss
 
 <?php
-require_once 'DatabaseConnection.php'; 
+require_once 'db_connection.php'; 
 require_once 'IMaintainable.php';
 require_once 'IEvent.php';
 require_once 'IObserver.php';
