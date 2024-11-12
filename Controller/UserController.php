@@ -34,7 +34,7 @@ class UserController{
     function retrieveuser($userId)
     {
         $admin = AdminModel::retrieve($userId);
-        AdminView::displayAdmin($userId);
+        AdminView::displayAdmin($admin);
     }
 
     function deleteDonor($donorId)
