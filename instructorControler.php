@@ -1,6 +1,5 @@
-
 <?php
-
+//Delete
 class InstructorController {
     private $view;
 
