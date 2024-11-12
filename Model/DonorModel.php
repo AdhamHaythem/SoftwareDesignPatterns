@@ -1,13 +1,13 @@
 <?php
-
 require_once 'User.php';
 require_once 'Donation.php';
 require_once 'Campaign.php';
 require_once 'PaymentStrategy.php';
 require_once 'ISubject.php';
+require_once 'IObserver.php';
 require_once 'IEvent.php';
 
-class Donor extends UserModel {
+class Donor extends UserModel implements IObserver {
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
@@ -26,8 +26,7 @@ class Donor extends UserModel {
         array $location,
         int $phoneNumber,
         PaymentStrategy $paymentMethod,
-        ISubject $eventData,
-        ISubject $newsData
+        ISubject $eventData
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
         $this->donorID = $userID;
@@ -36,7 +35,8 @@ class Donor extends UserModel {
         $this->campaignsJoined = [];
         $this->paymentMethod = $paymentMethod;
         $this->eventData = $eventData;
-        $this->newsData = $newsData;
+
+        $this->eventData->registerObserver($this);
     }
 
     public function getDonationHistory(): array {
@@ -50,7 +50,6 @@ class Donor extends UserModel {
     }
 
     public function joinEvent(IEvent $event): bool {
-        //lesaaaaaaa lamaaa n3ml interface ll event
         return true;
     }
 
@@ -62,31 +61,13 @@ class Donor extends UserModel {
         $this->paymentMethod = $paymentMethod;
     }
 
-    public function updateStatus(): void {
+    public function Update(): void {
+        echo "Donor {$this->donorID} has been notified about the event update.\n";
+        
         $this->totalDonations = 0.0;
         foreach ($this->donationsHistory as $donation) {
             $this->totalDonations += $donation->getAmount();
         }
-
-        foreach ($this->campaignsJoined as $campaign) {
-            if ($campaign->isCompleted()) {
-                $campaign->notifyDonor($this);
-            }
-        }
-
-        // 3. Synchronize donor data (optional: if donor data needs to be fetched/updated from an external source)
-        // Optionally, fetch the latest data for the donor from a database, API, etc.
-        // $this->fetchLatestDataFromDatabase();
-
-        $this->newsData->notify($this);  // Assuming ISubject has a method notify() to update the donor
-    }
-
-    public function joinCampaign(CampaignModel $campaign): void {
-        $this->campaignsJoined[] = $campaign;
-    }
-
-    public function getCampaignsJoined(): array {
-        return $this->campaignsJoined;
     }
 
     public function getDonorID(): int {
@@ -105,4 +86,4 @@ class Donor extends UserModel {
         return $this->newsData;
     }
 }
-
+?>

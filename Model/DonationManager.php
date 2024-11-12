@@ -2,9 +2,10 @@
 
 require_once 'Donation.php';
 require_once 'Campaign.php';
-require_once 'DonorModel';
+require_once 'DonorModel.php';
+require_once 'IMaintainable.php';
 
-class DonationManager {
+class DonationManager implements IMaintainable{
     private array $donationsByDonor;
     private float $totalDonations;
     private float $goalAmount;
@@ -24,7 +25,7 @@ class DonationManager {
         $this->campaigns = $campaigns;
     }
 
-    public static function create(object $object): bool {
+    public static function create($object): bool { //ESTA5DEMNA Polymorphism with same interface 
         if ($object instanceof Donation) {
             $donorID = $object->getDonorID();
             if (!isset(self::$donationsByDonor[$donorID])) {
@@ -39,7 +40,7 @@ class DonationManager {
         return false;
     }
 
-    public static function retrieve(int $key): ?object {
+    public static function retrieve($key): ?object {
         foreach (self::$donationsByDonor as $donorID => $donations) {
             foreach ($donations as $donation) {
                 if ($donation->getId() == $key) {
@@ -55,7 +56,7 @@ class DonationManager {
         return null;
     }
 
-    public static function update(object $object): bool {
+    public static function update($object): bool {
         if ($object instanceof Donation) {
             foreach (self::$donationsByDonor as $donorID => &$donations) {
                 foreach ($donations as &$donation) {
@@ -76,7 +77,7 @@ class DonationManager {
         return false;
     }
 
-    public static function delete(int $key): bool {
+    public static function delete($key): bool {
         foreach (self::$donationsByDonor as $donorID => &$donations) {
             foreach ($donations as $index => $donation) {
                 if ($donation->getId() == $key) {
@@ -94,7 +95,7 @@ class DonationManager {
         return false;
     }
 
-    public function addDonationForDonor(int $donorID, Donation $donation): bool {
+    public function addDonationForDonor(int $donorID, Donation $donation): bool {// ma5dnash donationhistory direct from donor class 3shan hyb2a totally dependent 3aleh ->decoupling concept
         if (!isset($this->donationsByDonor[$donorID])) {
             $this->donationsByDonor[$donorID] = [];
         }
