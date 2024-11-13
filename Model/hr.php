@@ -12,12 +12,10 @@ class hrModel extends EmployeeModel {
         string $lastname,
         int $userID,
         string $email,
-        string $usernameID,
         string $password,
         array $location,
         int $phoneNumber,
         string $title,
-        int $employeeId,
         int $salary,
         int $workingHours
     ) {
@@ -27,19 +25,108 @@ class hrModel extends EmployeeModel {
             $lastname,
             $userID,
             $email,
-            $usernameID,
             $password,
             $location,
             $phoneNumber,
             $title,
-            $employeeId,
             $salary,
             $workingHours
         );
     }
 
+    // CRUD Methods
+    public static function create($hr): bool {
+        if (!$hr instanceof hrModel) {
+            throw new InvalidArgumentException("Expected instance of HR");
+        }
+        $sql = "INSERT INTO hr (username, firstname, lastname, userID, email, password, location, phoneNumber, title, salary, workingHours)
+                VALUES (:username, :firstname, :lastname, :userID, :email, :password, :location, :phoneNumber, :title, :salary, :workingHours)";
+        
+        $params = [
+            ':username' => $hr->getUsername(),
+            ':firstname' => $hr->getFirstname(),
+            ':lastname' => $hr->getLastname(),
+            ':userID' => $hr->getUserID(),
+            ':email' => $hr->getEmail(),
+            ':password' => password_hash($hr->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($hr->getLocation()), // Assuming location is an array
+            ':phoneNumber' => $hr->getPhoneNumber(),
+            ':title' => $hr->getTitle(),
+            ':salary' => $hr->getSalary(),
+            ':workingHours' => $hr->getHoursWorked()
+        ];
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
 
-    public function addEmployee(EmployeeModel $employee){
+    public static function retrieve($userID): ?hrModel {
+        $sql = "SELECT * FROM hr WHERE userID = :userID";
+        $params = [':userID' => $userID];
+        
+        $dbConnection = UserModel::getDatabaseConnection();
+        $result = $dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
+            return new hrModel(
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['userID'],
+                $result['email'],
+                $result['password'],
+                json_decode($result['location'], true),
+                $result['phoneNumber'],
+                $result['title'],
+                $result['salary'],
+                $result['workingHours']
+            );
+        }
+        return null;
+    }
+
+    public static function update($hr): bool {
+        if (!$hr instanceof hrModel) {
+            throw new InvalidArgumentException("Expected instance of HR");
+        }
+        $sql = "UPDATE hr SET 
+                    username = :username, 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    email = :email, 
+                    usernameID = :usernameID, 
+                    password = :password, 
+                    location = :location, 
+                    phoneNumber = :phoneNumber,
+                    title = :title,
+                    salary = :salary,
+                    workingHours = :workingHours
+                WHERE userID = :userID";
+
+        $params = [
+            ':username' => $hr->getUsername(),
+            ':firstname' => $hr->getFirstname(),
+            ':lastname' => $hr->getLastname(),
+            ':email' => $hr->getEmail(),
+            ':password' => password_hash($hr->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($hr->getLocation()),
+            ':phoneNumber' => $hr->getPhoneNumber(),
+            ':title' => $hr->getTitle(),
+            ':salary' => $hr->getSalary(),
+            ':workingHours' => $hr->getHoursWorked()
+        ];
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
+
+    public static function delete($userID): bool {
+        $sql = "DELETE FROM hr WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
+
+    // Methods for managing employees and volunteers
+    public function addEmployee(EmployeeModel $employee) {
         $this->managedEmployees[] = $employee;
     }
 
@@ -47,11 +134,9 @@ class hrModel extends EmployeeModel {
         return $this->managedEmployees;
     }
 
-
-    public function recruitVolunteer(Donor $donor){
+    public function recruitVolunteer(Donor $donor) {
         $this->Donors[] = $donor;
     }
-
 
     public function getVolunteers(): array {
         return $this->Donors;
@@ -74,8 +159,6 @@ class hrModel extends EmployeeModel {
         $payment = $employee->getHoursWorked() * $multiplier;
         return (int) $payment;
     }
-    
-    
 }
 
 ?>
