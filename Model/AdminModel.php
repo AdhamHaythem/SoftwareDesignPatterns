@@ -21,6 +21,88 @@ class Admin extends UserModel {
         $this->donationManager = new DonationManager($goalAmount, [], []);
     }
 
+    // CRUD Methods similar to UserModel
+    
+    public static function create($adminObject): bool {
+        if (!$adminObject instanceof Admin) {
+            throw new InvalidArgumentException("Expected instance of Admin");
+        }
+
+        $sql = "INSERT INTO admins (username, firstname, lastname, userID, email, password, phoneNumber)
+                VALUES (:username, :firstname, :lastname, :userID, :email, :password, :phoneNumber)";
+        
+        $params = [
+            ':username' => $adminObject->getUsername(),
+            ':firstname' => $adminObject->getFirstname(),
+            ':lastname' => $adminObject->getLastname(),
+            ':userID' => $adminObject->getUserID(),
+            ':email' => $adminObject->getEmail(),
+            ':password' => password_hash($adminObject->getPassword(), PASSWORD_DEFAULT),
+            ':phoneNumber' => $adminObject->getPhoneNumber()
+        ];
+        
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
+
+    public static function retrieve($userID): ?Admin {
+        $sql = "SELECT * FROM admins WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        $dbConnection = UserModel::getDatabaseConnection();
+        $result = $dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
+            return new Admin(
+                $result['userID'],
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['email'],
+                $result['password'],
+                [],  // Assuming location data will be handled separately
+                $result['phoneNumber']
+            );
+        }
+        return null;
+    }
+
+    public static function update($adminObject): bool {
+        if (!$adminObject instanceof Admin) {
+            throw new InvalidArgumentException("Expected instance of Admin");
+        }
+    
+        $sql = "UPDATE admins SET 
+                    username = :username, 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    email = :email, 
+                    password = :password, 
+                    phoneNumber = :phoneNumber 
+                WHERE userID = :userID";
+
+        $params = [
+            ':username' => $adminObject->getUsername(),
+            ':firstname' => $adminObject->getFirstname(),
+            ':lastname' => $adminObject->getLastname(),
+            ':email' => $adminObject->getEmail(),
+            ':password' => password_hash($adminObject->getPassword(), PASSWORD_DEFAULT),
+            ':phoneNumber' => $adminObject->getPhoneNumber(),
+            ':userID' => $adminObject->getUserID()
+        ];
+
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
+
+    public static function delete($userID): bool {
+        $sql = "DELETE FROM admins WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        $dbConnection = UserModel::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
+    }
+
+    // Additional methods for admin-specific functionalities
     public function manageUsers(int $userID): void {
         echo "Managing user with ID: $userID\n";
         $user = $this->getUserByID($userID); 
@@ -40,7 +122,6 @@ class Admin extends UserModel {
         return "Report generated. Total Donations: $totalDonations";
     }
 
-    //implementation lesaaa henaaaaaaaa
     public function sendNotification(int $userID): void {
         echo "Notification sent to user with ID: $userID\n";
     }
