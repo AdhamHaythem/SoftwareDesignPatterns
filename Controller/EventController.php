@@ -34,8 +34,7 @@ class EventController {
     }
 
     public function createCampaign(array $object) {
-        $campaignModel = new CampaignModel();
-        $campaign = $campaignModel->create(
+        $campaign = CampaignModel::create(
             $object['eventId'],
             $object['eventName'],
             $object['volunteers_needed'],
@@ -47,8 +46,7 @@ class EventController {
     }
 
     public function createVolunteeringEvent(array $object) {
-        $volunteeringEventModel = new VolunteeringEventModel();
-        $event = $volunteeringEventModel->create(
+        $event = VolunteeringEventModel::create(
             $object['eventId'],
             $object['eventName'],
             $object['volunteers_needed'],
@@ -63,7 +61,7 @@ class EventController {
     }
 
     public function updateCampaign(array $updates): bool {
-        $campaignModel = $this->retrieve($updates['eventId']);
+        $campaignModel = CampaignModel::retrieve($updates['eventId']);
         if ($campaignModel) {
             $campaignModel->updateCampaign($updates); 
             return true;
@@ -72,7 +70,7 @@ class EventController {
     }
     
     public function updateVolunteeringEvent(array $updates): bool {
-        $volunteeringEventModel = $this->retrieve($updates['eventId']);
+        $volunteeringEventModel = VolunteeringEventModel::retrieve($updates['eventId']);
         if ($volunteeringEventModel) {
             $volunteeringEventModel->updateVolunteeringEvent($updates); 
             return true;

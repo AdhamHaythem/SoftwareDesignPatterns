@@ -9,20 +9,20 @@ class DonationManagerController {
    
     public function createCampaign($campaignId,$target,$title){
         $campaignModel = new CampaignModel($campaignId,$target,$title);
-        donationManagerModel::create($campaignModel);
+        DonationManager::create($campaignModel);
     
 }
 
     // Creates a new donation
-    public function createDonation($amount,$DonationID){
-            $donationModel = new DonationModel($amount,$DonationID);
-            donationManagerModel::create($donationModel);
+    public function createDonation($amount,$DonationID,$donorId){
+            $donationModel = new Donation($amount,$DonationID,$donorId);
+            DonationManager::create($donationModel);
         
     }
 
     // Retrieves a specific donation or campaign by key
     public function retrieve(string $key){
-        $donationModel = DonationModel::retrieve($key);
+        $donationModel = Donation::retrieve($key);
         if ($donationModel) {
             return $donationModel;
         }
@@ -34,7 +34,7 @@ class DonationManagerController {
 
     // Updates a specific donation or campaign
     public function update(string $key, array $data): bool {
-        $donationModel = DonationModel::retrieve($key);
+        $donationModel = Donation::retrieve($key);
         if ($donationModel) {
             return $donationModel->update($data);
         }
@@ -49,12 +49,12 @@ class DonationManagerController {
 
     // Deletes a donation or campaign by key
     public function delete(string $key): bool {
-        return DonationModel::delete($key) || CampaignModel::delete($key);
+        return Donation::delete($key) || CampaignModel::delete($key);
     }
 
     // Retrieves donation details by Donation ID
     public function getDonationDetails(int $donationId): ?Donation {
-        return DonationModel::retrieve($donationId);
+        return Donation::retrieve($donationId);
     }
 
     // Calculates the total amount of all donations
@@ -85,7 +85,7 @@ class DonationManagerController {
 
     // Generates a report of all donations
     public function generateDonationReport() {
-        $report = DonationManger::generateDonationReport();
+        $report = DonationManager::generateDonationReport();
         DonationManagerView::displayDonationReport($report);
     }
 
@@ -101,7 +101,7 @@ $donationManagerController = new DonationManagerController();
 
 if (isset($_POST['createDonation'])) {
 
-    $result = $donationManagerController->createDonation($_POST['amount'],$_post['DonationID']);
+    $result = $donationManagerController->createDonation($_POST['amount'],$_post['DonationID'],$_post['donorId']);
     echo json_encode(['success' => $result]);
     exit;
 }
@@ -164,8 +164,8 @@ if (isset($_POST['editCampaign'])) {
 }
 
 if (isset($_POST['sendDonationConfirmation'])) {
-    $donor = DonorModel::retrieve($_POST['donorId']);
-    $donation = DonationModel::retrieve((int)$_POST['DonationID']);
+    $donor = Donor::retrieve($_POST['donorId']);
+    $donation = Donation::retrieve((int)$_POST['DonationID']);
     if ($donor && $donation) {
         $result = $donationManagerController->sendDonationConfirmation($donor, $donation);
         echo json_encode(['success' => $result]);

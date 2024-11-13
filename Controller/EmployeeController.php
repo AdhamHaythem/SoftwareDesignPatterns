@@ -9,7 +9,7 @@ class EmployeeController {
     }
 
     public function reportHoursWorked(int $userId, int $hours): void {
-        $employee = UserModel::retrieve($userId);
+        $employee = EmployeeModel::retrieve($userId);
         if ($employee) {
             $employee->reportHoursWorked($hours);
         }
