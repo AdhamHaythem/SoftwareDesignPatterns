@@ -11,12 +11,14 @@ class AdminView
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="javascript.js"></script>
         </head>
         <body>
             <nav>
                 <label class="logo">Admin</label>
                 <ul>
-                    <li><a href="#" onclick="displayUsers()">Users</a></li>
+                    <li><a href="#" onclick="users(1)">Users</a></li>
                     <li><a href="#" onclick="displayReports()">Reports</a></li>
                     <li><a href="#" onclick="displayDonations()">Donations</a></li>
                     <li><a href="#" onclick="displayDonationStatistics()">Statistics</a></li>
@@ -33,7 +35,7 @@ class AdminView
                     </div>
                 </section>
             </div>
-            <script src="script.js"></script>
+
         </body>
         </html>';
     }
@@ -44,20 +46,10 @@ class AdminView
         echo '<h2>Users Name</h2>';
         echo '<ul>';
         foreach ($users as $user) {
-            echo '<li>Name: ' . htmlspecialchars($user->name) . '</li>';
+            echo '<li>Name: ' . htmlspecialchars($user->username) . '</li>';
         }
         echo '</ul>';
         echo '</div>';
-
-        echo "<script>function users(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/AdminController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    users: \'\',
-                    },
-                });
-            };<\script>";
     }
 
     public function displayDonations($donations)
