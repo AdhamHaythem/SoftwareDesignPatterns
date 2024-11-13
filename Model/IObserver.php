@@ -1,7 +1,7 @@
 <?php
 
 interface IObserver {
-    public function UpdateStatus(): void;
+    public function UpdateStatus(String $status): void;
 }
 
 ?>

@@ -1,8 +1,4 @@
 <?php
-<<<<<<< HEAD
-=======
-
->>>>>>> 536e8c87bf398b6a5199fdf9f3d4247769942a48
 require_once 'db_connection.php';
 require_once 'IMaintainable.php';
 require_once 'configurations.php';
@@ -17,11 +13,7 @@ class UserModel implements IMaintainable {
     private string $password;
     private array $location;
     private int $phoneNumber;
-<<<<<<< HEAD
-    private DataBaseConnection $dbConnection;
-=======
     private static DatabaseConnection $dbConnection;
->>>>>>> 536e8c87bf398b6a5199fdf9f3d4247769942a48
 
     // Constructor to initialize the properties
     public function __construct(

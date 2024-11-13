@@ -11,10 +11,9 @@ class Donor extends UserModel implements IObserver {
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
-    private array $campaignsJoined;
+    private array $campaignsJoined =[];
     private IPaymentStrategy $paymentMethod;
     private ISubject $eventData;
-    private ISubject $newsData;
     private IEvent $eventStrategy;
 
     public function __construct(
@@ -38,10 +37,8 @@ class Donor extends UserModel implements IObserver {
         $this->paymentMethod = $paymentMethod;
         $this->eventData = $eventData;
         $this->eventStrategy = $eventStrategy;
-
         $this->eventData->registerObserver($this);
     }
-
     public function getDonationHistory(): array {
         return $this->donationsHistory;
     }
@@ -85,17 +82,13 @@ class Donor extends UserModel implements IObserver {
        $this->paymentMethod = $paymentMethod;
    }
 
-   public function setEventMethod(IEvent $eventStrategy): void {
-    $this->eventStrategy = $eventStrategy;
+    public function setEventMethod(IEvent $eventStrategy): void {
+        $this->eventStrategy = $eventStrategy;
 }
 
-    public function UpdateStatus(): void {
-        echo "Donor {$this->donorID} has been notified about the event update.\n";
-        
-        $this->totalDonations = 0.0;
-        foreach ($this->donationsHistory as $donation) {
-            $this->totalDonations += $donation->getAmount();
-        }
+    //observerrrr status updateeeee
+    public function UpdateStatus(string $status): void {
+        echo "Donor {$this->donorID} has been notified about the event update: $status\n";
     }
 
     public function getDonorID(): int {
@@ -113,10 +106,6 @@ class Donor extends UserModel implements IObserver {
 
     public function getEventData(): ISubject {
         return $this->eventData;
-    }
-
-    public function getNewsData(): ISubject {
-        return $this->newsData;
     }
 }
 ?>

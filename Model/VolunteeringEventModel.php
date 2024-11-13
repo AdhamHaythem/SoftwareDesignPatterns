@@ -9,8 +9,8 @@ class VolunteeringEvent extends Event {
     private array $observers = [];
 
 
-    public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID, DatabaseConnection $dbConnection) {
-        parent::__construct($time, $location, $volunteersNeeded, $eventID, $dbConnection);
+    public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
+        parent::__construct($time, $location, $volunteersNeeded, $eventID);
         $this->name = $name;
     }
 
@@ -18,7 +18,7 @@ class VolunteeringEvent extends Event {
     public function getVolunteerInfo(Donor $volunteer): array {
         return [
             'id' => $volunteer->getDonorID(),
-            'name' => $volunteer->getName(),
+            'name' => $volunteer->getUsername(),
 
         ];
     }
@@ -48,7 +48,8 @@ class VolunteeringEvent extends Event {
     public static function retrieve($key): ?VolunteeringEvent {
         $sql = "SELECT * FROM volunteering_events WHERE eventID = :eventID";
         $params = [':eventID' => $key];
-        $result = self::$dbConnection->query($sql, $params);
+        $dbConnection= Event::getDatabaseConnection();
+        $result = $dbConnection->query($sql, $params);
 
         if ($result) {
             return new VolunteeringEvent(
@@ -57,7 +58,6 @@ class VolunteeringEvent extends Event {
                 $result['location'],
                 $result['volunteersNeeded'],
                 $result['eventID'],
-                self::$dbConnection
             );
         }
         return null;
@@ -78,16 +78,19 @@ class VolunteeringEvent extends Event {
     public static function delete($eventID): bool {
         $sql = "DELETE FROM volunteering_events WHERE eventID = :eventID";
         $params = [':eventID' => $eventID];
-        return self::$dbConnection->execute($sql, $params);
+        
+        $dbConnection= Event::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
     }
 
     public function registerObserver(IObserver $observer): void {
         $this->observers[] = $observer;
     }
 
-    public function removeObserver(int $observerID): void {
+    public function removeObserver($observerID): void {
         unset($this->observers[$observerID]);
     }
+    
 
 
     public function notifyObservers(): void {
