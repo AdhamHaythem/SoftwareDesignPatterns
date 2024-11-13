@@ -1,5 +1,5 @@
 <?php
-require_once 'DatabaseConnection.php';
+require_once 'db_connection.php';
 require_once 'IMaintainable.php';
 
 class UserModel implements IMaintainable {
@@ -11,7 +11,7 @@ class UserModel implements IMaintainable {
     private string $password;
     private array $location;
     private int $phoneNumber;
-    private DatabaseConnection $dbConnection;
+    private DataBaseConnection $dbConnection;
 
     public function __construct(
         string $username,
