@@ -3,7 +3,7 @@
 require_once 'EventModel.php';
 require_once 'DonationModel.php';
 
-class CampaignModel {
+class CampaignModel extends Event {
     private int $campaignID;
     private float $target;
     private string $title;
@@ -21,13 +21,11 @@ class CampaignModel {
         $this->moneyEarned = $moneyEarned;
     }
 
-    public static function setDatabaseConnection(DatabaseConnection $dbConnection) {
-        self::$dbConnection = $dbConnection;
-    }
 
-    public function addVolunteer(int $donorID, int $eventID): bool {
+
+    public function addVolunteer(int $donorID): bool {
         foreach ($this->totalEvents as $event) {
-            if ($event->getEventID() == $eventID) {
+            if ($event->getDonorID() == $donorID) {
                 return $event->addVolunteer($donorID);
             }
         }
@@ -74,7 +72,11 @@ class CampaignModel {
         return self::$dbConnection->execute($sql, $params);
     }
 
-    public static function create(CampaignModel $campaign): bool {
+    public static function create($campaign): bool {
+
+        if (!$campaign instanceof CampaignModel) {
+            throw new InvalidArgumentException("Expected instance of UserModel");
+        }
         $sql = "INSERT INTO campaigns (campaignID, campaignName, description, startDate, endDate, targetAmount, raisedAmount)
                 VALUES (:campaignID, :campaignName, :description, :startDate, :endDate, :targetAmount, :raisedAmount)";
         
@@ -90,11 +92,11 @@ class CampaignModel {
         return $campaign->dbConnection->execute($sql, $params);
     }
 
-    public static function retrieve(int $campaignID): ?CampaignModel {
+    public static function retrieve($campaignID): ?CampaignModel {
         $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
-        $result = self::$dbConnection->query($sql, $params);
+        $result = self::dbConnection->query($sql, $params);
         if ($result) {
             return new CampaignModel(
                 $result['campaignID'],
@@ -109,7 +111,7 @@ class CampaignModel {
         return null;
     }
 
-    public static function update(CampaignModel $campaign): bool {
+    public static function update($campaign): bool {
         $sql = "UPDATE campaigns SET 
                     campaignName = :campaignName, 
                     description = :description, 

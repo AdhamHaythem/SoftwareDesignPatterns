@@ -26,12 +26,12 @@ function main() {
     $donorID = 101;
 
     echo "---- Testing CampaignStrategy ----\n";
-    $campaignEvent->signUpBasedOnStrategy($donorID);
+   // $campaignEvent->signUpBasedOnStrategy($donorID);
     echo "----------------------------------\n";
 
     echo "---- Changing to VolunteeringEventStrategy ----\n";
-    $campaignEvent->setStrategy(new VolunteeringEventStrategy());
-    $campaignEvent->signUpBasedOnStrategy($donorID); 
+   // $campaignEvent->setStrategy(new VolunteeringEventStrategy());
+  //  $campaignEvent->signUpBasedOnStrategy($donorID); 
     echo "-------------------------------------------\n";
 }
 

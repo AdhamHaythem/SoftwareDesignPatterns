@@ -1,6 +1,5 @@
-// zawedyyyyyyyyyyyy ba2yy el functions of strategiessssssssssssss
-
 <?php
+require_once 'db_connection.php'; 
 require_once 'db_connection.php'; 
 require_once 'IMaintainable.php';
 require_once 'IEvent.php';
@@ -17,13 +16,13 @@ class Event implements IMaintainable, ISubject {
     private DatabaseConnection $dbConnection; 
     private IEvent $eventStrategy;
 
-    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID, DatabaseConnection $dbConnection, IEvent $eventStrategy) {
+    public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID,IEvent $eventStrategy) {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
         $this->eventID = $eventID;
         $this->volunteersList = [];
-        $this->dbConnection = $dbConnection;
+      //  $this->dbConnection = $dbConnection;
         $this->eventStrategy = $eventStrategy; // Default strategy
     }
 
@@ -72,13 +71,13 @@ class Event implements IMaintainable, ISubject {
         }
     }
 
-    public function setStrategy(IEvent $eventStrategy): void {
-        $this->eventStrategy = $eventStrategy;
-    }
+    // public function setStrategy(IEvent $eventStrategy): void {
+    //     $this->eventStrategy = $eventStrategy;
+    // }
 
-    public function signUpBasedOnStrategy(int $donorID): bool {
-        return $this->eventStrategy->signUp($this, $donorID);
-    }
+    // public function signUpBasedOnStrategy(int $donorID): bool {
+    //     return $this->eventStrategy->signUp($this, $donorID);
+    // }
 
     public static function create($object): bool {
         $sql = "INSERT INTO events (eventID, eventTime, location, volunteersNeeded) VALUES (:eventID, :eventTime, :location, :volunteersNeeded)";
