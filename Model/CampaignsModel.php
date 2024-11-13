@@ -10,7 +10,7 @@ class CampaignModel {
     private array $totalEvents;
     private array $donations;
     private float $moneyEarned;
-    private DatabaseConnection $dbConnection;
+    private static DatabaseConnection $dbConnection;
 
     public function __construct(int $campaignID, float $target, string $title, array $totalEvents, array $donations, float $moneyEarned) {
         $this->campaignID = $campaignID;
@@ -21,7 +21,9 @@ class CampaignModel {
         $this->moneyEarned = $moneyEarned;
     }
 
-
+    public static function setDatabaseConnection(DatabaseConnection $dbConnection) {
+        self::$dbConnection = $dbConnection;
+    }
 
     public function addVolunteer(int $donorID, int $eventID): bool {
         foreach ($this->totalEvents as $event) {
@@ -69,7 +71,7 @@ class CampaignModel {
             ':campaignID' => $this->campaignID
         ];
 
-        return $this->dbConnection->execute($sql, $params);
+        return self::$dbConnection->execute($sql, $params);
     }
 
     public static function create(CampaignModel $campaign): bool {
@@ -88,11 +90,11 @@ class CampaignModel {
         return $campaign->dbConnection->execute($sql, $params);
     }
 
-    public static function retrieve(int $campaignID, DatabaseConnection $dbConnection): ?CampaignModel {
+    public static function retrieve(int $campaignID): ?CampaignModel {
         $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
-        $result = $dbConnection->query($sql, $params);
+        $result = self::$dbConnection->query($sql, $params);
         if ($result) {
             return new CampaignModel(
                 $result['campaignID'],
@@ -101,7 +103,7 @@ class CampaignModel {
                 [], // actual events here
                 [], //actual donations here
                 $result['raisedAmount'],
-                $dbConnection
+                self::$dbConnection
             );
         }
         return null;
@@ -126,11 +128,11 @@ class CampaignModel {
     }
 
 
-    public static function delete(int $campaignID, DatabaseConnection $dbConnection): bool {
+    public static function delete(int $campaignID): bool {
         $sql = "DELETE FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
 
-        return $dbConnection->execute($sql, $params);
+        return self::$dbConnection->execute($sql, $params);
     }
 
 

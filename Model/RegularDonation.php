@@ -8,7 +8,7 @@ class RegularDonation extends Donation {
     }
 
     public function amountPaid(float $amount): float {
-        $this->setAmount($this->getAmount() + $amount);
+        $this->setAmount($this->getAmount());
         return $this->getAmount();
     }
 }
