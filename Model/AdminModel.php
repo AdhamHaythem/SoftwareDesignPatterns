@@ -23,7 +23,7 @@ class Admin extends UserModel {
 
     // CRUD Methods similar to UserModel
     
-    public static function createAdmin($adminObject): bool {
+    public static function create($adminObject): bool {
         if (!$adminObject instanceof Admin) {
             throw new InvalidArgumentException("Expected instance of Admin");
         }
@@ -45,7 +45,7 @@ class Admin extends UserModel {
         return $dbConnection->execute($sql, $params);
     }
 
-    public static function retrieveAdmin($userID): ?Admin {
+    public static function retrieve($userID): ?Admin {
         $sql = "SELECT * FROM admins WHERE userID = :userID";
         $params = [':userID' => $userID];
 
@@ -66,7 +66,7 @@ class Admin extends UserModel {
         return null;
     }
 
-    public static function updateAdmin($adminObject): bool {
+    public static function update($adminObject): bool {
         if (!$adminObject instanceof Admin) {
             throw new InvalidArgumentException("Expected instance of Admin");
         }
@@ -94,7 +94,7 @@ class Admin extends UserModel {
         return $dbConnection->execute($sql, $params);
     }
 
-    public static function deleteAdmin($userID): bool {
+    public static function delete($userID): bool {
         $sql = "DELETE FROM admins WHERE userID = :userID";
         $params = [':userID' => $userID];
 
