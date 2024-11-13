@@ -16,7 +16,6 @@ class hrModel extends EmployeeModel {
         string $password,
         array $location,
         int $phoneNumber,
-        DatabaseConnection $dbConnection,
         string $title,
         int $employeeId,
         int $salary,
@@ -32,7 +31,6 @@ class hrModel extends EmployeeModel {
             $password,
             $location,
             $phoneNumber,
-            $dbConnection,
             $title,
             $employeeId,
             $salary,
@@ -50,7 +48,7 @@ class hrModel extends EmployeeModel {
     }
 
 
-    public function recruitVolunteer(DonorModel $donor){
+    public function recruitVolunteer(Donor $donor){
         $this->Donors[] = $donor;
     }
 

@@ -61,7 +61,7 @@ if(isset($_post['completeLesson']))
     }
 }
 
-if(isset($_post['lessonProgress']))
+if(isset($_post['getLessonProgress']))
 {
     if(!empty($_post['studentId'])&&!empty($_post['lessonId']))
     {

@@ -10,7 +10,7 @@ class CampaignModel extends Event {
     private array $totalEvents;
     private array $donations;
     private float $moneyEarned;
-    private DatabaseConnection $dbConnection;
+    private static DatabaseConnection $dbConnection;
 
     public function __construct(int $campaignID, float $target, string $title, array $totalEvents, array $donations, float $moneyEarned) {
         $this->campaignID = $campaignID;
@@ -69,7 +69,7 @@ class CampaignModel extends Event {
             ':campaignID' => $this->campaignID
         ];
 
-        return $this->dbConnection->execute($sql, $params);
+        return self::$dbConnection->execute($sql, $params);
     }
 
     public static function create($campaign): bool {
@@ -105,7 +105,7 @@ class CampaignModel extends Event {
                 [], // actual events here
                 [], //actual donations here
                 $result['raisedAmount'],
-                $dbConnection
+                self::$dbConnection
             );
         }
         return null;
@@ -130,11 +130,11 @@ class CampaignModel extends Event {
     }
 
 
-    public static function delete(int $campaignID, DatabaseConnection $dbConnection): bool {
+    public static function delete(int $campaignID): bool {
         $sql = "DELETE FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
 
-        return $dbConnection->execute($sql, $params);
+        return self::$dbConnection->execute($sql, $params);
     }
 
 

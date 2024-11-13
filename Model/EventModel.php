@@ -1,5 +1,6 @@
 <?php
 require_once 'db_connection.php'; 
+require_once 'db_connection.php'; 
 require_once 'IMaintainable.php';
 require_once 'IEvent.php';
 require_once 'IObserver.php';
@@ -12,7 +13,7 @@ class Event implements IMaintainable, ISubject {
     private int $volunteersNeeded;
     private int $eventID;
     private array $volunteersList;
-  //  private DatabaseConnection $dbConnection; 
+    private DatabaseConnection $dbConnection; 
     private IEvent $eventStrategy;
 
     public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID,IEvent $eventStrategy) {

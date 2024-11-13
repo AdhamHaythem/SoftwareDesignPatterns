@@ -14,25 +14,25 @@ require_once '../View/DonorView.php';
 class DonorController{
 
     public function getDonationHistory($donorId){
-        $donorModel = DonorModel::retrieve($donorId);
+        $donorModel = Donor::retrieve($donorId);
         $donationHistory=$donorModel->getDonationHistory();
         DonorView::displayDonationHistory($donationHistory);
     }    
 
     public function getTotalDonations($donorId){
-        $donorModel = DonorModel::retrieve($donationId);
+        $donorModel = Donor::retrieve($donorId);
         return $donorModel->getTotalDonations();
     }
     
     public function joinEvent($strategy,$donorId){
-        $donor= DonorModel::retrieve($donorId);
+        $donor= Donor::retrieve($donorId);
         $donor->joinEvent($strategy);
         return true;
     }
 
     public function setPaymentMethod($strategy,$donorId): bool{
-        $donor= DonorModel::retrieve($donorId);
-        $donor->setPayment($strategy);
+        $donor= Donor::retrieve($donorId);
+        $donor->setPaymentMethod($strategy);
         return true;
     }
 
@@ -53,22 +53,22 @@ class DonorController{
     }
 
     if (isset($_POST['addDonation'])) {
-        $donation= new RegularDonation();
+        $donation= new RegularDonation($_post['amount'],$_post['donorId']);
         
         if (isset($_POST['Clothes'])) {
-            $donation= new Clothes($donation);
+            $donation= new Clothes($_post['amount'],$_post['donorId'],$donation);
         }
 
         if (isset($_POST['Food'])) {
-            $donation= new Food($donation);
+            $donation= new Food($_post['amount'],$_post['donorId'],$donation);
         }
 
         if (isset($_POST['MedicalSupplies'])) {
-            $donation= new MedicalSupplies($donation);
+            $donation= new MedicalSupplies($_post['amount'],$_post['donorId'],$donation);
         }
 
         if (isset($_POST['CashDonation'])) {
-            $donation= new CashDonation($donation);
+            $donation= new CashDonation($_post['amount'],$_post['donorId'],$donation);
         }
 
         $donation->amountPaid($_POST['amount']);

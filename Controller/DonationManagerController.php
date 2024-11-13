@@ -7,20 +7,22 @@ require_once '../Model/DonationManager.php';
 
 class DonationManagerController {
    
-    // Creates a new donation or campaign object
-    public function create(array $object): bool {
-        if (isset($object['type']) && $object['type'] === 'campaign') {
-            $campaignModel = new CampaignModel();
-            return $campaignModel->create($object);
-        } else {
-            $donationModel = new DonationModel();
-            return $donationModel->create($object);
-        }
+    public function createCampaign($campaignId,$target,$title){
+        $campaignModel = new CampaignModel($campaignId,$target,$title);
+        DonationManager::create($campaignModel);
+    
+}
+
+    // Creates a new donation
+    public function createDonation($amount,$DonationID,$donorId){
+            $donationModel = new Donation($amount,$DonationID,$donorId);
+            DonationManager::create($donationModel);
+        
     }
 
     // Retrieves a specific donation or campaign by key
     public function retrieve(string $key){
-        $donationModel = DonationModel::retrieve($key);
+        $donationModel = Donation::retrieve($key);
         if ($donationModel) {
             return $donationModel;
         }
@@ -32,7 +34,7 @@ class DonationManagerController {
 
     // Updates a specific donation or campaign
     public function update(string $key, array $data): bool {
-        $donationModel = DonationModel::retrieve($key);
+        $donationModel = Donation::retrieve($key);
         if ($donationModel) {
             return $donationModel->update($data);
         }
@@ -47,12 +49,12 @@ class DonationManagerController {
 
     // Deletes a donation or campaign by key
     public function delete(string $key): bool {
-        return DonationModel::delete($key) || CampaignModel::delete($key);
+        return Donation::delete($key) || CampaignModel::delete($key);
     }
 
     // Retrieves donation details by Donation ID
     public function getDonationDetails(int $donationId): ?Donation {
-        return DonationModel::retrieve($donationId);
+        return Donation::retrieve($donationId);
     }
 
     // Calculates the total amount of all donations
@@ -70,8 +72,9 @@ class DonationManagerController {
     }
 
     // Edits an existing campaign
-    public function editCampaign(Campaign $campaign): bool {
-        return $campaign->update();
+    public function editCampaign($campaignId){
+        $campaign = CampaignModel::retrieve($campaignId);
+        CampaignModel::update($campaign);
     }
 
     // Retrieves campaign details by Campaign ID
@@ -82,7 +85,7 @@ class DonationManagerController {
 
     // Generates a report of all donations
     public function generateDonationReport() {
-        $report = DonationManger::generateDonationReport();
+        $report = DonationManager::generateDonationReport();
         DonationManagerView::displayDonationReport($report);
     }
 
@@ -96,11 +99,22 @@ class DonationManagerController {
 // Handling form submissions and requests
 $donationManagerController = new DonationManagerController();
 
-if (isset($_POST['create'])) {
-    $result = $donationManagerController->create($_POST['object']);
+if (isset($_POST['createDonation'])) {
+
+    $result = $donationManagerController->createDonation($_POST['amount'],$_post['DonationID'],$_post['donorId']);
     echo json_encode(['success' => $result]);
     exit;
 }
+
+
+if (isset($_POST['createCampaign'])) {
+
+    $result = $donationManagerController->createCampaign($_POST['campaignId'],$_post['target'],$_post['title']);
+    echo json_encode(['success' => $result]);
+    exit;
+}
+
+
 
 if (isset($_POST['retrieve'])) {
     $result = $donationManagerController->retrieve($_POST['key']);
@@ -142,17 +156,16 @@ if (isset($_POST['getDonationStatistics'])) {
 }
 
 if (isset($_POST['editCampaign'])) {
-    $campaign = $donationManagerController->getCampaignDetails((int)$_POST['campaignID']);
-    if ($campaign) {
-        $result = $donationManagerController->editCampaign($campaign);
+    if (!empty($_post['campaignId'])) {
+        $result = $donationManagerController->editCampaign($_post['campaignId']);
         echo json_encode(['success' => $result]);
     }
     exit;
 }
 
 if (isset($_POST['sendDonationConfirmation'])) {
-    $donor = DonorModel::retrieve($_POST['donorId']);
-    $donation = DonationModel::retrieve((int)$_POST['DonationID']);
+    $donor = Donor::retrieve($_POST['donorId']);
+    $donation = Donation::retrieve((int)$_POST['DonationID']);
     if ($donor && $donation) {
         $result = $donationManagerController->sendDonationConfirmation($donor, $donation);
         echo json_encode(['success' => $result]);
@@ -167,7 +180,7 @@ if (isset($_POST['generateDonationReport'])) {
 }
 
 if (isset($_POST['addCampaign'])) {
-    $result = $donationManagerController->addCampaign($_POST['time'], $_POST['location']);
+    $result = $donationManagerController->addCampaign($_POST['campaignID'],$_POST['target'],$_POST['title'],$_POST['time'], $_POST['location'],$_POST['volunteersNeeded'],$_POST['eventID']);
     echo json_encode(['success' => $result]);
     exit;
 }

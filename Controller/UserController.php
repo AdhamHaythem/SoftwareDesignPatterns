@@ -4,47 +4,49 @@ require_once "../Model/AdminModel.php";
 require_once "../Model/EmployeeModel.php";
 require_once "../Model/DonorView.php";
 require_once "../Model/userModel.php";
+require_once "../Model/cash.php";
 
 class UserController{
-    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$donorID)
+    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$event)
     {
-        $donor = new DonorModel($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$donorID);
-        DonorModel::create($donor);
+
+        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash(),$event);
+        Donor::create($donor);
     }
 
     function createAdmin($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber)
     {
-        $admin = new AdminModel($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber);
-        AdminModel::create($admin);
+        $admin = new Admin($userId,$username , $firstname,$lastname ,$email,$password,$location,$phoneNumber);
+        Admin::create($admin);
     }
 
     function createEmployee($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours)
     {
-        $employee = new EmployeeModel($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours);
+        $employee = new EmployeeModel($username,$firstname,$lastname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours);
         EmployeeModel::create($employee);
     }
 
     function retrieveDonor($donorId)
     {
-        $donor = DonorModel::retrieve($donorId);
+        $donor = Donor::retrieve($donorId);
         DonorView::displayDonor($donor);
 
     }
 
     function retrieveuser($userId)
     {
-        $admin = AdminModel::retrieve($userId);
-        AdminView::displayAdmin($userId);
+        $admin = Admin::retrieve($userId);
+        AdminView::displayAdmin($admin);
     }
 
     function deleteDonor($donorId)
     {
-        DonorModel::delete($donorId);
+        Donor::delete($donorId);
     }
 
     function deleteAdmin($userId)
     {
-        AdminModel::delete($userId);
+        Admin::delete($userId);
     }
 
     function deleteEmployee($userId)
@@ -72,7 +74,7 @@ if (isset($_POST['createUser'])) {
         if (!empty($_POST['userId']) && !empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname'])
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
-            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['donorID']);
+            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],Event::retrieve($_POST['eventID']));
     }
     }
 elseif(isset($_POST['Admin']))
@@ -186,7 +188,7 @@ if(isset($_post['updateAdmin']))
             $updates['phoneNumber'] = $_post['phoneNumber'];
         }
 
-        AdminModel::update($_post['userId'],$updates);
+        Admin::update($_post['userId'],$updates);
 
     }
 }
@@ -227,7 +229,7 @@ if(isset($_post['updateDonor']))
         {
             $updates['phoneNumber'] = $_post['phoneNumber'];
         }
-        DonorModel::update($_post['userId'],$updates);
+        Donor::update($_post['userId'],$updates);
     }
 }
 

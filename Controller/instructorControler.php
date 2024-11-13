@@ -1,13 +1,8 @@
 
 <?php
-
+require_once '../Model/instructor.php';
 class InstructorController {
     private $view;
-
-    // Constructor to initialize InstructorView
-    public function __construct() {
-        $this->view = new InstructorView();
-    }
 
     // Method to start lesson
     public function startLesson(): void {
@@ -19,11 +14,6 @@ class InstructorController {
         // Logic to end lesson
     }
 
-    // Method to enroll in lesson
-    public function enrollLesson(): bool {
-        // Logic to enroll in a lesson
-        return true; // Return success or failure based on logic
-    }
 }
 
 // InstructorController actions

@@ -1,7 +1,10 @@
 <?php
 
-interface IPaymentStrategy {
-    public function pay(float $amount): bool;
+class Cash implements IPaymentStrategy {
+    public function pay(float $amount): bool
+    {
+        return true;
+    }
 }
 
 ?>

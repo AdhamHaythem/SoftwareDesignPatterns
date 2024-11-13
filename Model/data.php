@@ -60,7 +60,6 @@ if ($conn->query($sql_student) === TRUE) {
 
 $insert_user_sql = "INSERT INTO `user` (username, firstName, lastName, email, password, locationList, phoneNumber, isActive) VALUES
     ('johndoe', 'John', 'Doe', 'johndoe@example.com', MD5('password123'), '[\"New York\", \"Los Angeles\"]', '1234567890', TRUE),
-    ('janedoe', 'Jane', 'Doe', 'janedoe@example.com', MD5('password456'), '[\"San Francisco\"]', '0987654321', TRUE),
     ('alice', 'Alice', 'Smith', 'alice@example.com', MD5('password789'), '[\"Chicago\"]', '1122334455', FALSE)
 ";
 if ($conn->query($insert_user_sql) === TRUE) {
