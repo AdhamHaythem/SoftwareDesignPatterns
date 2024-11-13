@@ -1,115 +1,19 @@
 <?php
-// class DonorView
-// {
-//     public function DonorViewDetials($StdObj)
-//     { 
-//         echo '<!DOCTYPE html>
-//         <html lang="en" dir="ltr">
-//         <head>
-//             <meta charset="utf-8">
-//             <title>Responsive Navbar with AJAX</title>
-//             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//             <link rel="stylesheet" href="style.css">
-//             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-//         </head>
-//         <body>
-//             <nav>
-//                 <input type="checkbox" id="check">
-//                 <label for="check" class="checkbtn">
-//                     <i class="fas fa-bars"></i>
-//                 </label>
-//                 <label class="logo">Information</label>
-//                 <ul>
-//                     <li><a href="#" onclick="loadHome()">Home</a></li>
-//                     <li><a href="#" onclick="loadProfile()">Donor Information</a></li>
-//                     <li><a href="#" onclick="loadDonationHistory()">History</a></li>
-//                     <li><a href="#" onclick="loadTotalDonations()">Total Donations</a></li>
-//                     <li><a href="#" onclick="loadEventStatus()">Events</a></li>
-//                 </ul>
-//             </nav>
-//             <div class="container">
-//             <section>
-//                 <div id="content">
-//                     <div id="home">
-//                         <h2>Welcome to the Donor Information System</h2>
-//                         <p>Select a menu item to view more details.</p>
-//                         <img src="assets\donation.jpg" alt="Welcome Image" style="max-width:100%; height:auto;">
-//                     </div>
-//                 </div>
-//             </section>
-//             </div>
-
-//             <script>
-//                 function loadProfile() {
-//                     fetch("DonorController.php?action=getProfile")
-//                         .then(response => response.text())
-//                         .then(data => {
-//                             document.getElementById("content").innerHTML = data;
-//                         })
-//                         .catch(error => console.error("Error:", error));
-//                 }
-                
-//                 function loadHome() {
-//                     document.getElementById("content").innerHTML = `
-//                         <div id="home">
-//                             <h2>Welcome to the Donor Information System</h2>
-//                             <p>Select a menu item to view more details.</p>
-//                             <img src="assets/donation.jpg" alt="Welcome Image" style="max-width:100%; height:auto;">
-//                         </div>
-//                     `;
-//                 }
-
-//                 function loadDonationHistory() {
-//                     fetch("DonorController.php?action=getDonationHistory")
-//                         .then(response => response.text())
-//                         .then(data => {
-//                             document.getElementById("content").innerHTML = data;
-//                         })
-//                         .catch(error => console.error("Error:", error));
-//                 }
-
-//                 function loadTotalDonations() {
-//                     fetch("DonorController.php?action=getTotalDonations")
-//                         .then(response => response.text())
-//                         .then(data => {
-//                             document.getElementById("content").innerHTML = data;
-//                         })
-//                         .catch(error => console.error("Error:", error));
-//                 }
-
-//                 function loadEventStatus() {
-//                     fetch("DonorController.php?action=getEventStatus")
-//                         .then(response => response.text())
-//                         .then(data => {
-//                             document.getElementById("content").innerHTML = data;
-//                         })
-//                         .catch(error => console.error("Error:", error));
-//                 }
-//             </script>
-//         </body>
-//         </html>';
-//     }
-//}
 class DonorView
 {
-    // Main method for rendering the initial donor page with navbar and placeholders
     public function DonorViewDetails($StdObj)
     { 
         echo '<!DOCTYPE html>
         <html lang="en" dir="ltr">
         <head>
             <meta charset="utf-8">
-            <title>Responsive Navbar with AJAX</title>
+            <title>Donor</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
         </head>
         <body>
             <nav>
-                <input type="checkbox" id="check">
-                <label for="check" class="checkbtn">
-                    <i class="fas fa-bars"></i>
-                </label>
                 <label class="logo">Donor Information</label>
                 <ul>
                     <li><a href="#" onclick="loadHome()">Home</a></li>
@@ -143,6 +47,17 @@ class DonorView
         echo '<p><strong>Name:</strong> ' . htmlspecialchars($donor->name) . '</p>';
         echo '<p><strong>Email:</strong> ' . htmlspecialchars($donor->email) . '</p>';
         echo '</div>';
+
+        echo "<script>function donorProfile(itemId) {
+            $.ajax({
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
+                type: \'POST\',
+                data: {
+                    donorId: \'<?php echo $donor -> donorId ?>\',
+                    donorProfile: \'\',
+                    },
+                });
+            };<\script>";
     }
 
     // Display donation history
@@ -156,18 +71,36 @@ class DonorView
         }
         echo '</ul>';
         echo '</div>';
+
+        echo "<script>function donationHistory(itemId) {
+            $.ajax({
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
+                type: \'POST\',
+                data: {
+                    donationHistory: \'\',
+                    },
+                });
+            };<\script>";
     }
 
-    // Display total donations
     public function displayTotalDonations($total)
     {
         echo '<div class="total-donations">';
         echo '<h2>Total Donations</h2>';
         echo '<p><strong>Total Amount Donated:</strong> $' . htmlspecialchars($total) . '</p>';
         echo '</div>';
+
+        echo "<script>function totalDonations(itemId) {
+            $.ajax({
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
+                type: \'POST\',
+                data: {
+                    totalDonations: \'\',
+                    },
+                });
+            };<\script>";
     }
 
-    // Display events status
     public function displayEventStatus($events)
     {
         echo '<div class="event-status">';
@@ -178,8 +111,18 @@ class DonorView
         }
         echo '</ul>';
         echo '</div>';
+
+        echo "<script>function eventStatus(itemId) {
+            $.ajax({
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
+                type: \'POST\',
+                data: {
+                    eventStatus: \'\',
+                    },
+                });
+            };<\script>";
     }
-       // Display a list of events for the donor
+       
        public function displayEventList($donor)
        {
            echo '<div class="event-list">';
@@ -193,7 +136,7 @@ class DonorView
            
            echo "<script>function eventList(itemId) {
             $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/View/EventController.php\" ?>,
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
                 type: \'POST\',
                 data: {
                     eventList: \'\',
@@ -202,7 +145,7 @@ class DonorView
             };<\script>";
        }
    
-       // Display a detailed report of a specific event
+    
        public function displayEventReport($event)
        {
            echo '<div class="event-report">';
@@ -212,6 +155,16 @@ class DonorView
            echo '<p><strong>Description:</strong> ' . htmlspecialchars($event->description) . '</p>';
            echo '<p><strong>Total Donations:</strong> ' . htmlspecialchars($event->totalDonations) . '</p>';
            echo '</div>';
+
+           echo "<script>function eventReport(itemId) {
+            $.ajax({
+                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
+                type: \'POST\',
+                data: {
+                    eventReport: \'\',
+                    },
+                });
+            };<\script>";
        }
 
 }

@@ -2,7 +2,6 @@
 
 class EventView
 {
-    // Main method for rendering the initial event page with navbar and placeholders
     public function EventViewDetails($StdObj)
     { 
         echo '<!DOCTYPE html>
@@ -15,8 +14,6 @@ class EventView
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
         </head>
         <body>
-
-            <!-- Modal for event options -->
             <div id="eventModal" class="modal">
                 <div class="modal-content">
                     <span class="close" onclick="closeModal()">&times;</span>
@@ -28,48 +25,44 @@ class EventView
                 </div>
             </div>
 
-            <!-- Content Area where Event Details will be loaded -->
             <div id="content">
                 <h2>Welcome to the Events Information System</h2>
                 <p>Select an event from the list below to view more details.</p>
             </div>
 
-            <!-- JavaScript Functions for handling modal and fetching data -->
             <script>
-                // Open modal when an event is clicked
                 function openModal(eventName) {
                     document.getElementById("eventModal").style.display = "block";
                     // Store event name for use in loading status or report
                     sessionStorage.setItem("selectedEvent", eventName);
                 }
 
-                // Close the modal
                 function closeModal() {
                     document.getElementById("eventModal").style.display = "none";
                 }
 
                 // Load event status
-                function loadEventStatus() {
-                    let eventName = sessionStorage.getItem("selectedEvent");
-                    fetch("EventController.php?action=getEventStatus&event=" + encodeURIComponent(eventName))
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById("eventModal").style.display = "none";
-                            document.getElementById("content").innerHTML = data;
-                        })
-                        .catch(error => console.error("Error:", error));
-                }
+                // function loadEventStatus() {
+                //     let eventName = sessionStorage.getItem("selectedEvent");
+                //     fetch("EventController.php?action=getEventStatus&event=" + encodeURIComponent(eventName))
+                //         .then(response => response.text())
+                //         .then(data => {
+                //             document.getElementById("eventModal").style.display = "none";
+                //             document.getElementById("content").innerHTML = data;
+                //         })
+                //         .catch(error => console.error("Error:", error));
+                // }
 
                 // Load event report
-                function loadEventReport() {
-                    let eventName = sessionStorage.getItem("selectedEvent");
-                    fetch("EventController.php?action=getEventReport&event=" + encodeURIComponent(eventName))
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById("eventModal").style.display = "none";
-                            document.getElementById("content").innerHTML = data;
-                        })
-                        .catch(error => console.error("Error:", error));
+                // function loadEventReport() {
+                //     let eventName = sessionStorage.getItem("selectedEvent");
+                //     fetch("EventController.php?action=getEventReport&event=" + encodeURIComponent(eventName))
+                //         .then(response => response.text())
+                //         .then(data => {
+                //             document.getElementById("eventModal").style.display = "none";
+                //             document.getElementById("content").innerHTML = data;
+                //         })
+                //         .catch(error => console.error("Error:", error));
                 }
             </script>
 
@@ -78,7 +71,6 @@ class EventView
     }
 
 
-    // Display event status details
     public function displayEventStatus($event)
     {
         echo '<div class="event-status">';
@@ -99,7 +91,6 @@ class EventView
             };<\script>";
     }
 
-    // Display a detailed report of a specific event
     public function displayEventReport($event)
     {
         echo '<div class="event-report">';
