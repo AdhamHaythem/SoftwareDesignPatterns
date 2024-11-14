@@ -1,4 +1,5 @@
 <?php
+
 require_once 'User.php';
 require_once 'Donation.php';
 require_once 'Campaign.php';
@@ -11,7 +12,7 @@ class Donor extends UserModel implements IObserver {
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
-    private array $campaignsJoined =[];
+    private array $campaignsJoined = [];
     private IPaymentStrategy $paymentMethod;
     private ISubject $eventData;
     private IEvent $eventStrategy;
@@ -26,8 +27,8 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        IEvent $eventStrategy, //defaultevent
-        ISubject $eventData //defaulttttttttt
+        IEvent $eventStrategy,
+        ISubject $eventData
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
         $this->donorID = $userID;
@@ -39,6 +40,96 @@ class Donor extends UserModel implements IObserver {
         $this->eventStrategy = $eventStrategy;
         $this->eventData->registerObserver($this);
     }
+
+    // CRUD Methods
+
+    // Create a new Donor record in the database
+    public static function create($donor): bool {
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "INSERT INTO donors (userID, username, firstname, lastname, email, password, location, phoneNumber, totalDonations)
+                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :totalDonations)";
+        
+        $params = [
+            ':userID' => $donor->getDonorID(),
+            ':username' => $donor->getUsername(),
+            ':firstname' => $donor->getFirstname(),
+            ':lastname' => $donor->getLastname(),
+            ':email' => $donor->getEmail(),
+            ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($donor->getLocation()), // Assuming location is an array
+            ':phoneNumber' => $donor->getPhoneNumber(),
+            ':totalDonations' => $donor->getTotalDonations()
+        ];
+
+        return $dbConnection->execute($sql, $params);
+    }
+
+    // Retrieve a Donor record from the database by donorID
+    public static function retrieve($donorID): ?Donor {
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "SELECT * FROM donors WHERE userID = :donorID";
+        $params = [':donorID' => $donorID];
+
+        $result = $dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
+            return new Donor(
+                $result['userID'],
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['email'],
+                $result['password'],
+                json_decode($result['location'], true),
+                $result['phoneNumber'],
+                $result['paymentMethod'], // Assuming `paymentMethod` is stored and retrieved properly
+                $result['eventStrategy'], // Assuming `eventStrategy` is stored and retrieved properly
+                $result['eventData']      // Assuming `eventData` is stored and retrieved properly
+            );
+        }
+
+        return null;
+    }
+
+    // Update a Donor record in the database
+    public static function update($donor): bool {
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "UPDATE donors SET 
+                    username = :username, 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    email = :email, 
+                    password = :password, 
+                    location = :location, 
+                    phoneNumber = :phoneNumber, 
+                    totalDonations = :totalDonations 
+                WHERE userID = :userID";
+
+        $params = [
+            ':username' => $donor->getUsername(),
+            ':firstname' => $donor->getFirstname(),
+            ':lastname' => $donor->getLastname(),
+            ':email' => $donor->getEmail(),
+            ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($donor->getLocation()), // Assuming location is an array
+            ':phoneNumber' => $donor->getPhoneNumber(),
+            ':totalDonations' => $donor->getTotalDonations(),
+            ':userID' => $donor->getDonorID()
+        ];
+
+        return $dbConnection->execute($sql, $params);
+    }
+
+    // Delete a Donor record from the database by donorID
+    public static function delete($donorID): bool {
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "DELETE FROM donors WHERE userID = :donorID";
+        $params = [':donorID' => $donorID];
+
+        return $dbConnection->execute($sql, $params);
+    }
+
+    // Other Methods
+
     public function getDonationHistory(): array {
         return $this->donationsHistory;
     }
@@ -48,45 +139,46 @@ class Donor extends UserModel implements IObserver {
         $this->totalDonations += $donation->getAmount();
         return true;
     }
-    
-    //StrategyMethods
+
+    // Strategy Methods
     public function joinEvent(Event $event) {
         $this->eventStrategy->signUp($event, $this->donorID);
     }
 
-    public function getAllEvents(){
+    public function getAllEvents() {
         $this->eventStrategy->getAllEvents();
     }
 
-    public function processEvents(){
+    public function processEvents() {
         $this->eventStrategy->processEvents();
     }
 
-    public function checkEventStatus(Event $event){
+    public function checkEventStatus(Event $event) {
         $this->eventStrategy->checkEventStatus($event);
     }
 
-    public function generateEventReport(Event $event){
+    public function generateEventReport(Event $event) {
         $this->eventStrategy->generateEventReport($event);
     }
-    public function sendReminderToVolunteers(Event $event){
+
+    public function sendReminderToVolunteers(Event $event) {
         $this->eventStrategy->sendReminderToVolunteers($event);
     }
 
     public function getTotalDonations(): float {
         return $this->totalDonations;
     }
-    
-    //Switch ma ben el strategies henaaaa
+
+    // Switching between strategies
     public function setPaymentMethod(IPaymentStrategy $paymentMethod): void {
-       $this->paymentMethod = $paymentMethod;
-   }
+        $this->paymentMethod = $paymentMethod;
+    }
 
     public function setEventMethod(IEvent $eventStrategy): void {
         $this->eventStrategy = $eventStrategy;
-}
+    }
 
-    //observerrrr status updateeeee
+    // Observer status update
     public function UpdateStatus(string $status): void {
         echo "Donor {$this->donorID} has been notified about the event update: $status\n";
     }
@@ -95,12 +187,11 @@ class Donor extends UserModel implements IObserver {
         return $this->donorID;
     }
 
-   public function getPaymentMethod(): IPaymentStrategy {
-       return $this->paymentMethod;
+    public function getPaymentMethod(): IPaymentStrategy {
+        return $this->paymentMethod;
     }
 
-
-    public function getEventMethod(): IEvent{
+    public function getEventMethod(): IEvent {
         return $this->eventStrategy;
     }
 

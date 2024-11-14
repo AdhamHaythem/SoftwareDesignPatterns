@@ -4,6 +4,7 @@ require_once 'LessonModel.php';
 
 class InstructorModel extends EmployeeModel {
     private array $lessons = []; // Array to hold LessonModel instances
+    private static DatabaseConnection $dbConnection; // Static database connection variable
 
     public function __construct(
         string $username,
@@ -16,7 +17,6 @@ class InstructorModel extends EmployeeModel {
         array $location,
         int $phoneNumber,
         string $title,
-        int $employeeId,
         int $salary,
         int $workingHours
     ) {
@@ -32,15 +32,115 @@ class InstructorModel extends EmployeeModel {
             $location,
             $phoneNumber,
             $title,
-            $employeeId,
             $salary,
             $workingHours
         );
     }
 
+    // Setter for database connection
+    public static function setDatabaseConnection(DatabaseConnection $dbConnection): void {
+        self::$dbConnection = $dbConnection;
+    }
+
+    // Getter for database connection
+    public static function getDatabaseConnection(): DatabaseConnection {
+        return self::$dbConnection;
+    }
+
+    // CRUD Methods for InstructorModel
+
+    // Create a new Instructor record in the database
+    public static function create($instructor): bool {
+        $sql = "INSERT INTO instructors (userID, username, firstname, lastname, email, password, location, phoneNumber, title, salary, workingHours)
+                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :title, :salary, :workingHours)";
+
+        $params = [
+            ':userID' => $instructor->getUserID(),
+            ':username' => $instructor->getUsername(),
+            ':firstname' => $instructor->getFirstname(),
+            ':lastname' => $instructor->getLastname(),
+            ':email' => $instructor->getEmail(),
+            ':password' => password_hash($instructor->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($instructor->getLocation()), // Assuming location is an array
+            ':phoneNumber' => $instructor->getPhoneNumber(),
+            ':title' => $instructor->getTitle(),
+            ':salary' => $instructor->getSalary(),
+            ':workingHours' => $instructor->getHoursWorked()
+        ];
+
+        return self::$dbConnection->execute($sql, $params);
+    }
+
+    // Retrieve an Instructor record from the database by userID
+    public static function retrieve($userID): ?InstructorModel {
+        $sql = "SELECT * FROM instructors WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        $result = self::$dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
+            return new InstructorModel(
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['userID'],
+                $result['email'],
+                $result['usernameID'],
+                $result['password'],
+                json_decode($result['location'], true),
+                $result['phoneNumber'],
+                $result['title'],
+                $result['salary'],
+                $result['workingHours']
+            );
+        }
+
+        return null;
+    }
+
+    // Update an Instructor record in the database
+    public static function update($instructor): bool {
+        $sql = "UPDATE instructors SET 
+                    username = :username, 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    email = :email, 
+                    password = :password, 
+                    location = :location, 
+                    phoneNumber = :phoneNumber, 
+                    title = :title, 
+                    salary = :salary, 
+                    workingHours = :workingHours 
+                WHERE userID = :userID";
+
+        $params = [
+            ':username' => $instructor->getUsername(),
+            ':firstname' => $instructor->getFirstname(),
+            ':lastname' => $instructor->getLastname(),
+            ':email' => $instructor->getEmail(),
+            ':password' => password_hash($instructor->getPassword(), PASSWORD_DEFAULT),
+            ':location' => json_encode($instructor->getLocation()), // Assuming location is an array
+            ':phoneNumber' => $instructor->getPhoneNumber(),
+            ':title' => $instructor->getTitle(),
+            ':salary' => $instructor->getSalary(),
+            ':workingHours' => $instructor->getWorkingHours(),
+            ':userID' => $instructor->getUserID()
+        ];
+
+        return self::$dbConnection->execute($sql, $params);
+    }
+
+    // Delete an Instructor record from the database by userID
+    public static function delete($userID): bool {
+        $sql = "DELETE FROM instructors WHERE userID = :userID";
+        $params = [':userID' => $userID];
+
+        return self::$dbConnection->execute($sql, $params);
+    }
+
+    // Additional Methods for Lessons
+
     // Add a lesson to the instructor's managed lessons
     public function createLesson(LessonModel $lesson): bool {
-        // Add the lesson to the array and return true if successful
         $this->lessons[] = $lesson;
         return true;
     }
@@ -52,14 +152,13 @@ class InstructorModel extends EmployeeModel {
                 return $lesson;
             }
         }
-        return null; // Return null if no lesson found with the given ID
+        return null;
     }
 
     // Update an existing lesson
     public function updateLesson(int $lessonId, array $newData): bool {
         foreach ($this->lessons as $lesson) {
             if ($lesson->getLessonId() === $lessonId) {
-                // Assuming LessonModel has setters for each property
                 if (isset($newData['lessonName'])) {
                     $lesson->setLessonName($newData['lessonName']);
                 }
@@ -69,29 +168,27 @@ class InstructorModel extends EmployeeModel {
                 if (isset($newData['duration'])) {
                     $lesson->setDuration($newData['duration']);
                 }
-                // Update other fields as needed
                 return true;
             }
         }
-        return false; // Return false if no lesson found with the given ID
+        return false;
     }
 
     // Delete a lesson by its ID
     public function deleteLesson(int $lessonId): bool {
         foreach ($this->lessons as $index => $lesson) {
             if ($lesson->getLessonId() === $lessonId) {
-                unset($this->lessons[$index]); // Remove the lesson from the array
-                $this->lessons = array_values($this->lessons); // Re-index array
+                unset($this->lessons[$index]);
+                $this->lessons = array_values($this->lessons);
                 return true;
             }
         }
-        return false; // Return false if no lesson found with the given ID
+        return false;
     }
 
-    // Method to retrieve all lessons managed by the instructor
+    // Retrieve all lessons managed by the instructor
     public function getLessons(): array {
         return $this->lessons;
     }
 }
-
 ?>
