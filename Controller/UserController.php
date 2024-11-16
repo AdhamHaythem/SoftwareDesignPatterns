@@ -29,14 +29,16 @@ class UserController{
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
-        DonorView::displayDonor($donor);
+        $view = new DonorView();
+        $view->displayDonorProfile($donor);
 
     }
 
     function retrieveuser($userId)
     {
         $admin = Admin::retrieve($userId);
-        AdminView::displayAdmin($admin);
+        $view = new AdminView();
+        $view->displayUsers($admin);
     }
 
     function deleteDonor($donorId)
