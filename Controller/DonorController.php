@@ -22,12 +22,12 @@ class DonorController{
 
     public function getTotalDonations($donorId){
         $donorModel = Donor::retrieve($donorId);
-        return $donorModel->getTotalDonations();
+        return $donorModel->getTotalDonationsStrategy();
     }
     
-    public function joinEvent($strategy,$donorId){
+    public function joinEvent($donorId){
         $donor= Donor::retrieve($donorId);
-        $donor->joinEvent($strategy);
+        $donor->joinEvent();
         return true;
     }
 
@@ -57,22 +57,22 @@ class DonorController{
     }
 
     if (isset($_POST['addDonation'])) {
-        $donation= new RegularDonation($_post['amount'],$_post['donorId']);
+        $donation= new RegularDonation($_POST['amount'],$_POST['donorId']);
         
         if (isset($_POST['Clothes'])) {
-            $donation= new Clothes($_post['amount'],$_post['donorId'],$donation);
+            $donation= new Clothes($_POST['amount'],$_POST['donorId'],$donation);
         }
 
         if (isset($_POST['Food'])) {
-            $donation= new Food($_post['amount'],$_post['donorId'],$donation);
+            $donation= new Food($_POST['amount'],$_POST['donorId'],$donation);
         }
 
         if (isset($_POST['MedicalSupplies'])) {
-            $donation= new MedicalSupplies($_post['amount'],$_post['donorId'],$donation);
+            $donation= new MedicalSupplies($_POST['amount'],$_POST['donorId'],$donation);
         }
 
         if (isset($_POST['CashDonation'])) {
-            $donation= new CashDonation($_post['amount'],$_post['donorId'],$donation);
+            $donation= new CashDonation($_POST['amount'],$_POST['donorId'],$donation);
         }
 
         $donation->amountPaid($_POST['amount']);
@@ -92,16 +92,7 @@ class DonorController{
     }
 
     if (isset($_POST['joinEvent'])) {
-        
-        if (isset($_POST['CampaignStrategy'])) {
-            $strategy= new CampaignStrategy();
-        }
-
-        elseif (isset($_POST['VolunteeringEventStrategy'])) {
-            $strategy= new VolunteeringEventStrategy();
-        }
-
-        $donorController->joinEvent($strategy,$_POST['donorId']);
+        $donorController->joinEvent($_POST['donorId']);
     }
 
 

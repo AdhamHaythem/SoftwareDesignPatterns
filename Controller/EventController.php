@@ -1,22 +1,23 @@
 <?php
 
-require_once '../Model/EventModel.php';
+// require_once '../Model/EventModel.php';
+require_once '../Model/IEvent.php';
 require_once '../Model/VolunteeringEventModel.php';
-require_once '../Model/CampaignModel.php';
+require_once '../Model/CampaignStrategy.php';
 require_once '../View/EventView.php';
 
 class EventController {
 
-    public function getVolunteerInfo(int $donorId,$eventId): void {
+    public function getVolunteerInfo(int $donorId, $eventId): void {
         $eventView = new EventView();
-        $eventModel = VolunteeringEvent::retrieve($eventId);
+        $eventModel = VolunteeringEventStrategy::retrieve($eventId);
         $donor = Donor::retrieve($donorId);
         $volunteer = $eventModel->getVolunteerInfo($donor);
-        $eventView->displayVolunteerInfo($volunteer);
+        // $eventView->displayVolunteerInfo($volunteer);
     }
 
     public function addFunds(float $amount, int $eventId): bool {
-        $event = CampaignModel::retrieve($eventId);
+        $event = CampaignStrategy::retrieve($eventId);
         if ($event) {
             $event->addFunds($amount);
             return true;
@@ -25,18 +26,16 @@ class EventController {
     }
 
     public function addVolunteerForCampaign(int $donorId, int $eventId): bool {
-        $event = CampaignModel::retrieve($eventId);
+        $event = CampaignStrategy::retrieve($eventId);
         if ($event) {
             $event->addVolunteer($donorId);
             return true;
         }
         return false;
     }
-
-
 
     public function addVolunteerForVolunteeringEvent(int $donorId, int $eventId): bool {
-        $event = VolunteeringEvent::retrieve($eventId);
+        $event = VolunteeringEventStrategy::retrieve($eventId);
         if ($event) {
             $event->addVolunteer($donorId);
             return true;
@@ -44,80 +43,58 @@ class EventController {
         return false;
     }
 
-
-
-
     public function createCampaign(array $object) {
-        $campaign = CampaignModel::create(
-            $object['eventId'],
-            $object['eventName'],
-            $object['volunteers_needed'],
-            $object['location'],
-            $object['time'],
-            $object['target']
-        );
+        $campaign = CampaignStrategy::create($object);
         return $campaign;
     }
 
-    public function createVolunteeringEvent(array $object) {
-        $event = VolunteeringEvent::create(
-            $object['eventId'],
-            $object['eventName'],
-            $object['volunteers_needed'],
-            $object['location'],
-            $object['time']
-        );
+    public function createVolunteeringEvent($object) {
+        $event = VolunteeringEventStrategy::create($object);
         return $event;
     }
 
     public function retrieveCampaign(int $key): ?Event {
-        return CampaignModel::retrieve($key);
+        return CampaignStrategy::retrieve($key);
     }
 
     public function retrieveVolunteeringEvent(int $key): ?Event {
-        return VolunteeringEvent::retrieve($key);
+        return VolunteeringEventStrategy::retrieve($key);
     }
 
-    public function updateCampaign(array $updates): bool {
-        $campaignModel = CampaignModel::retrieve($updates['eventId']);
-        if ($campaignModel) {
-            $campaignModel->updateCampaign($updates); 
+    public function updateCampaign($updates): bool {
+        if ($updates) {
+            CampaignStrategy::update($updates); 
             return true;
         }
         return false;
     }
-    
+
     public function updateVolunteeringEvent(array $updates): bool {
-        $volunteeringEventModel = VolunteeringEvent::retrieve($updates['eventId']);
-        if ($volunteeringEventModel) {
-            $volunteeringEventModel->updateVolunteeringEvent($updates); 
+        if ($updates) {
+            VolunteeringEventStrategy::update($updates); 
             return true;
         }
         return false;
     }
-    
-    public function deleteCampaign(int $key): bool {
-        return CampaignModel::delete($key);
-    }
 
+    public function deleteCampaign(int $key): bool {
+        return CampaignStrategy::delete($key);
+    }
 
     public function deleteVolunteeringEvent(int $key): bool {
-        return VolunteeringEvent::delete($key);
+        return VolunteeringEventStrategy::delete($key);
     }
-
-
 }
 
 $eventController = new EventController();
 
 if (isset($_POST['getVolunteerInfo'])) {
     if (!empty($_POST['donorId'])) {
-        $eventController->getVolunteerInfo((int)$_POST['donorId'],(int)$_Post['eventId']);
+        $eventController->getVolunteerInfo((int)$_POST['donorId'], (int)$_POST['eventId']);
         echo json_encode(['success' => true]);
-    } 
+    }
     exit;
 }
-
 
 if (isset($_POST['addVolunteerForCampaign'])) {
     if (!empty($_POST['donorId']) && !empty($_POST['eventId'])) {
@@ -127,7 +104,6 @@ if (isset($_POST['addVolunteerForCampaign'])) {
     exit;
 }
 
-
 if (isset($_POST['addVolunteerForVolunteeringEvent'])) {
     if (!empty($_POST['donorId']) && !empty($_POST['eventId'])) {
         $result = $eventController->addVolunteerForVolunteeringEvent((int)$_POST['donorId'], (int)$_POST['eventId']);
@@ -136,13 +112,11 @@ if (isset($_POST['addVolunteerForVolunteeringEvent'])) {
     exit;
 }
 
-
-
 if (isset($_POST['addFunds'])) {
     if (!empty($_POST['amount']) && !empty($_POST['eventId'])) {
         $result = $eventController->addFunds((float)$_POST['amount'], (int)$_POST['eventId']);
         echo json_encode(['success' => $result]);
-    } 
+    }
     exit;
 }
 
@@ -162,7 +136,7 @@ if (isset($_POST['createEvent'])) {
 
             $result = $eventController->createCampaign($object);
             echo json_encode(['success' => !empty($result)]);
-        } 
+        }
 
     } elseif (isset($_POST['VolunteeringEvent'])) {
         if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
@@ -178,7 +152,7 @@ if (isset($_POST['createEvent'])) {
 
             $result = $eventController->createVolunteeringEvent($object);
             echo json_encode(['success' => !empty($result)]);
-        } 
+        }
     }
     exit;
 }
@@ -193,11 +167,9 @@ if (isset($_POST['retrieveCampaign'])) {
         } else {
             echo json_encode(['success' => false, 'error' => 'Event not found']);
         }
-    } 
+    }
     exit;
 }
-
-
 
 if (isset($_POST['retrieveVolunteeringEvent'])) {
     if (!empty($_POST['eventId'])) {
@@ -209,44 +181,39 @@ if (isset($_POST['retrieveVolunteeringEvent'])) {
         } else {
             echo json_encode(['success' => false, 'error' => 'Event not found']);
         }
-    } 
+    }
     exit;
 }
 
-
-
 if (isset($_POST['updateEvent'])) {
     $updates = [];
+    $event = Event::retrieve($updates['eventId']);
 
     if (!empty($_POST['eventId'])) {
         if (isset($_POST['eventName'])) {
-            $updates['eventName'] = $_POST['eventName'];
+            $event->setEventName($_POST['eventName']);
         }
         if (isset($_POST['volunteers_needed'])) {
-            $updates['volunteers_needed'] = $_POST['volunteers_needed'];
+            $event->setVolunteersNeeded($_POST['volunteers_needed']);
         }
         if (isset($_POST['location'])) {
-            $updates['location'] = $_POST['location'];
+            $event->setLocation($_POST['location']);
         }
         if (isset($_POST['time'])) {
-            $updates['time'] = $_POST['time'];
+            $event->setTime($_POST['time']);
         }
 
         if (isset($_POST['Campaign'])) {
             if (isset($_POST['target'])) {
-                $updates['target'] = $_POST['target'];
+                $event->setTarget($_POST['target']);
             }
 
-            if (!empty($updates)) {
-                $result = $eventController->updateCampaign(array_merge(['eventId' => $_POST['eventId']], $updates));
-                echo json_encode(['success' => $result]);
-            }
+            $result = $eventController->updateCampaign($event);
+            echo json_encode(['success' => $result]);
 
         } elseif (isset($_POST['VolunteeringEvent'])) {
-            if (!empty($updates)) {
-                $result = $eventController->updateVolunteeringEvent(array_merge(['eventId' => $_POST['eventId']], $updates));
-                echo json_encode(['success' => $result]);
-            }
+            $result = $eventController->updateVolunteeringEvent($event);
+            echo json_encode(['success' => $result]);
         }
     }
     exit;
@@ -260,8 +227,6 @@ if (isset($_POST['deleteCampaign'])) {
     exit;
 }
 
-
-
 if (isset($_POST['deleteVolunteeringEvent'])) {
     if (!empty($_POST['eventId'])) {
         $result = $eventController->deleteVolunteeringEvent((int)$_POST['eventId']);
@@ -269,6 +234,4 @@ if (isset($_POST['deleteVolunteeringEvent'])) {
     }
     exit;
 }
-
-
 ?>
