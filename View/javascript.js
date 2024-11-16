@@ -59,19 +59,47 @@ function getCampaignData(itemId) {
         });
 }
 
-///////////////////////////////////////////////////////////////////
 
-//Fix
+function donationDetails($donationId) {
+    $.ajax({
+        url: '../Controller/DonationController.php',
+        type: 'POST',
+        data: {
+            donationId: $donationId,
+            donationDetails: '',
+        },
+    });
+}
 
-// function donationDetails($donation) {
-//     $.ajax({
-//         url: '../Controller/DonationController.php',
-//         type: 'POST',
-//         data: {
-//             donationId: $donation->getDonationID(),
-//             donationDetails: '',
-//         },
-//     });
-// };
-/////////////////////////////////////////////////////////////////
+function donorProfile($donorId) {
+    $.ajax({
+        url: "../Controller/DonorController.php",
+        type: 'POST',
+        data: {
+            donorId: $donorId,
+            retrieveDonor: '',
+            },
+        });
+}
 
+function donationHistory(itemId) {
+$.ajax({
+url: "../Controller/DonorController.php" ,
+type: 'POST',
+data: {
+    getDonationHistory: '',
+    donorId:itemId,
+    },
+});
+}
+
+function totalDonations(itemId) {
+$.ajax({
+    url: "../Controller/DonorController.php",
+    type: 'POST',
+    data: {
+        getTotalDonations: '',
+        donorId:itemId,
+        },
+    });
+};
