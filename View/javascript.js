@@ -103,3 +103,51 @@ $.ajax({
         },
     });
 };
+
+function login() {
+    $.ajax({
+        url: "../Controller/UserController.php",
+        type: 'POST',
+        data: {
+            email: getElementById("exampleInputEmail1").text,
+            password: getElementById("exampleInputPassword1").text,
+            login: '',
+            },
+        });
+    };
+
+function signup(itemId) {
+    $.ajax({
+        url: "../Controller/UserController.php",
+        type: 'POST',
+        data: {
+            username: getElementById("username").text,
+            firstname: getElementById("validationServer01").text,
+            lastname: getElementById("validationServer02").text,
+            userId: getElementById("validationServer01").text,
+            email: getElementById("validationServerEmail").text,
+            password: getElementById("password").text,
+            location: getElementById("validationServer01").text,
+            phoneNumber: getElementById("phoneNumber").text,
+            signup: '',
+            },
+        });
+    };
+
+function displayLogin(){
+    $.ajax({url: "../Controller/UserController.php",
+        type: 'POST',
+        data: {
+            displayLogin: '',
+            },
+        });
+    };
+
+function displaysignUp(){
+    $.ajax({url: "../Controller/UserController.php",
+        type: 'POST',
+        data: {
+            displaysignUp: '',
+            },
+        });
+    };
