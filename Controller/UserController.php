@@ -5,6 +5,7 @@ require_once "../Model/EmployeeModel.php";
 require_once "../Model/DonorView.php";
 require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
+require_once "../View/UserView.php";
 
 class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$event)
@@ -29,14 +30,16 @@ class UserController{
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
-        DonorView::displayDonor($donor);
+        $view = new DonorView();
+        $view->displayDonorProfile($donor);
 
     }
 
     function retrieveuser($userId)
     {
         $admin = Admin::retrieve($userId);
-        AdminView::displayAdmin($admin);
+        $view = new AdminView();
+        $view->displayUsers($admin);
     }
 
     function deleteDonor($donorId)
@@ -68,6 +71,19 @@ class UserController{
 }
 
 $x = new UserController();
+if(isset($_POST['displaysignUp']))
+{
+   $view = new UserView();
+   $view->signUp();
+}
+
+if(isset($_POST['displayLogin']))
+{
+   $view = new UserView();
+   $view->signIn();
+}
+
+
 if (isset($_POST['createUser'])) {
     if(isset($_POST['Donor'])){
 

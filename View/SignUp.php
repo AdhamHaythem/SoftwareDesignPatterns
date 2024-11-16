@@ -40,25 +40,7 @@ class SignUp
                 </div>
                 <button class="btn btn-primary" type="submit" name="signup">Sign Up</button>
             </form>
-        </div>
-        function sign(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/View/UserController.php" ?>,
-                type: \'POST\',
-                data: {
-                    username: \'<?php echo $username ?>\',
-                    firstname: \'<?php echo $firstname ?>\',
-                    lastname: \'<?php echo $lastname ?>\',
-                    userId: \'<?php echo $userId ?>\',
-                    email: \'<?php echo $email ?>\',
-                    password: \'<?php echo $password ?>\',
-                    location: \'<?php echo $location ?>\',
-                    phoneNumber: \'<?php echo $phoneNumber ?>\',
-                    signup: \'\',
-                    },
-                });
-            };
-        <\script>';
+        </div>';
     }
 }
 
