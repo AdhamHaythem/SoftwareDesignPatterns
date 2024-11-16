@@ -24,25 +24,37 @@ function donationHistory(itemId) {
             donationHistory: ''
             },
         });
-    }
+}
 
-    function generateReports(itemId) {
-        $.ajax({
-            url: "../Controller/AdminController.php",
-            type: 'POST',
-            data: {
-                generateReports: ''
-                },
-            });
-        }
+function generateReports(itemId) {
+$.ajax({
+    url: "../Controller/AdminController.php",
+    type: 'POST',
+    data: {
+        generateReports: ''
+        },
+    });
+}
 
 
-        function viewDonationStatistics(itemId) {
-            $.ajax({
-                url: "../Controller/AdminController.php",
-                type: 'POST',
-                data: {
-                    viewDonationStatistics: '',
-                    },
-                });
-            }
+function viewDonationStatistics(itemId) {
+    $.ajax({
+        url: "../Controller/AdminController.php",
+        type: 'POST',
+        data: {
+            viewDonationStatistics: '',
+            },
+        });
+}
+
+
+function getCampaignData(itemId) {
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            retrieveCampaign: '',
+            eventId : itemId,
+            },
+        });
+}
