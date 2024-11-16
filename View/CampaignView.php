@@ -219,10 +219,10 @@ class CampaignView
             <nav>
                 <label class="logo">Campaign Manager</label>
                 <ul>
-                    <li><a href="#" onclick="viewCampaignDetails(' . htmlspecialchars($campaign->id) . ')">Campaign Details</a></li>
-                    <li><a href="#">Event List</a></li>
-                    <li><a href="#">Fund Progress</a></li>
-                    <li><a href="#">All Campaigns</a></li>
+                    <li><a href="#" onclick="displayCampaignDetails()">Campaign Details</a></li>
+                    <li><a href="#" onclick="displayReports()">Event List</a></li>
+                    <li><a href="#" onclick="displayDonations()">Fund Progress</a></li>
+                    <li><a href="#" onclick="displayDonationStatistics()">All Campaigns</a></li>
                 </ul>
             </nav>
             <div class="container">
