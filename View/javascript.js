@@ -131,23 +131,34 @@ function signup(itemId) {
             phoneNumber: getElementById("phoneNumber").text,
             signup: '',
             },
+            success: function(response) {
+                $('.container').html(response);
+            },
         });
     };
 
 function displayLogin(){
-    $.ajax({url: "../Controller/UserController.php",
+    $.ajax({
+        url: "../Controller/UserController.php",
         type: 'POST',
         data: {
             displayLogin: '',
+            },
+            success: function(response) {
+                $('.container').html(response);
             },
         });
     };
 
 function displaysignUp(){
-    $.ajax({url: "../Controller/UserController.php",
+    $.ajax({
+        url: "../Controller/UserController.php",
         type: 'POST',
         data: {
             displaysignUp: '',
             },
+        success: function(response) {
+            $('.container').html(response);
+        },
         });
     };

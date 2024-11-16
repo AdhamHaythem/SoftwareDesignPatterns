@@ -17,7 +17,7 @@ class UserView
                 <label class="logo">Engedny</label>
                 <ul>
                     <li><a href="#" onclick="loadHome()">Home</a></li>
-                    <li><a href="#" onclick="displaylogin()">sign in</a></li>
+                    <li><a href="#" onclick="displayLogin()">sign in</a></li>
                     <li><a href="#" onclick="displaysignUp()">sign up</a></li>
                 </ul>
             </nav>
@@ -28,6 +28,7 @@ class UserView
                 </div>
             </div>
             <script src="javascript.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         </body>
         </html>';
     }
