@@ -106,6 +106,4 @@ public function signUp()
 
 $userView = new UserView();
 $userView->userViewDetials("sample");
-$userView->signIn();
-$userView->signUp();
 ?>

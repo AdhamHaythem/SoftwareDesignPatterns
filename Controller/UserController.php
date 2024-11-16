@@ -70,6 +70,19 @@ class UserController{
 }
 
 $x = new UserController();
+if(isset($_POST['displaysignUp']))
+{
+   $view = new UserView();
+   $view->signUp();
+}
+
+if(isset($_POST['displayLogin']))
+{
+   $view = new UserView();
+   $view->signIn();
+}
+
+
 if (isset($_POST['createUser'])) {
     if(isset($_POST['Donor'])){
 
