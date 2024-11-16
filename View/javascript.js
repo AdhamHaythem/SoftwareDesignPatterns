@@ -15,3 +15,34 @@ function users(userId) {
         }
     });
 }
+
+function donationHistory(itemId) {
+    $.ajax({
+        url: "../Controller/AdminController.php" ,
+        type: 'POST',
+        data: {
+            donationHistory: ''
+            },
+        });
+    }
+
+    function generateReports(itemId) {
+        $.ajax({
+            url: "../Controller/AdminController.php",
+            type: 'POST',
+            data: {
+                generateReports: ''
+                },
+            });
+        }
+
+
+        function viewDonationStatistics(itemId) {
+            $.ajax({
+                url: "../Controller/AdminController.php",
+                type: 'POST',
+                data: {
+                    viewDonationStatistics: '',
+                    },
+                });
+            }
