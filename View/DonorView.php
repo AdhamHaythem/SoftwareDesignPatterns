@@ -34,7 +34,7 @@ class DonorView
                     </div>
                 </section>
             </div>
-            <script src="script.js"></script>
+            <script src="javascript.js"></script>
         </body>
         </html>';
     }
@@ -47,17 +47,6 @@ class DonorView
         echo '<p><strong>Name:</strong> ' . htmlspecialchars($donor->name) . '</p>';
         echo '<p><strong>Email:</strong> ' . htmlspecialchars($donor->email) . '</p>';
         echo '</div>';
-
-        echo "<script>function donorProfile(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    donorId: \'<?php echo $donor -> donorId ?>\',
-                    donorProfile: \'\',
-                    },
-                });
-            };<\script>";
     }
 
     // Display donation history
@@ -71,16 +60,6 @@ class DonorView
         }
         echo '</ul>';
         echo '</div>';
-
-        echo "<script>function donationHistory(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    donationHistory: \'\',
-                    },
-                });
-            };<\script>";
     }
 
     public function displayTotalDonations($total)
@@ -89,16 +68,6 @@ class DonorView
         echo '<h2>Total Donations</h2>';
         echo '<p><strong>Total Amount Donated:</strong> $' . htmlspecialchars($total) . '</p>';
         echo '</div>';
-
-        echo "<script>function totalDonations(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    totalDonations: \'\',
-                    },
-                });
-            };<\script>";
     }
 
     public function displayEventStatus($events)

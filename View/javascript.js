@@ -15,3 +15,91 @@ function users(userId) {
         }
     });
 }
+
+function donationHistory(itemId) {
+    $.ajax({
+        url: "../Controller/AdminController.php" ,
+        type: 'POST',
+        data: {
+            donationHistory: ''
+            },
+        });
+}
+
+function generateReports(itemId) {
+$.ajax({
+    url: "../Controller/AdminController.php",
+    type: 'POST',
+    data: {
+        generateReports: ''
+        },
+    });
+}
+
+
+function viewDonationStatistics(itemId) {
+    $.ajax({
+        url: "../Controller/AdminController.php",
+        type: 'POST',
+        data: {
+            viewDonationStatistics: '',
+            },
+        });
+}
+
+
+function getCampaignData(itemId) {
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            retrieveCampaign: '',
+            eventId : itemId,
+            },
+        });
+}
+
+
+function donationDetails($donationId) {
+    $.ajax({
+        url: '../Controller/DonationController.php',
+        type: 'POST',
+        data: {
+            donationId: $donationId,
+            donationDetails: '',
+        },
+    });
+}
+
+function donorProfile($donorId) {
+    $.ajax({
+        url: "../Controller/DonorController.php",
+        type: 'POST',
+        data: {
+            donorId: $donorId,
+            retrieveDonor: '',
+            },
+        });
+}
+
+function donationHistory(itemId) {
+$.ajax({
+url: "../Controller/DonorController.php" ,
+type: 'POST',
+data: {
+    getDonationHistory: '',
+    donorId:itemId,
+    },
+});
+}
+
+function totalDonations(itemId) {
+$.ajax({
+    url: "../Controller/DonorController.php",
+    type: 'POST',
+    data: {
+        getTotalDonations: '',
+        donorId:itemId,
+        },
+    });
+};

@@ -16,7 +16,8 @@ class DonorController{
     public function getDonationHistory($donorId){
         $donorModel = Donor::retrieve($donorId);
         $donationHistory=$donorModel->getDonationHistory();
-        DonorView::displayDonationHistory($donationHistory);
+        $view = new DonorView();
+        $view->displayDonationHistory($donationHistory);
     }    
 
     public function getTotalDonations($donorId){
@@ -48,7 +49,10 @@ class DonorController{
 
     if (isset($_POST['getTotalDonations'])) {
         if(!empty($_POST['donorId'])){
-            $donorController->getTotalDonations($_POST['donorId']);
+            $data = $donorController->getTotalDonations($_POST['donorId']);
+            $view = new DonorView();
+            $view->displayTotalDonations($data);
+
         }
     }
 

@@ -11,12 +11,13 @@ class DonationView
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+            <script src="javascript.js"></script>
         </head>
         <body>
             <nav>
                 <label class="logo">Donation Manager</label>
                 <ul>
-                    <li><a href="#" onclick="displayDonationDetails()">Donation Details</a></li>
+                    <li><a href="#" onclick="donationDetails(1)">Donation Details</a></li>
                 </ul>
             </nav>
             <div class="container">
@@ -202,18 +203,6 @@ class DonationView
             
         </body>
         </html>';
-        echo "<script>function donationDetails(itemId) {
-            $.ajax({
-                url: 'SoftwareDesignPatterns/Controller/DonationController.php',
-                type: 'POST',
-                data: {
-                    donationId: \'<?php echo $donation -> donationId ?>\',
-                    campaignId: \'<?php echo $donation -> campaignId ?>\',
-                    eventId: \'<?php echo $donation -> eventId ?>\',
-                    donationDetails: \'\',
-                },
-            });
-        };</script>";
     }
 }
 
