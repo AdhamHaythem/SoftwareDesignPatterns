@@ -21,8 +21,8 @@ function main() {
      
     $dbConnection = new DatabaseConnection($config);
 
-    $campaignEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new CampaignStrategy()); 
-    $volunteeringEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new VolunteeringEventStrategy()); 
+   // $campaignEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new CampaignStrategy()); 
+   // $volunteeringEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new VolunteeringEventStrategy()); 
     $donorID = 101;
 
     echo "---- Testing CampaignStrategy ----\n";

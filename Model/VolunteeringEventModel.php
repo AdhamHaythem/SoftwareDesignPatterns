@@ -1,19 +1,16 @@
 <?php
-require_once 'Event.php'; 
+require_once 'IEvent.php'; 
 require_once 'IObserver.php';
 require_once 'db_connection.php';
 require_once 'Donor.php';
 
-class VolunteeringEvent extends Event {
-    private string $name;
+class VolunteeringEventStrategy extends Event {
     private array $observers = [];
 
 
     public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
-        parent::__construct($time, $location, $volunteersNeeded, $eventID);
-        $this->name = $name;
+        
     }
-
 
     public function getVolunteerInfo(Donor $volunteer): array {
         return [
@@ -23,14 +20,14 @@ class VolunteeringEvent extends Event {
         ];
     }
 
-    public function assignToEvent(Donor $volunteer): bool {
-        if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){
-            $this->getVolunteersList()[] = $volunteer->getDonorID();
-            $this->notifyObservers();
-            return true;
-        }
-        return false;
-    }
+    // public function assignToEvent(Donor $volunteer): bool {
+    //     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){
+    //         $this->getVolunteersList()[] = $volunteer->getDonorID();
+    //         $this->notifyObservers();
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     
     public static function create($object): bool {
@@ -45,14 +42,14 @@ class VolunteeringEvent extends Event {
         return $object->dbConnection->execute($sql, $params);
     }
 
-    public static function retrieve($key): ?VolunteeringEvent {
+    public static function retrieve($key): ?VolunteeringEventStrategy {
         $sql = "SELECT * FROM volunteering_events WHERE eventID = :eventID";
         $params = [':eventID' => $key];
         $dbConnection= Event::getDatabaseConnection();
         $result = $dbConnection->query($sql, $params);
 
         if ($result) {
-            return new VolunteeringEvent(
+            return new VolunteeringEventStrategy(
                 $result['name'],
                 new DateTime($result['eventTime']),
                 $result['location'],
@@ -91,11 +88,63 @@ class VolunteeringEvent extends Event {
         unset($this->observers[$observerID]);
     }
     
-
-
     public function notifyObservers(): void {
         foreach ($this->observers as $observer) {
             $observer->update(); 
         }
     }
+
+
+   //for strategiesss
+
+   public function signUp(int $donorID): bool {
+    if (!isset($donorID)) {
+    //    echo "Volunteering SignUp: Donor ID is not provided.\n";
+        return false;
+    }
+    
+    if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()) {
+     //   echo "Volunteering SignUp: Donor $donorID successfully signed up to volunteer for the event.\n";
+        return $this->addVolunteer($donorID);
+    }
+    // echo "Volunteering SignUp: No more spots available for volunteers.\n";
+    return false;
+}
+
+public function getAllEvents(): array {
+    $sql = "SELECT * FROM volunteering_events";
+    $dbConnection = Event::getDatabaseConnection();
+    $result = $dbConnection->query($sql);
+
+    $events = [];
+    if ($result) {
+        foreach ($result as $eventData) {
+            $events[] = new VolunteeringEventStrategy(
+                $eventData['name'],
+                new DateTime($eventData['eventTime']),
+                $eventData['location'],
+                $eventData['volunteersNeeded'],
+                $eventData['eventID']
+            );
+        }
+    }
+    return $events;
+}
+
+
+public function checkEventStatus(): string {
+    if ($this->getVolunteersNeeded() > count($this->getVolunteersList())) {
+        return 'Volunteering Event is open for more volunteers';
+    }
+    return 'Volunteering Event is fully booked';
+}
+
+public function generateEventReport(): string {
+    $report = "Volunteering Event Report for Event ID: " . $this->getEventID() . "\n";
+    $report .= "Location: " . $this->getLocation() . "\n";
+    $report .= "Volunteers Needed: " . $this->getVolunteersNeeded() . "\n";
+    $report .= "Current Volunteers: " . count($this->getVolunteersList()) . "\n";
+    $report .= "Volunteering Event Status: " . $this->checkEventStatus($this) . "\n";
+    return $report;
+}
 }

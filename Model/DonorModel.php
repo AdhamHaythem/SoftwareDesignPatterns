@@ -14,7 +14,7 @@ class Donor extends UserModel implements IObserver {
     private array $campaignsJoined =[];
     private IPaymentStrategy $paymentMethod;
     private ISubject $eventData;
-    private IEvent $eventStrategy;
+    private Event $eventStrategy;
 
     public function __construct(
         int $userID,
@@ -26,7 +26,7 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        IEvent $eventStrategy, //defaultevent
+        Event $eventStrategy = new CampaignStrategy(200 ,"","",400.0), //defaultevent
         ISubject $eventData //defaulttttttttt
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
@@ -50,30 +50,26 @@ class Donor extends UserModel implements IObserver {
     }
     
     //StrategyMethods
-    public function joinEvent(Event $event) {
-        $this->eventStrategy->signUp($event, $this->donorID);
-    }
 
-    public function getAllEvents(){
+    public function joinEvent() {
+        $this->eventStrategy->signUp($this->donorID);
+    } 
+
+    public function getAllEventsStrategy(){
         $this->eventStrategy->getAllEvents();
     }
 
-    public function processEvents(){
-        $this->eventStrategy->processEvents();
+
+    public function checkEventStatusStrategy(){
+
+        return $this->eventStrategy->checkEventStatus($this->donorID);
     }
 
-    public function checkEventStatus(Event $event){
-        $this->eventStrategy->checkEventStatus($event);
+    public function generateEventReportStrategy(){
+        $this->eventStrategy->generateEventReport();
     }
 
-    public function generateEventReport(Event $event){
-        $this->eventStrategy->generateEventReport($event);
-    }
-    public function sendReminderToVolunteers(Event $event){
-        $this->eventStrategy->sendReminderToVolunteers($event);
-    }
-
-    public function getTotalDonations(): float {
+    public function getTotalDonationsStrategy(): float {
         return $this->totalDonations;
     }
     
@@ -82,7 +78,7 @@ class Donor extends UserModel implements IObserver {
        $this->paymentMethod = $paymentMethod;
    }
 
-    public function setEventMethod(IEvent $eventStrategy): void {
+    public function setEventMethod(Event $eventStrategy): void {
         $this->eventStrategy = $eventStrategy;
 }
 
@@ -100,7 +96,7 @@ class Donor extends UserModel implements IObserver {
     }
 
 
-    public function getEventMethod(): IEvent{
+    public function getEventMethod(): Event{
         return $this->eventStrategy;
     }
 
