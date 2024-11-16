@@ -58,3 +58,20 @@ function getCampaignData(itemId) {
             },
         });
 }
+
+///////////////////////////////////////////////////////////////////
+
+//Fix
+
+// function donationDetails($donation) {
+//     $.ajax({
+//         url: '../Controller/DonationController.php',
+//         type: 'POST',
+//         data: {
+//             donationId: $donation->getDonationID(),
+//             donationDetails: '',
+//         },
+//     });
+// };
+/////////////////////////////////////////////////////////////////
+
