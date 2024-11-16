@@ -12,12 +12,13 @@ class CampaignView
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+            <script src="javascript.js"></script>
         </head>
         <body>
             <nav>
                 <label class="logo">Campaign Manager</label>
                 <ul>
-                    <li><a href="#" onclick="displayCampaignDetails()">Campaign Details</a></li>
+                    <li><a href="#" onclick="getCampaignData(1)">Campaign Details</a></li>
                     <li><a href="#" onclick="displayReports()">Event List</a></li>
                     <li><a href="#" onclick="displayDonations()">Fund Progress</a></li>
                     <li><a href="#" onclick="displayDonationStatistics()">All Campaigns</a></li>
@@ -199,7 +200,6 @@ class CampaignView
                     </div>
                 </section>
             </div>
-            <script src="script.js"></script>
         </body>
         </html>';
     }

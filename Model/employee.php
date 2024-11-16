@@ -49,5 +49,10 @@ class EmployeeModel extends UserModel {
     function getTitle():string{
         return $this->title;
     }
+    
+    function getSalary(){
+        return $this->salary;
+    }
+
 }
 

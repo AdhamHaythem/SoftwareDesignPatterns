@@ -7,14 +7,15 @@ require_once 'IObserver.php';
 require_once 'ISubject.php';
 
 class Event implements IMaintainable, ISubject {
-    private array $observers = [];
+    private array $Eventobservers = [];
     private DateTime $time;
     private string $location;
     private int $volunteersNeeded;
     private int $eventID;
     private array $volunteersList;
-    private DatabaseConnection $dbConnection; 
+    private static DatabaseConnection $dbConnection; 
     private IEvent $eventStrategy;
+    private String $status;
 
     public function __construct(DateTime $time, string $location, int $volunteersNeeded, int $eventID,IEvent $eventStrategy) {
         $this->time = $time;
@@ -22,7 +23,6 @@ class Event implements IMaintainable, ISubject {
         $this->volunteersNeeded = $volunteersNeeded;
         $this->eventID = $eventID;
         $this->volunteersList = [];
-      //  $this->dbConnection = $dbConnection;
         $this->eventStrategy = $eventStrategy; // Default strategy
     }
 
@@ -55,20 +55,26 @@ class Event implements IMaintainable, ISubject {
     }
 
     public function registerObserver(IObserver $observer): void {
-        $this->observers[] = $observer;
+        $this->Eventobservers[] = $observer;
     }
 
     public function removeObserver(IObserver $observer): void {
-        $index = array_search($observer, $this->observers, true);
+        $index = array_search($observer, $this->Eventobservers, true);
         if ($index !== false) {
-            unset($this->observers[$index]);
+            unset($this->Eventobservers[$index]);
         }
     }
 
     public function notifyObservers(): void {
-        foreach ($this->observers as $observer) {
-            $observer->Update();  // Notify each donor
+        foreach ($this->Eventobservers as $observer) {
+            $observer->UpdateStatus();  // Notify each donor
         }
+    }
+    //notifyyyy el oberverss
+    
+    public function SetStatus(string $EventStatus): void {
+        $this->status = $EventStatus;
+        $this->notifyObservers();
     }
 
     // public function setStrategy(IEvent $eventStrategy): void {
@@ -78,6 +84,15 @@ class Event implements IMaintainable, ISubject {
     // public function signUpBasedOnStrategy(int $donorID): bool {
     //     return $this->eventStrategy->signUp($this, $donorID);
     // }
+
+
+        // Set the database connection
+        public static function setDatabaseConnection(DatabaseConnection $dbConnection) {
+            self::$dbConnection = $dbConnection;
+        }
+        public static function getDatabaseConnection() {
+           return self::$dbConnection;
+        }
 
     public static function create($object): bool {
         $sql = "INSERT INTO events (eventID, eventTime, location, volunteersNeeded) VALUES (:eventID, :eventTime, :location, :volunteersNeeded)";
@@ -91,6 +106,7 @@ class Event implements IMaintainable, ISubject {
     }
 
     public static function retrieve($key) {
+        $dbConnection = Event::getDatabaseConnection();
         $sql = "SELECT * FROM events WHERE eventID = :eventID";
         $params = [':eventID' => $key];
         $result = self::$dbConnection->query($sql, $params);
@@ -100,7 +116,6 @@ class Event implements IMaintainable, ISubject {
                 $result['location'],
                 $result['volunteersNeeded'],
                 $result['eventID'],
-                self::$dbConnection,
                 new CampaignStrategy() // Default strategy
             );
         }
@@ -135,7 +150,6 @@ class Event implements IMaintainable, ISubject {
                     $row['location'],
                     $row['volunteersNeeded'],
                     $row['eventID'],
-                    self::$dbConnection,
                     new CampaignStrategy() // Default strategy
                 );
             }

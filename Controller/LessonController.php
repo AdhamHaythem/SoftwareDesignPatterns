@@ -8,17 +8,19 @@ class LessonController
     {
         $instructor = InstructorModel::retrieve($instructorId);
         $lesson = new LessonModel($lessonId,$lessonName,$lessonSubject,$duration,$instructor);
-        InstructorModel::retrieveLesson($lesson);
+        $instructor->createLesson($lesson);
 
     }
-    function deleteLesson($lessonId)
+    function deleteLesson($lessonId,$instructorId)
     {
-       InstructorModel::deleteLesson($lessonId);
+        $instructor = InstructorModel::retrieve($instructorId);
+       $instructor->deleteLesson($lessonId);
     }
 
-    function retrieveLesson($lessonId)
+    function retrieveLesson($lessonId,$instructorId)
     {
-        $lesson = InstructorModel::retrieveLesson($lessonId);
+        $instructor = InstructorModel::retrieve($instructorId);
+        $lesson = $instructor->retrieveLesson($lessonId);
         $lessonView = new LessonView();
         $lessonView->displayLessonDetails($lesson);
     }

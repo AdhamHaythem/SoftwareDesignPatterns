@@ -1,3 +1,5 @@
+//setterrrr w getterrrrrrrr 3shann om el dbbbbb ya adhaaaaaaaaaaam
+
 <?php
 
 require_once 'EventModel.php';
@@ -10,18 +12,14 @@ class CampaignModel extends Event {
     private array $totalEvents;
     private array $donations;
     private float $moneyEarned;
-    private static DatabaseConnection $dbConnection;
 
-    public function __construct(int $campaignID, float $target, string $title, array $totalEvents, array $donations, float $moneyEarned) {
+    
+    public function __construct(int $campaignID, float $target, string $title,float $moneyEarned) {
         $this->campaignID = $campaignID;
         $this->target = $target;
         $this->title = $title;
-        $this->totalEvents = $totalEvents;
-        $this->donations = $donations;
         $this->moneyEarned = $moneyEarned;
     }
-
-
 
     public function addVolunteer(int $donorID): bool {
         foreach ($this->totalEvents as $event) {
@@ -69,7 +67,8 @@ class CampaignModel extends Event {
             ':campaignID' => $this->campaignID
         ];
 
-        return self::$dbConnection->execute($sql, $params);
+        $dbConnection= Event::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
     }
 
     public static function create($campaign): bool {
@@ -88,24 +87,22 @@ class CampaignModel extends Event {
             ':targetAmount' => $campaign->target,
             ':raisedAmount' => $campaign->moneyEarned
         ];
-
-        return $campaign->dbConnection->execute($sql, $params);
+        $dbConnection= Event::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
     }
 
     public static function retrieve($campaignID): ?CampaignModel {
+        $dbConnection = CampaignModel::getDatabaseConnection();
         $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
-        $result = self::dbConnection->query($sql, $params);
+        $result = $dbConnection->query($sql, $params);
         if ($result) {
             return new CampaignModel(
                 $result['campaignID'],
                 $result['targetAmount'],
                 $result['campaignName'],
-                [], // actual events here
-                [], //actual donations here
                 $result['raisedAmount'],
-                self::$dbConnection
             );
         }
         return null;
@@ -130,21 +127,11 @@ class CampaignModel extends Event {
     }
 
 
-    public static function delete(int $campaignID): bool {
+    public static function delete($campaignID): bool {
         $sql = "DELETE FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
-
-        return self::$dbConnection->execute($sql, $params);
-    }
-
-
-    public function registerObserver(IObserver $observer): void {
-    }
-
-    public function removeObserver(int $observerID): void {
-    }
-
-    public function notifyObserver(): void {
+        $dbConnection= Event::getDatabaseConnection();
+        return $dbConnection->execute($sql, $params);
     }
 }
 

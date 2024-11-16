@@ -1,17 +1,20 @@
 <?php
 require_once 'DatabaseConnection.php';
 require_once 'InstructorModel.php';
+require_once 'IObserver.php';
 
 class LessonModel {
+    private array $lessonObservers = [];
     private int $lessonId;
     private string $lessonName;
     private string $lessonSubject;
     private int $duration;
     private InstructorModel $instructor;
-    private array $studentView = []; // Array to represent ArrayList<Student>
+    private array $studentView = [];
     private int $views = 0;
     private DatabaseConnection $dbConnection;
     private int $lessonViews = 0;
+    private string $status;
 
     public function __construct(
         int $lessonId,
@@ -78,10 +81,30 @@ class LessonModel {
         return "Lesson ID: {$this->lessonId}, Name: {$this->lessonName}, Subject: {$this->lessonSubject}";
     }
 
-    // Add a student view
+    public function registerObserver(IObserver $observer): void {
+        $this->lessonObservers[] = $observer;
+    }
+
+    public function removeObserver(IObserver $observer): void {
+        $index = array_search($observer, $this->lessonObservers, true);
+        if ($index !== false) {
+            unset($this->lessonObservers[$index]);
+        }
+    }
+
+    public function notifyObservers(): void {
+        foreach ($this->lessonObservers as $observer) {
+            $observer->UpdateStatus($this->status);
+        }
+    }
+
+    public function SetStatus(string $newStatus): void {
+        $this->status = $newStatus;
+        $this->notifyObservers();
+    }
+
     public function addStudentView(StudentModel $student): void {
         $this->studentView[] = $student;
     }
 }
-
 ?>

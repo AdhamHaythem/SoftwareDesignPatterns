@@ -19,9 +19,9 @@ class AdminView
                 <label class="logo">Admin</label>
                 <ul>
                     <li><a href="#" onclick="users(1)">Users</a></li>
-                    <li><a href="#" onclick="displayReports()">Reports</a></li>
-                    <li><a href="#" onclick="displayDonations()">Donations</a></li>
-                    <li><a href="#" onclick="displayDonationStatistics()">Statistics</a></li>
+                    <li><a href="#" onclick="generateReports(1)">Reports</a></li>
+                    <li><a href="#" onclick="donationHistory(1)">Donations</a></li>
+                    <li><a href="#" onclick="viewDonationStatistics(1)">Statistics</a></li>
                 </ul>
             </nav>
             <div class="container">
@@ -62,16 +62,6 @@ class AdminView
         }
         echo '</ul>';
         echo '</div>';
-
-        echo "<script>function donationHistory(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/AdminController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    donationHistory: \'\',
-                    },
-                });
-            };<\script>";
     }
 
     public function displayDonationStatistics($statistics)
@@ -82,16 +72,6 @@ class AdminView
             echo '<li>Donation: ' . htmlspecialchars($statistic->amount) . ' - Statistics: ' . htmlspecialchars($statistic->statistic) . '</li>';
         }
         echo '</div>';
-
-        echo "<script>function viewDonationStatistics(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/AdminController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    viewDonationStatistics: \'\',
-                    },
-                });
-            };<\script>";
     }
 
        
@@ -105,16 +85,6 @@ class AdminView
            echo '<p><strong>Description:</strong> ' . htmlspecialchars($event->description) . '</p>';
            echo '<p><strong>Total Donations:</strong> ' . htmlspecialchars($event->totalDonations) . '</p>';
            echo '</div>';
-
-           echo "<script>function generateReports(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/AdminController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    generateReports: \'\',
-                    },
-                });
-            };<\script>";
        }
 
 }

@@ -2,9 +2,11 @@
 require_once 'UserModel.php';
 require_once 'LessonModel.php';
 
-class StudentModel extends UserModel { 
+class StudentModel extends UserModel implements IObserver{ 
     private array $enrolledLessons = []; // Array to hold enrolled LessonModel instances
     private array $lessonCompletionStatus = []; // Array to track completion status by lesson ID
+    private ISubject $lessonSubject;
+    private int $studentID;
 
     public function __construct(
         string $username,
@@ -12,11 +14,10 @@ class StudentModel extends UserModel {
         string $lastname,
         int $userID,
         string $email,
-        string $usernameID,
         string $password,
         array $location,
         int $phoneNumber,
-        DatabaseConnection $dbConnection
+        ISubject $lessonSubject
     ) {
         // Call parent constructor to initialize User properties
         parent::__construct(
@@ -25,18 +26,19 @@ class StudentModel extends UserModel {
             $lastname,
             $userID,
             $email,
-            $usernameID,
             $password,
             $location,
-            $phoneNumber,
-            $dbConnection
-        );
+            $phoneNumber);
+            $this->studentID = $userID;
+            $this->lessonSubject = $lessonSubject;
+            $this->lessonSubject->registerObserver($this);
     }
 
     // Enroll in a lesson
     public function enrollInLesson(LessonModel $lesson): void {
         $this->enrolledLessons[] = $lesson;
         $this->lessonCompletionStatus[$lesson->getLessonId()] = false; // Mark as not completed by default
+        $lesson->registerObserver($this);
     }
 
     // Complete a lesson for this student
@@ -84,6 +86,21 @@ class StudentModel extends UserModel {
         }
         return "In Progress";
     }
+    // Observer method to receive updates from LessonModel
+    public function UpdateStatus(string $status): void {
+        echo "Student {$this->studentID} has been notified about the lesson update: $status\n";
+    }
+
+    // Getters
+    public function getStudentID(): int {
+        return $this->studentID;
+    }
+
+    public function getLessonSubject(): ISubject {
+        return $this->lessonSubject;
+    }
+
 }
+
 
 ?>
