@@ -20,6 +20,14 @@ class VolunteeringEventStrategy extends Event {
         ];
     }
 
+    public function getListObservers(): array {
+        return $this->observers;
+    }
+
+    public function setListObservers(array $observers): void {
+        $this->observers = $observers;
+    }
+
     // public function assignToEvent(Donor $volunteer): bool {
     //     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){
     //         $this->getVolunteersList()[] = $volunteer->getDonorID();

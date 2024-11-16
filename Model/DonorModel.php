@@ -41,9 +41,7 @@ class Donor extends UserModel implements IObserver {
         $this->eventData->registerObserver($this);
     }
 
-    // CRUD Methods
 
-    // Create a new Donor record in the database
     public static function create($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "INSERT INTO donors (userID, username, firstname, lastname, email, password, location, phoneNumber, totalDonations)
@@ -56,7 +54,7 @@ class Donor extends UserModel implements IObserver {
             ':lastname' => $donor->getLastname(),
             ':email' => $donor->getEmail(),
             ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($donor->getLocation()), // Assuming location is an array
+            ':location' => json_encode($donor->getLocation()), 
             ':phoneNumber' => $donor->getPhoneNumber(),
             ':totalDonations' => $donor->getTotalDonations()
         ];
@@ -64,7 +62,6 @@ class Donor extends UserModel implements IObserver {
         return $dbConnection->execute($sql, $params);
     }
 
-    // Retrieve a Donor record from the database by donorID
     public static function retrieve($donorID): ?Donor {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "SELECT * FROM donors WHERE userID = :donorID";
@@ -81,9 +78,9 @@ class Donor extends UserModel implements IObserver {
                 $result['password'],
                 json_decode($result['location'], true),
                 $result['phoneNumber'],
-                $result['paymentMethod'], // Assuming `paymentMethod` is stored and retrieved properly
-                $result['eventStrategy'], // Assuming `eventStrategy` is stored and retrieved properly
-                $result['eventData']      // Assuming `eventData` is stored and retrieved properly
+                $result['paymentMethod'], 
+                $result['eventStrategy'], 
+                $result['eventData']      
             );
         }
 
@@ -119,7 +116,6 @@ class Donor extends UserModel implements IObserver {
         return $dbConnection->execute($sql, $params);
     }
 
-    // Delete a Donor record from the database by donorID
     public static function delete($donorID): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "DELETE FROM donors WHERE userID = :donorID";
@@ -128,7 +124,6 @@ class Donor extends UserModel implements IObserver {
         return $dbConnection->execute($sql, $params);
     }
 
-    // Other Methods
 
     public function getDonationHistory(): array {
         return $this->donationsHistory;

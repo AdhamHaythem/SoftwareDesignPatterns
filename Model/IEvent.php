@@ -28,21 +28,52 @@ abstract class Event implements IMaintainable, ISubject {
 
     abstract public function signUp(int $donorID): bool;
     abstract public function getAllEvents(): array;
-    abstract public function processEvents(): void;
     abstract public function checkEventStatus(): string;
     abstract public function generateEventReport(): string;
-    abstract public function sendReminderToVolunteers(): void;
 
-    public function getTime(): DateTime {
-        return $this->time;
+
+    public function setTime(DateTime $time): void {
+        $this->time = $time;
     }
 
     public function getLocation(): string {
         return $this->location;
     }
 
+    public function setLocation(string $location): void {
+        $this->location = $location;
+    }
+
     public function getVolunteersNeeded(): int {
         return $this->volunteersNeeded;
+    }
+
+    public function setVolunteersNeeded(int $volunteersNeeded): void {
+        $this->volunteersNeeded = $volunteersNeeded;
+    }
+
+    public function setEventID(int $eventID): void {
+        $this->eventID = $eventID;
+    }
+
+    public function setVolunteersList(array $volunteersList): void {
+        $this->volunteersList = $volunteersList;
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function getStatus(): string {
+        return $this->status;
+    }
+
+    public function getTime(): DateTime {
+        return $this->time;
     }
 
     public function getEventID(): int {

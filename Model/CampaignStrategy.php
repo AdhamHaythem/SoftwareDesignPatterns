@@ -21,8 +21,55 @@ class CampaignStrategy extends Event {
         $this->moneyEarned = $moneyEarned;
     }
 
-     
-    //zawedyyyyy eventid 
+
+    public function getCampaignID(): int {
+        return $this->campaignID;
+    }
+
+    public function setCampaignID(int $campaignID): void {
+        $this->campaignID = $campaignID;
+    }
+
+    public function getTarget(): float {
+        return $this->target;
+    }
+
+    public function setTarget(float $target): void {
+        $this->target = $target;
+    }
+
+    public function getTitle(): string {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void {
+        $this->title = $title;
+    }
+
+    public function getTotalEvents(): array {
+        return $this->totalEvents;
+    }
+
+    public function setTotalEvents(array $totalEvents): void {
+        $this->totalEvents = $totalEvents;
+    }
+
+    public function getDonations(): array {
+        return $this->donations;
+    }
+
+    public function setDonations(array $donations): void {
+        $this->donations = $donations;
+    }
+
+    public function getMoneyEarned(): float {
+        return $this->moneyEarned;
+    }
+
+    public function setMoneyEarned(float $moneyEarned): void {
+        $this->moneyEarned = $moneyEarned;
+    }
+    
     public function addVolunteer($donorID): bool {
         foreach ($this->totalEvents as $event) {
             if ($event->getDonorID() == $donorID) {
@@ -57,10 +104,6 @@ class CampaignStrategy extends Event {
         ];
     }
 
-    public function getCampaignID(): int {
-         return $this ->campaignID;
-
-    }
     public function addFunds(float $amount): bool {
         $this->moneyEarned += $amount;
         return $this->updateCampaignInDB();
