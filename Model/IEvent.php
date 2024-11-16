@@ -1,5 +1,6 @@
 <?php
-
+require "IMaintainable.php";
+require "ISubject.php.php";
 
 abstract class Event implements IMaintainable, ISubject {
     private string $name;

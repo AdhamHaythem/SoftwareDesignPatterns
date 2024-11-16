@@ -146,7 +146,7 @@ class CampaignStrategy extends Event {
     }
 
     public static function retrieve($campaignID): ?CampaignStrategy {
-        $dbConnection = CampaignStrategy::getDatabaseConnection();
+        $dbConnection = Event::getDatabaseConnection();
         $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
@@ -177,7 +177,7 @@ class CampaignStrategy extends Event {
             ':campaignID' => $campaign->campaignID
         ];
 
-        return $campaign->dbConnection->execute($sql, $params);
+        return Event::getDatabaseConnection()->execute($sql, $params);
     }
 
 

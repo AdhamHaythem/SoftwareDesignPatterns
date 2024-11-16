@@ -1,39 +1,49 @@
 <?php
-require_once 'db_connection.php';
+
+require_once 'DonorModel.php'; 
 require_once 'IEvent.php';
-require_once 'EventModel.php';
-require_once 'CampaignStrategy.php';
-require_once 'VolunteeringEventStrategy.php';
+
 
 function main() {
+    $event = new Event(new DateTime(), "Central Park",20, 10, 1);
 
-    $config = [
-        'DB_HOST' => 'localhost',
-        'DB_USER' => 'root',
-        'DB_PASS' => '',
-        'DB_NAME' => 'sdp'
-    ];
+    $paymentMethod1 = new IPaymentStrategy(); 
+    $paymentMethod2 = new IPaymentStrategy(); 
+ 
+    $donor1 = new Donor(
+        userID: 1,
+        username: "donor1",
+        firstname: "Alice",
+        lastname: "Smith",
+        email: "alice.smith@example.com",
+        password: "password123",
+        location: ["city" => "New York", "country" => "USA"],
+        phoneNumber: 1234567890,
+        paymentMethod: $paymentMethod1,
+        eventData: $event
+    );
 
-    $eventID = 1; 
-    $eventTime = new DateTime('2024-12-01 10:00:00'); 
-    $location = "City Park"; 
-    $volunteersNeeded = 5; 
-     
-    $dbConnection = new DatabaseConnection($config);
+    $donor2 = new Donor(
+        userID: 2,
+        username: "donor2",
+        firstname: "Bob",
+        lastname: "Johnson",
+        email: "bob.johnson@example.com",
+        password: "password456",
+        location: ["city" => "Los Angeles", "country" => "USA"],
+        phoneNumber: 9876543210,
+        paymentMethod: $paymentMethod2,
+        eventData: $event
+    );
 
-   // $campaignEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new CampaignStrategy()); 
-   // $volunteeringEvent = new Event($eventTime, $location, $volunteersNeeded, $eventID,new VolunteeringEventStrategy()); 
-    $donorID = 101;
+    $event->registerObserver($donor1);
+    $event->registerObserver($donor2);
 
-    echo "---- Testing CampaignStrategy ----\n";
-   // $campaignEvent->signUpBasedOnStrategy($donorID);
-    echo "----------------------------------\n";
+    echo "Both donors have been registered as observers to the event.\n";
+    $event->setStatus("The event has been postponed due to weather conditions!");
 
-    echo "---- Changing to VolunteeringEventStrategy ----\n";
-   // $campaignEvent->setStrategy(new VolunteeringEventStrategy());
-  //  $campaignEvent->signUpBasedOnStrategy($donorID); 
-    echo "-------------------------------------------\n";
 }
 
 main();
+
 ?>

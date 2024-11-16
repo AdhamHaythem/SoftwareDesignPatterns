@@ -1,6 +1,6 @@
 <?php
 
-require_once 'User.php';
+require_once 'userModel.php';
 require_once 'Donation.php';
 require_once 'Campaign.php';
 require_once 'IPaymentStrategy.php';
