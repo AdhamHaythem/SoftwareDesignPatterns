@@ -120,7 +120,7 @@ class CampaignStrategy extends Event {
     }
 
     private function updateCampaignInDB(): bool {
-        $sql = "UPDATE campaigns SET 
+        $sql = "UPDATE campaignstrategy SET 
                     targetAmount = :targetAmount, 
                     raisedAmount = :raisedAmount
                 WHERE campaignID = :campaignID";
@@ -140,7 +140,7 @@ class CampaignStrategy extends Event {
         if (!$campaign instanceof CampaignStrategy) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
-        $sql = "INSERT INTO campaigns (campaignID, campaignName, description, startDate, endDate, targetAmount, raisedAmount)
+        $sql = "INSERT INTO campaignstrategy (campaignID, campaignName, description, startDate, endDate, targetAmount, raisedAmount)
                 VALUES (:campaignID, :campaignName, :description, :startDate, :endDate, :targetAmount, :raisedAmount)";
         
         $params = [
@@ -157,7 +157,7 @@ class CampaignStrategy extends Event {
 
     public static function retrieve($campaignID): ?CampaignStrategy {
         $dbConnection = Event::getDatabaseConnection();
-        $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
+        $sql = "SELECT * FROM campaignstrategy WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
         $result = $dbConnection->query($sql, $params);
@@ -182,7 +182,7 @@ class CampaignStrategy extends Event {
     
 
     public static function update($campaign): bool {
-        $sql = "UPDATE campaigns SET 
+        $sql = "UPDATE campaignstrategy SET 
                     campaignName = :campaignName, 
                     description = :description, 
                     targetAmount = :targetAmount, 
@@ -201,7 +201,7 @@ class CampaignStrategy extends Event {
 
 
     public static function delete($campaignID): bool {
-        $sql = "DELETE FROM campaigns WHERE campaignID = :campaignID";
+        $sql = "DELETE FROM campaignstrategy WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         $dbConnection= Event::getDatabaseConnection();
         return $dbConnection->execute($sql, $params);
@@ -225,7 +225,7 @@ class CampaignStrategy extends Event {
     
     public function getAllEvents(): array {
         $dbConnection = Event::getDatabaseConnection();
-        $sql = "SELECT * FROM campaigns";
+        $sql = "SELECT * FROM campaignstrategy";
         
         $result = $dbConnection->query($sql);
         $campaigns = [];

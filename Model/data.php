@@ -51,7 +51,7 @@ if ($conn->query($sql_employee) === TRUE) {
 $sql_hr = "CREATE TABLE IF NOT EXISTS `HR` (
     `userID` INT NOT NULL PRIMARY KEY,
     `managedEmployees` TEXT, -- JSON or serialized list of Employee IDs
-    `recruits` TEXT,         -- JSON or serialized list of Donors
+    
     FOREIGN KEY (`userID`) 
         REFERENCES `Employee`(`userID`)
         ON DELETE CASCADE
