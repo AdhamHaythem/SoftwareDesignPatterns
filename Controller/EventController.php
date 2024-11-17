@@ -133,15 +133,7 @@ if (isset($_POST['createEvent'])) {
     } elseif (isset($_POST['VolunteeringEvent'])) {
         if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
             && !empty($_POST['location']) && !empty($_POST['time'])) {
-
-            $object = [
-                'eventId' => $_POST['eventId'],
-                'eventName' => $_POST['eventName'],
-                'volunteers_needed' => $_POST['volunteers_needed'],
-                'location' => $_POST['location'],
-                'time' => $_POST['time']
-            ];
-
+            $object = new VolunteeringEventStrategy($_Post['eventName'],$_Post['time'],$_Post['location'],$_Post['volunteers_needed'],$_Post['eventId']);
             $result = $eventController->createVolunteeringEvent($object);
             echo json_encode(['success' => !empty($result)]);
         }
