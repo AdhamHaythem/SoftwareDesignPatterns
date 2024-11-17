@@ -115,7 +115,7 @@ class DonationManager implements IMaintainable {
         return null;
     }
 
-    public function getCampaignDetails(int $campaignID): ?CampaignModel {
+    public function getCampaignDetails(int $campaignID): ?CampaignStrategy {
         foreach ($this->campaigns as $campaign) {
             if ($campaign->getCampaignID() == $campaignID) {
                 return $campaign;

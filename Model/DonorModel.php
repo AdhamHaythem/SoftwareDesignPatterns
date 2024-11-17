@@ -27,18 +27,16 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        Event $eventStrategy , //defaultevent
-        ISubject $eventData //defaulttttttttt
+        Event $event=null
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
         $this->donorID = $userID;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
-        $this->campaignsJoined = [];
+        if ($event !== null) {
+            $this->campaignsJoined[] = $event;
+        }
         $this->paymentMethod = $paymentMethod;
-        $this->eventData = $eventData;
-        $this->eventStrategy = $eventStrategy;
-        $this->eventData->registerObserver($this);
     }
 
 
@@ -79,8 +77,7 @@ class Donor extends UserModel implements IObserver {
                 json_decode($result['location'], true),
                 $result['phoneNumber'],
                 $result['paymentMethod'], 
-                $result['eventStrategy'], 
-                $result['eventData']      
+                $result['eventStrategy'],    
             );
         }
 
@@ -132,7 +129,14 @@ class Donor extends UserModel implements IObserver {
         $this->totalDonations += $donation->getAmount();
         return true;
     }
-    
+
+    public function addEvent(Event $event): void {
+        $this->campaignsJoined[] = $event;
+    }    
+
+    public function getEvents(): array {
+        return $this->campaignsJoined;
+    }
     //StrategyMethods
 
     public function joinEvent() {
@@ -178,6 +182,7 @@ class Donor extends UserModel implements IObserver {
     public function getPaymentMethod(): IPaymentStrategy {
         return $this->paymentMethod;
     }
+
 
 
     public function getEventMethod(): Event{
