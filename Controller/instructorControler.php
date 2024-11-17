@@ -1,31 +1,41 @@
-
 <?php
 require_once '../Model/instructor.php';
+require_once '../Model/LessonController.php';
+require_once '../View/InstructorView.php';
 class InstructorController {
-    private $view;
 
-    // Method to start lesson
-    public function startLesson(): void {
-        // Logic to start lesson
+    public function getLessons($instructorId): void {
+        $instructor= InstructorModel::retrieve($instructorId);
+        $instructor->getLessons();
+        $view= new InstructorView();
+        $view->displayAllLessons();
     }
 
-    // Method to end lesson
-    public function endLesson(): void {
-        // Logic to end lesson
+    public function retrieveLesson($lessonId,$instructorId): void {
+        $instructor= InstructorModel::retrieve($instructorId);
+        $instructor->retrieveLesson($lessonId);
+        $view= new InstructorView();
+        $view->displayLesson($lessonId);
     }
 
 }
 
-// InstructorController actions
     $instructorController = new InstructorController();
-    if ($_POST['action'] === 'startLesson') {
-        $instructorController->startLesson();
-    } elseif ($_POST['action'] === 'endLesson') {
-        $instructorController->endLesson();
-    } elseif ($_POST['action'] === 'enrollLesson') {
-        $instructorController->enrollLesson();
-    }
 
+    if(isset($_POST['retrieveLesson']))
+{
+    if(!empty($_POST['lessonId']) &&!empty($_POST['instructorId']))
+    {
+        $instructorController->retrieveLesson($_POST['lessonId'],$_POST['instructorId']);
+    }
+}
+
+if(isset($_POST['getLessons'])){
+
+    if(!empty($_POST['instructorId'])){
+    $instructorController->getLessons($_POST['instructorId']);
+    }
+}
     
    
    
