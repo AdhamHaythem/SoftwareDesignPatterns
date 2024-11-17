@@ -150,7 +150,7 @@ public function generateEventReport(): string {
     $report .= "Location: " . $this->getLocation() . "\n";
     $report .= "Volunteers Needed: " . $this->getVolunteersNeeded() . "\n";
     $report .= "Current Volunteers: " . count($this->getVolunteersList()) . "\n";
-    $report .= "Volunteering Event Status: " . $this->checkEventStatus($this) . "\n";
+    $report .= "Volunteering Event Status: " . $this->checkEventStatus() . "\n";
     return $report;
 }
 }

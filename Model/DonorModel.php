@@ -150,7 +150,7 @@ class Donor extends UserModel implements IObserver {
 
     public function checkEventStatusStrategy(){
 
-        return $this->eventStrategy->checkEventStatus($this->donorID);
+        return $this->eventStrategy->checkEventStatus();
     }
 
     public function generateEventReportStrategy(){
