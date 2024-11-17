@@ -6,11 +6,11 @@ require_once 'IEvent.php';
 
 
 function main() {
-    $event = new Event(new DateTime(), "Central Park",20, 10, 1);
+ //   $event = new Event(new DateTime(), "Central Park",20, 10, 1);
     $startDate = new DateTime('2024-12-31 00:00:00');   
     $paymentMethod1 = new IPaymentStrategy(); 
     $paymentMethod2 = new IPaymentStrategy(); 
-    $campaignEvent1 = new CampaignStrategy(
+    $event = new CampaignStrategy(
         100, $startDate, "", 9, 100, 
         "", "", "", 100000
     );
@@ -25,7 +25,7 @@ function main() {
         location: ["city" => "New York", "country" => "USA"],
         phoneNumber: 1234567890,
         paymentMethod: $paymentMethod1,
-        eventStrategy: $campaignEvent1,
+        eventStrategy: $event,
         eventData: $event
     );
 
@@ -39,7 +39,7 @@ function main() {
         location: ["city" => "Los Angeles", "country" => "USA"],
         phoneNumber: 9876543210,
         paymentMethod: $paymentMethod2,
-        eventStrategy: $campaignEvent1,
+        eventStrategy: $event,
         eventData: $event
     );
 
