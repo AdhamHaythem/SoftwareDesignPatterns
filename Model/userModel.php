@@ -5,6 +5,7 @@ require_once 'configurations.php';
 //require_once 'data.php';
 
 class UserModel implements IMaintainable {
+    private static $counter=1;
     private string $username;
     private string $firstname;
     private string $lastname;
@@ -29,11 +30,12 @@ class UserModel implements IMaintainable {
         $this->username = $username;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->userID = $userID;
+        $this->userID = $this->counter;
         $this->email = $email;
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
+        $this->counter++;
     }
 
     // Set the database connection

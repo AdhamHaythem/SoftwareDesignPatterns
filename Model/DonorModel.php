@@ -9,6 +9,7 @@ require_once 'IObserver.php';
 require_once 'IEvent.php';
 
 class Donor extends UserModel implements IObserver {
+    private static int $counter = 1;
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
@@ -30,13 +31,14 @@ class Donor extends UserModel implements IObserver {
         Event $event=null
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = $userID;
+        $this->donorID = $this->counter;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         if ($event !== null) {
             $this->campaignsJoined[] = $event;
         }
         $this->paymentMethod = $paymentMethod;
+        $this->counter++;
     }
 
 
