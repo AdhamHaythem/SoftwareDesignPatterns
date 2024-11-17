@@ -5,67 +5,71 @@ require_once '../Model/student.php';
 
 class StudentController
 {
-    function enrollLesson($lessonId,$studentId)
+    function enrollLesson($lessonId,$studentId,$instructorId)
     {
-        $student = UserModel::retrieve($studentId);
-        $lesson = InstructorModel::retrieveLesson($lessonId);
+        $instructor= InstructorModel::retrieve($instructorId);
+        $student = StudentModel::retrieve($studentId);
+        $lesson = $instructor->retrieveLesson($lessonId);
         $student->enrollInLesson($lesson);
     }
 
     function getlessonList($studentId)
     {
+        //TODO
         $studentView = new StudentView();
-        $student = UserModel::retrieve($studentId);
+        $student = StudentModel::retrieve($studentId);
         $studentView->displayStudentLessons($student->getEnrolledLessons());
 
     }
 
-    function completeLesson($studentId,$lessonId)
-    {
-        $student = UserModel::retrieve($studentId);
-        $lesson = InstructorModel::retrieveLesson($lessonId);
+    function completeLesson($studentId,$lessonId,$instructorId)
+    {        
+        $instructor= InstructorModel::retrieve($instructorId);
+        $student = StudentModel::retrieve($studentId);
+        $lesson = $instructor->retrieveLesson($lessonId);
         $student->completeLesson($lesson);
     }
 
-    function getLessonProgress($studentId,$lessonId)
+    function getLessonProgress($studentId,$lessonId,$instructorId)
     {
-        $student = UserModel::retrieve($studentId);
-        $lesson = InstructorModel::retrieveLesson($lessonId);
+        $student = StudentModel::retrieve($studentId);
+        $instructor= InstructorModel::retrieve($instructorId);
+        $lesson = $instructor->retrieveLesson($lessonId);
         $student->getLessonProgress($lesson);
     }
 }
 
 $studentController = new StudentController();
 
-if(isset($_post['enrolLesson']))
+if(isset($_POST['enrollLesson']))
 {
-    if(!empty($_post['lessonId'])&&!empty($_post['studentId']))
+    if(!empty($_POST['lessonId'])&&!empty($_POST['studentId']))
     {
-        $studentController->enrollLesson($_post['lessonId'],$_post['studentId']);
+        $studentController->enrollLesson($_POST['lessonId'],$_POST['studentId'],$_POST['instructorId']);
     }
 }
 
-if(isset($_post['getEnrolledLessons']))
+if(isset($_POST['getEnrolledLessons']))
 {
-    if(!empty($_post['studentId']))
+    if(!empty($_POST['studentId']))
     {
-        $studentController->getlessonList($_post['studentId']);
+        $studentController->getlessonList($_POST['studentId']);
     }
 }
 
-if(isset($_post['completeLesson']))
+if(isset($_POST['completeLesson']))
 {
-    if(!empty($_post['studentId'])&&!empty($_post['lessonId']))
+    if(!empty($_POST['studentId'])&&!empty($_POST['lessonId']))
     {
-        $studentController->completeLesson($_post['studentId'],$_post['lessonId']);
+        $studentController->completeLesson($_POST['studentId'],$_POST['lessonId'],$_POST['instructorId']);
     }
 }
 
-if(isset($_post['getLessonProgress']))
+if(isset($_POST['getLessonProgress']))
 {
-    if(!empty($_post['studentId'])&&!empty($_post['lessonId']))
+    if(!empty($_POST['studentId'])&&!empty($_POST['lessonId']))
     {
-        $studentController->getLessonProgress($_post['studentId'],$_post['lessonId']);
+        $studentController->getLessonProgress($_POST['studentId'],$_POST['lessonId'],$_POST['instructorId']);
     }
 }
 
