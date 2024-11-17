@@ -15,11 +15,9 @@ class StudentController
 
     function getlessonList($studentId)
     {
-        //TODO
         $studentView = new StudentView();
         $student = StudentModel::retrieve($studentId);
         $studentView->displayStudentLessons($student->getEnrolledLessons());
-
     }
 
     function completeLesson($studentId,$lessonId,$instructorId)

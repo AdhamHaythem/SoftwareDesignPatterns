@@ -3,7 +3,7 @@ require_once '../Model/DonationModel.php';
 require_once '../Model/CampaignStrategy.php';
 require_once '../Model/DonorModel.php';
 require_once '../View/DonationManagerView.php';
-require_once '../Model/DonationmanagerAdham.php';
+require_once '../Model/DonationManager.php';
 require_once 'EventController.php';
 
 

@@ -1,9 +1,9 @@
 <?php
 
-class InstructorView{
+class StudentView{
 
 
-    public function InstructorViewDetails($StdObj)
+    public function StudentViewDetails($StdObj)
     { 
         echo '<!DOCTYPE html>
         <html lang="en" dir="ltr">
@@ -17,21 +17,21 @@ class InstructorView{
         <body>
 
             <div id="content">
-                <h2>Welcome to the Instructor View</h2>
+                <h2>Welcome to the Student View</h2>
             </div>
 
         </body>
         </html>';
     }
-    public function displayLesson($StdObj)
+    public function displayStudentLessons($StdObj)
     { 
-        echo '<div class="lesson-display">';
+        echo '<div class="studentLesson-display">';
         echo 'A lesson will be displayed here ya Doniaaaaaa3333';
         echo '</div>';
     }
 
 
-    public function displayAllLessons()
+    public function displayLessonProgress()
     {
         echo '<div class="lessons-list">';
         echo 'Lessons will be displayed here ya Doniaaaaaa3333';

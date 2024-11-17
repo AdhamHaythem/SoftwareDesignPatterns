@@ -6,7 +6,7 @@ require_once '../View/DonationView.php';
 class DonationController {
 
     public function processDonationPayment(float $amount, int $donationId): bool {
-        $donation = DonationManager::retrieve($donationId);    
+        $donation = Donation::retrieve($donationId);    
         if ($donation) {
             $donation->amountPaid($amount);
             return true;
