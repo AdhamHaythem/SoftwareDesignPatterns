@@ -100,7 +100,6 @@ elseif(isset($_POST['Admin']))
         ) {
             $x->createAdmin($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
 
-        // TODO Return the result as the POST request's response
     }
 }
 elseif(isset($_POST['Employee']))
@@ -120,7 +119,7 @@ if(isset($_POST['retrieveDonor']))
 {
     if(!empty($_POST['donorId']))
     {
-        $x->retrieveDonor($_post['donorId']);
+        $x->retrieveDonor($_POST['donorId']);
     }
 }
 
@@ -128,174 +127,174 @@ if(isset($_POST['retrieveAdmin']))
 {
     if(!empty($_POST['userId']))
     {
-        $x->retrieveuser($_post['userId']);
+        $x->retrieveuser($_POST['userId']);
     }
 }
 
-if(isset($_post['deleteDonor']))
+if(isset($_POST['deleteDonor']))
 {
     if(!empty($_POST['donorId']))
     {
-        $x->deleteDonor($_post['donorId']);
+        $x->deleteDonor($_POST['donorId']);
     }
 }
 
-if(isset($_post['deleteAdmin']))
+if(isset($_POST['deleteAdmin']))
 {
     if(!empty($_POST['userId']))
     {
-        $x->deleteAdmin($_post['userId']);
+        $x->deleteAdmin($_POST['userId']);
     }
 }
 
-if(isset($_post['deleteEmployee']))
+if(isset($_POST['deleteEmployee']))
 {
     if(!empty($_POST['userId']))
     {
-        $x->deleteEmployee($_post['userId']);
+        $x->deleteEmployee($_POST['userId']);
     }
 }
 
-if(isset($_post['fullName']))
+if(isset($_POST['fullName']))
 {
-    if(!empty($_post['userId']))
+    if(!empty($_POST['userId']))
     {
-        $x->getFullName($_post['userId']);
+        $x->getFullName($_POST['userId']);
     }
 }
 
-if(isset($_post['changePassword']))
+if(isset($_POST['changePassword']))
 {
-    if(!empty($_post['userId'])&&!empty($_post['old'])&&!empty($_post['new']))
+    if(!empty($_POST['userId'])&&!empty($_POST['old'])&&!empty($_POST['new']))
     {
-        $x->changePassword($_post['userId'],$_post['old'],$_post['new']);
+        $x->changePassword($_POST['userId'],$_POST['old'],$_POST['new']);
     }
 }
 
 
-if(isset($_post['updateAdmin']))
+if(isset($_POST['updateAdmin']))
 {
     $updates = array();
-    if(!empty($_post['userId']))
+    if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_post['username'];
+            $updates['username'] = $_POST['username'];
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_post['email'];
+            $updates['email'] = $_POST['email'];
         }
 
-        if(isset($_post['firstname']))
+        if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_post['firstname'];
+            $updates['firstname'] = $_POST['firstname'];
         }
-        if(isset($_post['lastname']))
+        if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_post['lastname'];
+            $updates['lastname'] = $_POST['lastname'];
         }
         if(isset($_Location))
         {
-            $updates['Location'] = $_post['Location'];
+            $updates['Location'] = $_POST['Location'];
         }   
-        if(isset($_post['phoneNumber']))
+        if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_post['phoneNumber'];
+            $updates['phoneNumber'] = $_POST['phoneNumber'];
         }
 
-        Admin::update($_post['userId'],$updates);
+        Admin::update($_POST['userId'],$updates);
 
     }
 }
 
 
-if(isset($_post['updateDonor']))
+if(isset($_POST['updateDonor']))
 {
     $updates = array();
-    if(!empty($_post['userId']))
+    if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_post['username'];
+            $updates['username'] = $_POST['username'];
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_post['email'];
+            $updates['email'] = $_POST['email'];
         }
 
-        if(isset($_post['firstname']))
+        if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_post['firstname'];
+            $updates['firstname'] = $_POST['firstname'];
         }
-        if(isset($_post['lastname']))
+        if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_post['lastname'];
+            $updates['lastname'] = $_POST['lastname'];
         }
         if(isset($_Location))
         {
-            $updates['Location'] = $_post['Location'];
+            $updates['Location'] = $_POST['Location'];
         }   
-        if(isset($_post['phoneNumber']))
+        if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_post['phoneNumber'];
+            $updates['phoneNumber'] = $_POST['phoneNumber'];
         }
 
-        if(isset($_post['phoneNumber']))
+        if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_post['phoneNumber'];
+            $updates['phoneNumber'] = $_POST['phoneNumber'];
         }
-        Donor::update($_post['userId'],$updates);
+        Donor::update($_POST['userId'],$updates);
     }
 }
 
-if(isset($_post['updateDonor']))
+if(isset($_POST['updateDonor']))
 {
     $updates = array();
-    if(!empty($_post['userId']))
+    if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_post['username'];
+            $updates['username'] = $_POST['username'];
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_post['email'];
+            $updates['email'] = $_POST['email'];
         }
 
-        if(isset($_post['firstname']))
+        if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_post['firstname'];
+            $updates['firstname'] = $_POST['firstname'];
         }
-        if(isset($_post['lastname']))
+        if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_post['lastname'];
+            $updates['lastname'] = $_POST['lastname'];
         }
         if(isset($_Location))
         {
-            $updates['Location'] = $_post['Location'];
+            $updates['Location'] = $_POST['Location'];
         }   
-        if(isset($_post['phoneNumber']))
+        if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_post['phoneNumber'];
+            $updates['phoneNumber'] = $_POST['phoneNumber'];
         }
 
-        if(isset($_post['phoneNumber']))
+        if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_post['phoneNumber'];
+            $updates['phoneNumber'] = $_POST['phoneNumber'];
         }
-        if(isset($_post['title']))
+        if(isset($_POST['title']))
         {
-            $updates['title'] = $_post['title'];
+            $updates['title'] = $_POST['title'];
         }
-        if(isset($_post['salary']))
+        if(isset($_POST['salary']))
         {
-            $updates['salary'] = $_post['salary'];
+            $updates['salary'] = $_POST['salary'];
         }
-        if(isset($_post['workingHours']))
+        if(isset($_POST['workingHours']))
         {
-            $updates['workingHours'] = $_post['workingHours'];
+            $updates['workingHours'] = $_POST['workingHours'];
         }
-        EmployeeModel::update($_post['userId'],$updates);
+        EmployeeModel::update($_POST['userId'],$updates);
     }
 }

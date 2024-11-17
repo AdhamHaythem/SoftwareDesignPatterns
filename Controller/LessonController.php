@@ -29,27 +29,27 @@ class LessonController
 }
 
 $lessonController = new LessonController();
-if(isset($_post['Create']))
+if(isset($_POST['Create']))
 {
-    if(!empty($_post['lessonId'])&&!empty($_post['lessonName'])&&!empty($_post['lessonSubject'])&&!empty($_post['duration'])&&!empty($_post['instructorId']))
+    if(!empty($_POST['lessonId'])&&!empty($_POST['lessonName'])&&!empty($_POST['lessonSubject'])&&!empty($_POST['duration'])&&!empty($_POST['instructorId']))
     {
-        $LessonController->createLesson($_post['lessonId'],$_post['lessonName'],$_post['lessomSubject'],$_post['duration'],$_post['instructorId']);
+        $LessonController->createLesson($_POST['lessonId'],$_POST['lessonName'],$_POST['lessomSubject'],$_POST['duration'],$_POST['instructorId']);
     }
 }
 
-if(isset($_post['delete']))
+if(isset($_POST['delete']))
 {
-    if(!empty($_post['lessonId']))
+    if(!empty($_POST['lessonId']))
     {
-    $LessonController->deleteLesson($_post['lessonId']);
+    $LessonController->deleteLesson($_POST['lessonId']);
     }
 }
 
-if(isset($_post['retrieve']))
+if(isset($_POST['retrieve']))
 {
-    if(!empty($_post['lessonId']))
+    if(!empty($_POST['lessonId']))
     {
-        $LessonController->retrieveLesson($_post['lessonId']);
+        $LessonController->retrieveLesson($_POST['lessonId']);
         
     }
 }
