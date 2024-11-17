@@ -1,11 +1,11 @@
 <?php
-require_once "../Model/DonorModel.php";
-require_once "../Model/AdminModel.php";
-require_once "../Model/EmployeeModel.php";
-require_once "../View/DonorView.php";
-require_once "../Model/userModel.php";
-require_once "../Model/cash.php";
-require_once "../View/UserView.php";
+// require_once "../Model/DonorModel.php";
+// require_once "../Model/AdminModel.php";
+// require_once "../Model/EmployeeModel.php";
+// require_once "../View/DonorView.php";
+// require_once "../Model/userModel.php";
+// require_once "../Model/cash.php";
+ require_once "../View/UserView.php";
 
 class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
