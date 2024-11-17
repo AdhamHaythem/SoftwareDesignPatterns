@@ -27,7 +27,7 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        Event $eventStrategy = new CampaignStrategy(200 ,"","",400.0), //defaultevent
+        Event $eventStrategy , //defaultevent
         ISubject $eventData //defaulttttttttt
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
@@ -86,8 +86,6 @@ class Donor extends UserModel implements IObserver {
 
         return null;
     }
-
-    // Update a Donor record in the database
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "UPDATE donors SET 

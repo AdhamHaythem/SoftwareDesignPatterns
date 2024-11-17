@@ -13,8 +13,19 @@ class CampaignStrategy extends Event {
     private array $donations;
     private float $moneyEarned;
 
-    public function __construct(int $eventID, float $target, string $title,float $moneyEarned) {
-        $this->campaignID = $eventID;
+    public function __construct(
+        int $campaignID,
+        DateTime $time,
+        string $location,
+        int $volunteersNeeded,
+        int $eventID,
+        string $name,
+        float $target,
+        string $title,
+        float $moneyEarned
+    ) {
+        parent::__construct($time, $location, $volunteersNeeded, $eventID, $name);
+        $this->campaignID = $campaignID;
         $this->target = $target;
         $this->title = $title;
         $this->moneyEarned = $moneyEarned;
@@ -151,15 +162,24 @@ class CampaignStrategy extends Event {
         
         $result = $dbConnection->query($sql, $params);
         if ($result) {
+            $startDate = new DateTime($result['startDate']);
+            $endDate = new DateTime($result['endDate']);
+            
             return new CampaignStrategy(
                 $result['campaignID'],
-                $result['targetAmount'],
+                $startDate,
+                $result['location'],
+                $result['volunteersNeeded'],
+                $result['eventID'],
                 $result['campaignName'],
-                $result['raisedAmount'],
+                $result['targetAmount'],
+                $result['campaignTitle'],
+                $result['raisedAmount']
             );
         }
         return null;
     }
+    
 
     public static function update($campaign): bool {
         $sql = "UPDATE campaigns SET 
@@ -206,23 +226,31 @@ class CampaignStrategy extends Event {
     public function getAllEvents(): array {
         $dbConnection = Event::getDatabaseConnection();
         $sql = "SELECT * FROM campaigns";
-    
+        
         $result = $dbConnection->query($sql);
         $campaigns = [];
-    
+        
         if ($result) {
             foreach ($result as $campaignData) {
+                $startDate = new DateTime($campaignData['startDate']);
+                $endDate = new DateTime($campaignData['endDate']);
                 $campaigns[] = new CampaignStrategy(
                     $campaignData['campaignID'],
-                    $campaignData['targetAmount'],
+                    $startDate,
+                    $campaignData['location'],
+                    $campaignData['volunteersNeeded'],
+                    $campaignData['eventID'], 
                     $campaignData['campaignName'],
+                    $campaignData['targetAmount'],
+                    $campaignData['campaignTitle'],
                     $campaignData['raisedAmount']
                 );
             }
         }
-    
+        
         return $campaigns;
     }
+    
 
 
     public function checkEventStatus(): string {

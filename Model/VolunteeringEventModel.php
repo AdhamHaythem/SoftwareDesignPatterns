@@ -9,7 +9,7 @@ class VolunteeringEventStrategy extends Event {
 
 
     public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
-        
+        parent::__construct($name, $time, $location, $volunteersNeeded, $eventID);
     }
 
     public function getVolunteerInfo(Donor $volunteer): array {
