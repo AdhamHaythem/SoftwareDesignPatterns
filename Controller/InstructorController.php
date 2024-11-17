@@ -37,6 +37,4 @@ if(isset($_POST['getLessons'])){
     }
 }
     
-   
-   
 ?>
