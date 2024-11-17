@@ -1,14 +1,15 @@
 <?php
 
-require_once 'User.php';
-require_once 'Donation.php';
-require_once 'Campaign.php';
+require_once 'userModel.php';
+require_once 'DonationModel.php';
+require_once 'CampaignStrategy.php';
 require_once 'IPaymentStrategy.php';
 require_once 'ISubject.php';
 require_once 'IObserver.php';
 require_once 'IEvent.php';
 
 class Donor extends UserModel implements IObserver {
+    private static int $counter = 1;
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
@@ -26,65 +27,72 @@ class Donor extends UserModel implements IObserver {
         string $password,
         array $location,
         int $phoneNumber,
-        IPaymentStrategy $paymentMethod,
-
-        Event $eventStrategy = new CampaignStrategy(200 ,new DateTime('2024-11-20 10:00:00'),"",40,100,"",50.0,"",300), //defaultevent
-        ISubject $eventData //defaulttttttttt
+        IPaymentStrategy $paymentMethod=null,
+        Event $event=null
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = $userID;
+        $this->donorID = $this->getUserID();
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
-        $this->campaignsJoined = [];
+        if ($event !== null) {
+            $this->campaignsJoined[] = $event;
+        }
         $this->paymentMethod = $paymentMethod;
-        $this->eventData = $eventData;
-        $this->eventStrategy = $eventStrategy;
-        $this->eventData->registerObserver($this);
+        $this->counter++;
     }
 
 
     public static function create($donor): bool {
+        // Get database connection
         $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "INSERT INTO donors (userID, username, firstname, lastname, email, password, location, phoneNumber, totalDonations)
-                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :totalDonations)";
-        
-        $params = [
-            ':userID' => $donor->getDonorID(),
-            ':username' => $donor->getUsername(),
-            ':firstname' => $donor->getFirstname(),
-            ':lastname' => $donor->getLastname(),
-            ':email' => $donor->getEmail(),
-            ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($donor->getLocation()), 
-            ':phoneNumber' => $donor->getPhoneNumber(),
-            ':totalDonations' => $donor->getTotalDonations()
-        ];
 
-        return $dbConnection->execute($sql, $params);
+        try {
+            // 1. Insert into `user` table
+            $userSql = "INSERT IGNORE INTO users (username, firstname, lastname, email, password, location, phoneNumber)
+                        VALUES (:username, :firstname, :lastname, :email, :password, :location, :phoneNumber)";
+
+            $userParams = [
+                ':username' => $donor->getUsername(),
+                ':firstname' => $donor->getFirstname(),
+                ':lastname' => $donor->getLastname(),
+                ':email' => $donor->getEmail(),
+                ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT), // Hash password
+                ':location' => json_encode($donor->getLocation()), // Serialize location as JSON
+                ':phoneNumber' => $donor->getPhoneNumber()
+            ];
+
+            $userInserted = $dbConnection->execute($userSql, $userParams);
+
+            // 2. Insert into `donor` table
+            $donorSql = "INSERT INTO donor (userID, donationHistory, totalDonations, goalAmount)
+                         VALUES (:userID, :donationHistory, :totalDonations, :goalAmount)
+                         ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations), goalAmount = VALUES(goalAmount)";
+
+            $donorParams = [
+                ':userID' => $donor->getDonorID(),
+                ':donationHistory' => json_encode($donor->getDonationsHistory()), // Serialize donation history as JSON
+                ':totalDonations' => $donor->getTotalDonations(),
+                ':goalAmount' => $donor->getGoalAmount()
+            ];
+
+            $donorInserted = $dbConnection->execute($donorSql, $donorParams);
+
+            // Return success if both inserts succeed
+            return $userInserted && $donorInserted;
+        } catch (Exception $e) {
+            // Log the error and return false
+            error_log("Error creating donor: " . $e->getMessage());
+            return false;
+        }
     }
 
     public static function retrieve($donorID): ?Donor {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "SELECT * FROM donors WHERE userID = :donorID";
         $params = [':donorID' => $donorID];
-    
+
         $result = $dbConnection->query($sql, $params);
-    
         if ($result && !empty($result)) {
-            $location = json_decode($result['location'], true);
-            $paymentMethod = new IPaymentStrategy();
-            $eventStrategy = new CampaignStrategy(
-                $result['eventBudget'] ?? 200,
-                new DateTime($result['eventStartDate'] ?? '2024-11-20 10:00:00'),
-                $result['eventName'] ?? "",
-                $result['eventParticipants'] ?? 40,
-                $result['eventMaxParticipants'] ?? 100,
-                $result['eventDescription'] ?? "",
-                $result['eventCost'] ?? 50.0,
-                $result['eventLocation'] ?? "",
-                $result['eventDuration'] ?? 300
-            ); 
-            $eventData = new ISubject();
             return new Donor(
                 $result['userID'],
                 $result['username'],
@@ -92,17 +100,14 @@ class Donor extends UserModel implements IObserver {
                 $result['lastname'],
                 $result['email'],
                 $result['password'],
-                $location,
+                json_decode($result['location'], true),
                 $result['phoneNumber'],
-                $paymentMethod,
-                $eventStrategy,
-                $eventData
+                null, 
+                null,    
             );
         }
-    
         return null;
     }
-    
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "UPDATE donors SET 
@@ -149,7 +154,14 @@ class Donor extends UserModel implements IObserver {
         $this->totalDonations += $donation->getAmount();
         return true;
     }
-    
+
+    public function addEvent(Event $event): void {
+        $this->campaignsJoined[] = $event;
+    }    
+
+    public function getEvents(): array {
+        return $this->campaignsJoined;
+    }
     //StrategyMethods
 
     public function joinEvent() {
@@ -163,7 +175,7 @@ class Donor extends UserModel implements IObserver {
 
     public function checkEventStatusStrategy(){
 
-        return $this->eventStrategy->checkEventStatus($this->donorID);
+        return $this->eventStrategy->checkEventStatus();
     }
 
     public function generateEventReportStrategy(){
@@ -195,6 +207,7 @@ class Donor extends UserModel implements IObserver {
     public function getPaymentMethod(): IPaymentStrategy {
         return $this->paymentMethod;
     }
+
 
 
     public function getEventMethod(): Event{
