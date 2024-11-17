@@ -6,6 +6,8 @@ abstract class Event implements IMaintainable, ISubject {
     private string $name;
     private array $Eventobservers = [];
     private DateTime $time;
+
+    private static int $counter =1 ;
     private string $location;
     private int $volunteersNeeded;
     private int $eventID;
@@ -23,8 +25,9 @@ abstract class Event implements IMaintainable, ISubject {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
-        $this->eventID = $eventID;
+        $this->eventID = self::$counter;
         $this->name = $name;
+        self::$counter++;
     }
 
     abstract public function signUp(int $donorID): bool;
@@ -121,8 +124,107 @@ abstract class Event implements IMaintainable, ISubject {
         $this->status = $EventStatus;
         $this->notifyObservers($EventStatus);
     }
+
+    public static function create($object): bool {
+        if (!$object instanceof Event) {
+            throw new InvalidArgumentException("Expected instance of Event");
+        }
+    
+        $dbConnection = Event::getDatabaseConnection();
+    
+        try {
+            $Eventsql = "INSERT INTO events (eventID, name, time, location, volunteers_needed, volunteersList) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
+    
+            $Eventparams = [
+                $object->getEventID(),
+                $object->getName(),
+                $object->getTime()->format('Y-m-d H:i:s'),
+                $object->getLocation(),
+                $object->getVolunteersNeeded(),
+                json_encode($object->getVolunteersList())
+            ];
+    
+            $Eresult = $dbConnection->execute($Eventsql, $Eventparams);
+    
+            return $Eresult;
+        } catch (Exception $e) {
+            error_log("Error creating event: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    public static function delete($eventID): bool {
+        $dbConnection = Event::getDatabaseConnection();
+    
+        try {
+            $Eventsql = "DELETE FROM events WHERE eventID = :eventID";
+            $Eventparams = [$eventID];
+    
+            return $dbConnection->execute($Eventsql, $Eventparams);
+        } catch (Exception $e) {
+            error_log("Error deleting event: " . $e->getMessage());
+            return false;
+        }
+    }
+
+ public static function update($object): bool {
+        if (!$object instanceof Event) {
+            throw new InvalidArgumentException("Expected instance of Event");
+        }
+    
+        $dbConnection = Event::getDatabaseConnection();
+    
+        try {
+            $Eventsql = "UPDATE events SET 
+                            name = :name, 
+                            time = :time, 
+                            location = :location, 
+                            volunteers_needed = :volunteers_needed, 
+                            volunteersList = :volunteersList
+                        WHERE eventID = :eventID";
+    
+            $Eventparams = [
+                $object->getEventID(),
+                $object->getName(),
+                $object->getTime()->format('Y-m-d H:i:s'),
+                $object->getLocation(),
+                $object->getVolunteersNeeded(),
+                json_encode($object->getVolunteersList())
+            ];
+    
+            return $dbConnection->execute($Eventsql, $Eventparams);
+        } catch (Exception $e) {
+            error_log("Error updating event: " . $e->getMessage());
+            return false;
+        }
+    }
+    public static function retrieve($eventID): ?Event {
+        $dbConnection = Event::getDatabaseConnection();
+    
+        try {
+            $Eventsql = "SELECT * FROM events WHERE eventID = :eventID";
+            $Eventparams = [$eventID];
+            $result = $dbConnection->query($Eventsql, $Eventparams);
+    
+            if ($result) {
+                return new VolunteeringEventStrategy(
+                    $result['name'],    
+                    new DateTime($result['time']),       
+                    $result['location'],                     
+                    $result['volunteers_needed'],             
+                    $result['eventID']  
+                );
+            }
+            return null; 
+        } catch (Exception $e) {
+            error_log("Error retrieving event: " . $e->getMessage());
+            return null;
+        }
+    }
 }
-
-
 ?>
 
+
+   

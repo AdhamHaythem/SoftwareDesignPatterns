@@ -5,7 +5,7 @@ require_once 'configurations.php';
 //require_once 'data.php';
 
 class UserModel implements IMaintainable {
-    private static $counter=1;
+    private static int $counter=1;
     private string $username;
     private string $firstname;
     private string $lastname;
@@ -30,12 +30,12 @@ class UserModel implements IMaintainable {
         $this->username = $username;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->userID = $this->counter;
+        $this->userID = self::$counter;
         $this->email = $email;
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
-        $this->counter++;
+        self::$counter++;
     }
 
     // Set the database connection
@@ -53,24 +53,27 @@ class UserModel implements IMaintainable {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
 
-        $sql = "INSERT INTO users (username, firstname, lastname, userID, email, password, phoneNumber)
-                VALUES (:username, :firstname, :lastname, :userID, :email, :password, :phoneNumber)";
+        $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)";
         
         $params = [
-            ':username' => $object->username,
-            ':firstname' => $object->firstname,
-            ':lastname' => $object->lastname,
-            ':userID' => $object->userID,
-            ':email' => $object->email,
-            ':password' => password_hash($object->password, PASSWORD_DEFAULT),
-            ':phoneNumber' => $object->phoneNumber
+            $object->userID,
+            $object->username,
+            $object->firstname,
+            $object->lastname,
+            $object->email,
+            password_hash($object->password, PASSWORD_DEFAULT),
+            $object->location,
+            $object->phoneNumber,
+            1
         ];
 
-        return self::$dbConnection->execute($sql, $params);
+        return self::$dbConnection->execute($userSql, $params);
     }
 
     public static function retrieve($key): ?UserModel {
-        $sql = "SELECT * FROM users WHERE userID = :userID";
+        $sql = "SELECT * FROM user WHERE userID = :userID";
         $params = [':userID' => $key];
         
         $result = self::$dbConnection->query($sql, $params);
@@ -94,7 +97,7 @@ class UserModel implements IMaintainable {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
     
-        $sql = "UPDATE users SET 
+        $sql = "UPDATE user SET 
                     username = :username, 
                     firstname = :firstname, 
                     lastname = :lastname, 
@@ -117,11 +120,16 @@ class UserModel implements IMaintainable {
     }
 
     public static function delete($key): bool {
-        $sql = "DELETE FROM users WHERE userID = :userID";
-        $params = [':userID' => $key];
-
+        // Update SQL query to use positional placeholders
+        $sql = "DELETE FROM user WHERE userID = ?";
+    
+        // Bind parameters in the correct order
+        $params = [$key];
+    
+        // Execute the query using the DatabaseConnection
         return self::$dbConnection->execute($sql, $params);
     }
+    
 
     public function getFullName(): string {
         return $this->firstname . ' ' . $this->lastname;

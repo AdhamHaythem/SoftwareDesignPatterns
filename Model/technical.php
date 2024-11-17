@@ -40,35 +40,53 @@ class technicalModel extends EmployeeModel {
 
     // CRUD Methods
 
-    // Create a new technical employee
-    public static function create( $tech): bool {
-    if (!$tech instanceof technicalModel) {
+    public static function create($tech): bool {
+        if (!$tech instanceof technicalModel) {
             throw new InvalidArgumentException("Expected instance of tech");
-    }
-        $sql = "INSERT INTO technical (username, firstname, lastname, userID, email, usernameID, password, location, phoneNumber, title, employeeId, salary, workingHours, skills, certifications)
-                VALUES (:username, :firstname, :lastname, :userID, :email, :usernameID, :password, :location, :phoneNumber, :title, :employeeId, :salary, :workingHours, :skills, :certifications)";
-        
-        $params = [
-            ':username' => $tech->getUsername(),
-            ':firstname' => $tech->getFirstname(),
-            ':lastname' => $tech->getLastname(),
-            ':userID' => $tech->getUserID(),
-            ':email' => $tech->getEmail(),
-            ':password' => password_hash($tech->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($tech->getLocation()), // Assuming location is an array
-            ':phoneNumber' => $tech->getPhoneNumber(),
-            ':title' => $tech->getTitle(),
-            ':salary' => $tech->getSalary(),
-            ':workingHours' => $tech->getHoursWorked(),
-            ':skills' => json_encode($tech->skills),
-            ':certifications' => json_encode($tech->certifications)
+        }
+    
+        $userSql = "INSERT INTO user (username, firstname, lastname, userID, email, password, locationList, phoneNumber, isActive)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+        $userParams = [
+            $tech->getUsername(),
+            $tech->getFirstname(),
+            $tech->getLastname(),
+            $tech->getUserID(),
+            $tech->getEmail(),
+            password_hash($tech->getPassword(), PASSWORD_DEFAULT),
+            json_encode($tech->getLocation()),
+            $tech->getPhoneNumber(),
+            1 
         ];
-
+    
         $dbConnection = UserModel::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
+        $userCreated = $dbConnection->execute($userSql, $userParams);
+    
+        $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)
+                        VALUES (?, ?, ?, ?)";
+        $employeeParams = [
+            $tech->getUserID(),
+            $tech->getTitle(),
+            $tech->getSalary(),
+            $tech->getHoursWorked()
+        ];
+    
+        $employeeCreated = $dbConnection->execute($employeeSql, $employeeParams);
+    
+        $technicalSql = "INSERT INTO technical (userID, skills, certifications)
+                         VALUES (?, ? , ?)";
+        $technicalParams = [
+            $tech->getUserID(),
+            json_encode($tech->getSkills()),
+            json_encode($tech->getReports())
+        ];
+    
+        $technicalCreated = $dbConnection->execute($technicalSql, $technicalParams);
+    
+        return $userCreated && $employeeCreated && $technicalCreated;
     }
-
-    // Retrieve a technical employee by userID
+    
     public static function retrieve($userID): ?technicalModel {
         $sql = "SELECT * FROM technical WHERE userID = :userID";
         $params = [':userID' => $userID];
@@ -97,7 +115,7 @@ class technicalModel extends EmployeeModel {
         return null;
     }
 
-    // Update a technical employee
+
     public static function update($tech): bool {
     if (!$tech instanceof technicalModel) {
             throw new InvalidArgumentException("Expected instance of tech");
@@ -118,55 +136,52 @@ class technicalModel extends EmployeeModel {
                 WHERE userID = :userID";
 
         $params = [
-            ':username' => $tech->getUsername(),
-            ':firstname' => $tech->getFirstname(),
-            ':lastname' => $tech->getLastname(),
-            ':email' => $tech->getEmail(),
-            ':password' => password_hash($tech->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($tech->getLocation()),
-            ':phoneNumber' => $tech->getPhoneNumber(),
-            ':title' => $tech->getTitle(),
-            ':salary' => $tech->getSalary(),
-            ':workingHours' => $tech->getHoursWorked(),
-            ':skills' => json_encode($tech->skills),
-            ':certifications' => json_encode($tech->certifications),
-            ':userID' => $tech->getUserID()
+            $tech->getUsername(),
+            $tech->getFirstname(),
+            $tech->getLastname(),
+            $tech->getEmail(),
+            password_hash($tech->getPassword(), PASSWORD_DEFAULT),
+            json_encode($tech->getLocation()),
+            $tech->getPhoneNumber(),
+            $tech->getTitle(),
+            $tech->getSalary(),
+            $tech->getHoursWorked(),
+            json_encode($tech->skills),
+            json_encode($tech->certifications),
+            $tech->getUserID()
         ];
 
         $dbConnection = UserModel::getDatabaseConnection();
         return $dbConnection->execute($sql, $params);
     }
 
-    // Delete a technical employee by userID
     public static function delete($userID): bool {
         $sql = "DELETE FROM technical WHERE userID = :userID";
-        $params = [':userID' => $userID];
+        $params = [$userID];
 
         $dbConnection = UserModel::getDatabaseConnection();
         return $dbConnection->execute($sql, $params);
     }
 
-    // Method to upload a PDF report file
+    
     public static function uploadReport(string $reportName, string $filePath): bool {
-        // Read the PDF file as binary
         $fileContent = file_get_contents($filePath);
         if ($fileContent === false) {
             throw new Exception("Failed to read the file at $filePath");
         }
     
         $sql = "INSERT INTO technical_reports (reportName, reportFile) 
-                VALUES (:reportName, :reportFile)";
+                VALUES (? , ?)";
         
         $params = [
-            ':reportName' => $reportName,
-            ':reportFile' => $fileContent // Store the binary content directly
+            $reportName,
+            $fileContent
         ];
     
         $dbConnection = UserModel::getDatabaseConnection();
         return $dbConnection->execute($sql, $params);
     }
     
-    // Method to retrieve all reports for this technical employee
     public function getReports(): array {
         $sql = "SELECT reportId, reportName FROM technical_reports"; // Removed WHERE clause
     
@@ -176,6 +191,10 @@ class technicalModel extends EmployeeModel {
         // Check if $reports is an array and return it directly, or return an empty array if null
         return is_array($reports) ? $reports : [];
     }
+
+    public function getSkills() {
+        return $this->skills;
+    }
     
     
 
@@ -183,15 +202,15 @@ class technicalModel extends EmployeeModel {
     public function downloadReport(int $reportId): ?array {
         $sql = "SELECT reportName, reportFile FROM technical_reports WHERE reportId = :reportId";
         $params = [
-            ':reportId' => $reportId,
+            $reportId,
         ];
         
         $dbConnection = UserModel::getDatabaseConnection();
         $result = $dbConnection->query($sql, $params);
         if ($result && !empty($result)) {
             return [
-                'reportName' => $result['reportName'],
-                'reportFile' => $result['reportFile'] // Binary data of the PDF file
+                $result['reportName'],
+                $result['reportFile'] // Binary data of the PDF file
             ];
         }
 

@@ -37,15 +37,29 @@ class VolunteeringEventStrategy extends Event {
 
     
     public static function create($object): bool {
-        $sql = "INSERT INTO volunteering_events (name, eventTime, location, volunteersNeeded, eventID) VALUES (:name, :eventTime, :location, :volunteersNeeded, :eventID)";
-        $params = [
-            ':name' => $object->name,
-            ':eventTime' => $object->getTime()->format('Y-m-d H:i:s'),
-            ':location' => $object->getLocation(),
-            ':volunteersNeeded' => $object->getVolunteersNeeded(),
-            ':eventID' => $object->getEventID()
+
+        $dbConnection=Event::getDatabaseConnection();
+        $Eventsql = "INSERT INTO events (eventID,name,time,location,volunteers_needed,volunteersList) 
+        VALUES (?,?,?,?,?,?)";
+        $Eventparams = [
+            $object->getEventID(),
+            $object->getName(),
+            $object->getTime()->format('Y-m-d H:i:s'),
+            $object->getLocation(),
+            $object->getVolunteersNeeded(),
+            $object->getVolunteersList()
         ];
-        return $object->dbConnection->execute($sql, $params);
+        $Eresult=$dbConnection->execute($Eventsql, $Eventparams);
+        $VolunteerSql = "INSERT INTO volunteeringeventstrategy (strategyID,eventID) 
+        VALUES (?,?)";
+        $VolunteerParams = [
+            $object->getEventID(),
+            $object->getEventID()
+        ];
+        $Vresult= $dbConnection->execute($VolunteerSql, $VolunteerParams);
+
+        return $Vresult && $Eresult ;
+
     }
 
     public static function retrieve($key): ?VolunteeringEventStrategy {

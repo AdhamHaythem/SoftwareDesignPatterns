@@ -79,6 +79,13 @@ class DatabaseConnection {
         // For non-SELECT queries, return affected rows
         return $stmt->affected_rows;
     }
+    public function getError() {
+        return $this->conn->error;
+    }
+    
+    public function getLastError() {
+        return $this->conn->error;
+    }
     
 
     // Close the connection

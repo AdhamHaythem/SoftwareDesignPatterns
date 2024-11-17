@@ -1,6 +1,6 @@
 <?php
-require_once 'DatabaseConnection.php';
-require_once 'InstructorModel.php';
+require_once 'db_connection.php';
+require_once 'instructor.php';
 require_once 'IObserver.php';
 
 class LessonModel {
@@ -15,6 +15,8 @@ class LessonModel {
     private int $lessonViews = 0;
     private string $status;
 
+    private static int $counter =1;
+
     public function __construct(
         int $lessonId,
         string $lessonName,
@@ -22,11 +24,12 @@ class LessonModel {
         int $duration,
         InstructorModel $instructor,
     ) {
-        $this->lessonId = $lessonId;
+        $this->lessonId = self::$counter;
         $this->lessonName = $lessonName;
         $this->lessonSubject = $lessonSubject;
         $this->duration = $duration;
         $this->instructor = $instructor;
+        self::$counter++;
     }
 
     // Getters

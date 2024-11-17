@@ -14,9 +14,9 @@ class Donor extends UserModel implements IObserver {
     private array $donationsHistory;
     private float $totalDonations;
     private array $campaignsJoined = [];
-    private IPaymentStrategy $paymentMethod;
-    private ISubject $eventData;
-    private Event $eventStrategy;
+    private ?IPaymentStrategy $paymentMethod;
+    private ?ISubject $eventData;
+    private ?Event $eventStrategy;
 
     public function __construct(
         int $userID,
@@ -27,44 +27,81 @@ class Donor extends UserModel implements IObserver {
         string $password,
         array $location,
         int $phoneNumber,
-        IPaymentStrategy $paymentMethod,
+        IPaymentStrategy $paymentMethod=null,
         Event $event=null
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = $this->counter;
+        $this->donorID =self::$counter;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         if ($event !== null) {
             $this->campaignsJoined[] = $event;
         }
         $this->paymentMethod = $paymentMethod;
-        $this->counter++;
+        $this->donorID = self::$counter++;
     }
 
 
     public static function create($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "INSERT INTO donors (userID, username, firstname, lastname, email, password, location, phoneNumber, totalDonations)
-                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :totalDonations)";
-        
-        $params = [
-            ':userID' => $donor->getDonorID(),
-            ':username' => $donor->getUsername(),
-            ':firstname' => $donor->getFirstname(),
-            ':lastname' => $donor->getLastname(),
-            ':email' => $donor->getEmail(),
-            ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($donor->getLocation()), 
-            ':phoneNumber' => $donor->getPhoneNumber(),
-            ':totalDonations' => $donor->getTotalDonations()
-        ];
-
-        return $dbConnection->execute($sql, $params);
+    
+        try {
+            // 1. Insert into `user` table
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)";
+    
+            $userParams = [
+                $donor->getUserID(), // userID
+                $donor->getUsername(), // username
+                $donor->getFirstname(), // firstName
+                $donor->getLastname(), // lastName
+                $donor->getEmail(), // email
+                password_hash($donor->getPassword(), PASSWORD_DEFAULT), // hashed password
+                json_encode($donor->getLocation()), // location as JSON
+                $donor->getPhoneNumber(), // phoneNumber
+                true // isActive
+            ];
+    
+            // Execute user table insertion
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert or update user record.");
+            }
+    
+            // 2. Insert into `donor` table
+            $donorSql = "INSERT INTO donor (donorID,userID, donationHistory, totalDonations, goalAmount)
+                         VALUES (?, ?, ?, ?,?)
+                         ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations), goalAmount = VALUES(goalAmount)";
+    
+            $donorParams = [
+                $donor->getUserID(),
+                $donor->getUserID(), // userID
+                json_encode($donor->getDonationHistory()), // donationHistory as JSON
+                $donor->getTotalDonationsStrategy(), // totalDonations
+                0// goalAmount
+            ];
+    
+            // Execute donor table insertion
+            if (!$dbConnection->execute($donorSql, $donorParams)) {
+                throw new Exception("Failed to insert or update donor record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            // Log the error for debugging
+            error_log("Error creating donor: " . $e->getMessage());
+            return false;
+        }
     }
+    
+    
+    
+    
+    
 
     public static function retrieve($donorID): ?Donor {
         $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "SELECT * FROM donors WHERE userID = :donorID";
+        $sql = "SELECT * FROM donor WHERE userID = :donorID";
         $params = [':donorID' => $donorID];
 
         $result = $dbConnection->query($sql, $params);
@@ -78,16 +115,15 @@ class Donor extends UserModel implements IObserver {
                 $result['password'],
                 json_decode($result['location'], true),
                 $result['phoneNumber'],
-                $result['paymentMethod'], 
-                $result['eventStrategy'],    
+                null, 
+                null,    
             );
         }
-
         return null;
     }
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "UPDATE donors SET 
+        $sql = "UPDATE donor SET 
                     username = :username, 
                     firstname = :firstname, 
                     lastname = :lastname, 
@@ -115,7 +151,7 @@ class Donor extends UserModel implements IObserver {
 
     public static function delete($donorID): bool {
         $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "DELETE FROM donors WHERE userID = :donorID";
+        $sql = "DELETE FROM donor WHERE userID = :donorID";
         $params = [':donorID' => $donorID];
 
         return $dbConnection->execute($sql, $params);

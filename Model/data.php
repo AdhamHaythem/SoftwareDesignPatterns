@@ -4,7 +4,7 @@ require_once 'db_connection.php';
 function createTables($conn){
 //USER TABLEEEEEEE
 $sql_user = "CREATE TABLE IF NOT EXISTS `user` (
-    `userID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,         
+    `userID` INT NOT NULL PRIMARY KEY,        
     `username` VARCHAR(50) NOT NULL UNIQUE,                    
     `firstName` VARCHAR(50) NOT NULL,                          
     `lastName` VARCHAR(50) NOT NULL,                          
@@ -51,7 +51,7 @@ if ($conn->query($sql_employee) === TRUE) {
 $sql_hr = "CREATE TABLE IF NOT EXISTS `HR` (
     `userID` INT NOT NULL PRIMARY KEY,
     `managedEmployees` TEXT, -- JSON or serialized list of Employee IDs
-    `recruits` TEXT,         -- JSON or serialized list of Donors
+    
     FOREIGN KEY (`userID`) 
         REFERENCES `Employee`(`userID`)
         ON DELETE CASCADE
@@ -114,39 +114,59 @@ if ($conn->query($sql_instructor) === TRUE) {
     echo "Error creating table 'Instructor': " . $conn->error . "<br>";
 }
 
-$sql_donor = "CREATE TABLE IF NOT EXISTS `donor` (
-    `donorID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `userID` INT NOT NULL,
-    `donationHistory` TEXT,
-    `totalDonations` DOUBLE,
-    `goalAmount` DOUBLE,
-    FOREIGN KEY (`userID`) REFERENCES `user`(`userID`) ON DELETE CASCADE
+$sql_donor = "CREATE TABLE IF NOT EXISTS donor (
+    donorID INT NOT NULL PRIMARY KEY,
+    userID INT NOT NULL UNIQUE, 
+    donationHistory TEXT,
+    totalDonations DOUBLE,
+    goalAmount DOUBLE,
+    FOREIGN KEY (userID) REFERENCES user(userID) ON DELETE CASCADE
 )";
+
 if ($conn->query($sql_donor) === TRUE) {
     echo "Table 'donor' created successfully.<br>";
+
+    $alter_donor_sql = "ALTER TABLE donor ADD CONSTRAINT unique_user_id UNIQUE (userID)";
+    if ($conn->query($alter_donor_sql) === TRUE) {
+        echo "Unique constraint added to 'donor' table successfully.<br>";
+    } else {
+        echo "Error adding unique constraint to 'donor' table: " . $conn->error . "<br>";
+    }
 } else {
-    echo "Error creating table: " . $conn->error . "<br>";
+    echo "Error creating table 'donor': " . $conn->error . "<br>";
 }
 
-$sql_donation = "CREATE TABLE IF NOT EXISTS `Donation` (
-    `donationID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  -- Unique identifier for each donation
-    `amount` DOUBLE NOT NULL,                              -- Amount donated
-    `donorID` INT NOT NULL,                                -- Foreign key referencing Donor table 
-    FOREIGN KEY (`donorID`) 
-        REFERENCES `Donor`(`donorID`)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-)";
 
+$sql_donation = "CREATE TABLE IF NOT EXISTS `Donation` (
+    `donationID` INT NOT NULL PRIMARY KEY,
+    `amount` DOUBLE NOT NULL,
+    `donorID` INT NOT NULL,
+    UNIQUE (`donorID`, `amount`),  -- Prevent duplicate donations for the same donor
+    FOREIGN KEY (`donorID`) REFERENCES `donor`(`donorID`) ON DELETE CASCADE ON UPDATE CASCADE
+)";
 if ($conn->query($sql_donation) === TRUE) {
     echo "Table 'Donation' created successfully.<br>";
 } else {
     echo "Error creating table 'Donation': " . $conn->error . "<br>";
 }
 
+$sql_donation_manager = "CREATE TABLE IF NOT EXISTS DonationManager (
+    donations TEXT NOT NULL,                     
+    totalDonations DOUBLE DEFAULT 0.0,           
+    goalAmount DOUBLE DEFAULT 0.0,               
+    campaigns TEXT NOT NULL,                     -- JSON or serialized list of campaigns
+    UNIQUE KEY unique_donations (donations(255)) -- Ensure unique donations
+)";
+
+if ($conn->query($sql_donation_manager) === TRUE) {
+    echo "Table 'DonationManager' created successfully.<br>";
+} else {
+    echo "Error creating table 'DonationManager': " . $conn->error . "<br>";
+}
+
 
 $sql_lesson = "CREATE TABLE IF NOT EXISTS `Lesson` (
-    `lessonID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `lessonID` INT NOT NULL PRIMARY KEY,
     `lessonName` VARCHAR(255) NOT NULL,
     `lessonSubject` VARCHAR(255) NOT NULL,
     `duration` INT NOT NULL, -- Duration in minutes
@@ -177,27 +197,16 @@ if ($conn->query($sql_student) === TRUE) {
     echo "Error creating table: " . $conn->error . "<br>";
 }
 
-$sql_donation_manager = "CREATE TABLE IF NOT EXISTS `DonationManager` (
-    `donations` TEXT,              -- JSON or serialized list of donations
-    `totalDonations` DOUBLE DEFAULT 0.0,
-    `goalAmount` DOUBLE DEFAULT 0.0,
-    `campaigns` TEXT               -- JSON or serialized list of campaigns
-)";
-
-if ($conn->query($sql_donation_manager) === TRUE) {
-    echo "Table 'DonationManager' created successfully.<br>";
-} else {
-    echo "Error creating table 'DonationManager': " . $conn->error . "<br>";
-}
 
 
-$sql_event = "CREATE TABLE IF NOT EXISTS `Event` (
-    `eventID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each event
-    `name` VARCHAR(255) NOT NULL,                      -- Name of the event
-    `time` DATETIME NOT NULL,                          -- Time and date of the event
-    `location` VARCHAR(255) NOT NULL,                  -- Location of the event
-    `volunteers_needed` INT NOT NULL,                  -- Number of volunteers needed
-    `volunteersList` TEXT                              -- JSON or serialized list of volunteers (donor IDs)
+
+$sql_event = "CREATE TABLE IF NOT EXISTS Event (
+    eventID INT NOT NULL PRIMARY KEY, 
+    name VARCHAR(255) NOT NULL,                  
+    time DATETIME NOT NULL,                         
+    location VARCHAR(255) NOT NULL,                  
+    volunteers_needed INT NOT NULL,                
+    volunteersList TEXT                          
 )";
 
 if ($conn->query($sql_event) === TRUE) {
@@ -208,9 +217,8 @@ if ($conn->query($sql_event) === TRUE) {
 
 // VolunteeringEventStrategy Table
 $sql_volunteering_event_strategy = "CREATE TABLE IF NOT EXISTS `VolunteeringEventStrategy` (
-    `strategyID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each strategy
+    `strategyID` INT NOT NULL PRIMARY KEY, -- Unique identifier for each strategy
     `eventID` INT NOT NULL,                               -- Foreign key referencing Event
-    `description` TEXT,                                   -- Description of the strategy
     FOREIGN KEY (`eventID`) REFERENCES `Event`(`eventID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
@@ -224,11 +232,11 @@ if ($conn->query($sql_volunteering_event_strategy) === TRUE) {
 
 // CampaignStrategy Table
 $sql_campaign_strategy = "CREATE TABLE IF NOT EXISTS `CampaignStrategy` (
-    `campaignID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each campaign
-    `target` DOUBLE NOT NULL,                            -- Target amount for the campaign
-    `title` VARCHAR(255) NOT NULL,                      -- Title of the campaign
-    `donations` TEXT,                                   -- JSON or serialized list of donations
-    `moneyEarned` FLOAT DEFAULT 0.0                     -- Total money earned so far
+    `campaignID` INT NOT NULL PRIMARY KEY,
+    `target` DOUBLE NOT NULL,                           
+    `title` VARCHAR(255) NOT NULL,                      
+    `donations` TEXT,                                   
+    `moneyEarned` FLOAT DEFAULT 0.0                   
 )";
 
 if ($conn->query($sql_campaign_strategy) === TRUE) {
@@ -252,14 +260,20 @@ if ($conn->query($sql_event_volunteer) === TRUE) {
     echo "Error creating table 'EventVolunteer': " . $conn->error . "<br>";
 }
 
-$insert_user_sql = "INSERT INTO `user` (username, firstName, lastName, email, password, locationList, phoneNumber, isActive) VALUES
+$insert_user_sql = "INSERT IGNORE INTO user (username, firstName, lastName, email, password, locationList, phoneNumber, isActive) VALUES
     ('johndoe', 'John', 'Doe', 'johndoe@example.com', MD5('password123'), '[\"New York\", \"Los Angeles\"]', '1234567890', TRUE),
-    ('alice', 'Alice', 'Smith', 'alice@example.com', MD5('password789'), '[\"Chicago\"]', '1122334455', FALSE)
-";
-if ($conn->query($insert_user_sql) === TRUE) {
-    echo "Sample data inserted into 'user' table successfully.<br>";
+    ('alice', 'Alice', 'Smith', 'alice@example.com', MD5('password789'), '[\"Chicago\"]', '1122334455', FALSE)";
+
+
+$insert_donor_sql = "INSERT INTO `donor` (userID, donationHistory, totalDonations, goalAmount) 
+VALUES 
+(1, '[{\"donationID\": 1, \"amount\": 100}]', 100, 500), 
+(2, '[{\"donationID\": 2, \"amount\": 200}]', 200, 1000)";
+
+if ($conn->query($insert_donor_sql) === TRUE) {
+    echo "Sample data inserted into 'donor' table successfully.<br>";
 } else {
-    echo "Error inserting data: " . $conn->error . "<br>";
+    echo "Error inserting data into 'donor': " . $conn->error . "<br>";
 }
 
 // Close the connection
