@@ -120,10 +120,10 @@ $enrolledLessons = [
 
 $lesson = (object)[
     'lessonId' => 101,
-    'lessonName' => 'Introduction to PHP',
+    'lessonName' => 'Software Design Patterns',
     'lessonSubject' => 'Programming',
     'duration' => 60,
-    'instructor' => 'Dr. Smith',
+    'instructor' => 'Dr. Ayman Ezzat',
     'lessonViews' => 120
 ];
 

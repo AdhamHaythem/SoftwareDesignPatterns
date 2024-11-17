@@ -10,6 +10,7 @@ class AdminView
             <title>Admin</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
+            <link rel="stylesheet" href="style3.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="javascript.js"></script>
@@ -39,41 +40,75 @@ class AdminView
 
     public function displayUsers($users)
     {
-        echo '<div class="users-name">';
+        echo '<div class="container">
+            <section>
+                <div class="lesson-details">
+                    <ul>';
         echo '<h2>Users Name</h2>';
-        echo '<ul>';
         foreach ($users as $user) {
             echo '<li>Name: ' . $user->username . '</li>';
         }
-        echo '</ul>';
-        echo '</div>';
+        echo '</ul>
+                </div>
+            </section>
+        </div>';
     }
 
     public function displayDonations($donations)
     {
-        echo '<div class="donation-history">';
+        echo '<div class="container">
+        <section>
+            <div class="lesson-details">
+                <ul>';        
         echo '<h2>Donation History</h2>';
-        echo '<ul>';
         foreach ($donations as $donation) {
             echo '<li>Date: ' . $donation->date . ' - Amount: ' . $donation->amount . '</li>';
         }
-        echo '</ul>';
-        echo '</div>';
+        echo '</ul>
+                </div>
+            </section>
+        </div>';
     }
 
     public function displayDonationStatistics($statistics)
     {
-        echo '<div class="donations-statistics">';
+        echo '<div class="container">
+            <section>
+                <div class="lesson-details">
+                    <ul>';
         echo '<h2>Donations Statistics</h2>';
         foreach ($statistics as $statistic) {
             echo '<li>Donation: ' . $statistic->amount . ' - Statistics: ' . $statistic->statistic . '</li>';
         }
-        echo '</div>';
+        echo '</ul>
+                </div>
+            </section>
+        </div>';
     }
 
 }
 
+// Example Usage
+$users = [
+    (object)['username' => 'JohnDoe'],
+    (object)['username' => 'JaneSmith'],
+    (object)['username' => 'AdminUser']
+];
+
+$donations = [
+    (object)['date' => '2024-01-01', 'amount' => 100],
+    (object)['date' => '2024-02-15', 'amount' => 250],
+    (object)['date' => '2024-03-10', 'amount' => 75],
+];
+
+$statistics = [
+    (object)['amount' => 425, 'statistic' => 'Total Donations'],
+    (object)['amount' => 100, 'statistic' => 'Average Donation'],
+];
+
 $adminView = new AdminView();
-$adminView->AdminViewDetails("Sample Data");
-$adminView->displayUsers("s");
+$adminView->AdminViewDetails("");
+$adminView->displayUsers($users);
+$adminView->displayDonations($donations);
+$adminView->displayDonationStatistics($statistics);
 ?>
