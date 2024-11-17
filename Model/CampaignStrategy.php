@@ -1,10 +1,9 @@
-//setterrrr w getterrrrrrrr 3shann om el dbbbbb ya adhaaaaaaaaaaam
+<!-- setterrrr w getterrrrrrrr 3shann om el dbbbbb ya adhaaaaaaaaaaam -->
 
 <?php
 
-require_once 'EventModel.php';
-require_once 'DonationModel.php';
 require_once 'IEvent.php';
+require_once 'DonationModel.php';
 
 class CampaignStrategy extends Event {
     private int $campaignID;
@@ -157,7 +156,7 @@ class CampaignStrategy extends Event {
     }
 
     public static function retrieve($campaignID): ?CampaignStrategy {
-        $dbConnection = CampaignStrategy::getDatabaseConnection();
+        $dbConnection = Event::getDatabaseConnection();
         $sql = "SELECT * FROM campaigns WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
         
@@ -197,7 +196,7 @@ class CampaignStrategy extends Event {
             ':campaignID' => $campaign->campaignID
         ];
 
-        return $campaign->dbConnection->execute($sql, $params);
+        return Event::getDatabaseConnection()->execute($sql, $params);
     }
 
 

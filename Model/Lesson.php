@@ -12,7 +12,6 @@ class LessonModel {
     private InstructorModel $instructor;
     private array $studentView = [];
     private int $views = 0;
-    private DatabaseConnection $dbConnection;
     private int $lessonViews = 0;
     private string $status;
 
@@ -22,14 +21,12 @@ class LessonModel {
         string $lessonSubject,
         int $duration,
         InstructorModel $instructor,
-        DatabaseConnection $dbConnection
     ) {
         $this->lessonId = $lessonId;
         $this->lessonName = $lessonName;
         $this->lessonSubject = $lessonSubject;
         $this->duration = $duration;
         $this->instructor = $instructor;
-        $this->dbConnection = $dbConnection;
     }
 
     // Getters

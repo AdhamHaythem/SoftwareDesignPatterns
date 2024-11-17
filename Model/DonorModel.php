@@ -1,8 +1,8 @@
 <?php
 
-require_once 'User.php';
-require_once 'Donation.php';
-require_once 'Campaign.php';
+require_once 'userModel.php';
+require_once 'DonationModel.php';
+require_once 'CampaignStrategy.php';
 require_once 'IPaymentStrategy.php';
 require_once 'ISubject.php';
 require_once 'IObserver.php';

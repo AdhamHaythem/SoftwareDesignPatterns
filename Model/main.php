@@ -4,6 +4,7 @@ require_once 'Donor.php';
 require_once 'IEvent.php';
 
 
+
 function main() {
     $event = new Event(new DateTime(), "Central Park",20, 10, 1);
     $startDate = new DateTime('2024-12-31 00:00:00');   
@@ -48,8 +49,12 @@ function main() {
     echo "Both donors have been registered as observers to the event.\n";
     $event->setStatus("The event has been postponed due to weather conditions!");
 
+    echo "Both donors have been registered as observers to the event.\n";
+    $event->setStatus("The event has been postponed due to weather conditions!");
+
 }
 
 main();
+
 
 ?>
