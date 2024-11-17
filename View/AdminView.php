@@ -19,20 +19,17 @@ class AdminView
                 <label class="logo">Admin</label>
                 <ul>
                     <li><a href="#" onclick="users(1)">Users</a></li>
-                    <li><a href="#" onclick="generateReports(1)">Reports</a></li>
                     <li><a href="#" onclick="donationHistory(1)">Donations</a></li>
                     <li><a href="#" onclick="viewDonationStatistics(1)">Statistics</a></li>
                 </ul>
             </nav>
             <div class="container">
                 <section>
-                    <div id="content">
                         <div id="home">
                             <h2>Welcome to the User Information System</h2>
                             <p>Select a menu item to view more details.</p>
                             <img src="assets/donation.jpg" alt="Welcome Image" style="max-width:100%; height:auto;">
                         </div>
-                    </div>
                 </section>
             </div>
 
@@ -46,7 +43,7 @@ class AdminView
         echo '<h2>Users Name</h2>';
         echo '<ul>';
         foreach ($users as $user) {
-            echo '<li>Name: ' . htmlspecialchars($user->username) . '</li>';
+            echo '<li>Name: ' . $user->username . '</li>';
         }
         echo '</ul>';
         echo '</div>';
@@ -58,7 +55,7 @@ class AdminView
         echo '<h2>Donation History</h2>';
         echo '<ul>';
         foreach ($donations as $donation) {
-            echo '<li>Date: ' . htmlspecialchars($donation->date) . ' - Amount: ' . htmlspecialchars($donation->amount) . '</li>';
+            echo '<li>Date: ' . $donation->date . ' - Amount: ' . $donation->amount . '</li>';
         }
         echo '</ul>';
         echo '</div>';
@@ -69,26 +66,14 @@ class AdminView
         echo '<div class="donations-statistics">';
         echo '<h2>Donations Statistics</h2>';
         foreach ($statistics as $statistic) {
-            echo '<li>Donation: ' . htmlspecialchars($statistic->amount) . ' - Statistics: ' . htmlspecialchars($statistic->statistic) . '</li>';
+            echo '<li>Donation: ' . $statistic->amount . ' - Statistics: ' . $statistic->statistic . '</li>';
         }
         echo '</div>';
     }
-
-       
-    
-       public function displayReports($event)
-       {
-           echo '<div class="event-report">';
-           echo '<h2>Event Report: ' . htmlspecialchars($event->name) . '</h2>';
-           echo '<p><strong>Date:</strong> ' . htmlspecialchars($event->date) . '</p>';
-           echo '<p><strong>Location:</strong> ' . htmlspecialchars($event->location) . '</p>';
-           echo '<p><strong>Description:</strong> ' . htmlspecialchars($event->description) . '</p>';
-           echo '<p><strong>Total Donations:</strong> ' . htmlspecialchars($event->totalDonations) . '</p>';
-           echo '</div>';
-       }
 
 }
 
 $adminView = new AdminView();
 $adminView->AdminViewDetails("Sample Data");
+$adminView->displayUsers("s");
 ?>

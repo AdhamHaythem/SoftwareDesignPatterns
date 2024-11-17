@@ -17,21 +17,19 @@ class DonorView
                 <label class="logo">Donor Information</label>
                 <ul>
                     <li><a href="#" onclick="loadHome()">Home</a></li>
-                    <li><a href="#" onclick="loadProfile()">Donor Information</a></li>
-                    <li><a href="#" onclick="loadDonationHistory()">History</a></li>
-                    <li><a href="#" onclick="loadTotalDonations()">Total Donations</a></li>
-                    <li><a href="#" onclick="loadEventStatus()">Events</a></li>
+                    <li><a href="#" onclick="donorProfile()">Donor Information</a></li>
+                    <li><a href="#" onclick="donationHistory()">History</a></li>
+                    <li><a href="#" onclick="totalDonations()">Total Donations</a></li>
+                    <li><a href="#" onclick="eventList()">Events</a></li>
                 </ul>
             </nav>
             <div class="container">
                 <section>
-                    <div id="content">
                         <div id="home">
                             <h2>Welcome to the Donor Information System</h2>
                             <p>Select a menu item to view more details.</p>
                             <img src="assets/donation.jpg" alt="Welcome Image" style="max-width:100%; height:auto;">
                         </div>
-                    </div>
                 </section>
             </div>
             <script src="javascript.js"></script>
@@ -39,24 +37,22 @@ class DonorView
         </html>';
     }
 
-    // Display donor profile information
     public function displayDonorProfile($donor)
     {
         echo '<div class="donor-profile">';
         echo '<h2>Donor Profile</h2>';
-        echo '<p><strong>Name:</strong> ' . htmlspecialchars($donor->name) . '</p>';
-        echo '<p><strong>Email:</strong> ' . htmlspecialchars($donor->email) . '</p>';
+        echo '<p><strong>Name:</strong> ' . $donor->name . '</p>';
+        echo '<p><strong>Email:</strong> ' . $donor->email . '</p>';
         echo '</div>';
     }
 
-    // Display donation history
     public function displayDonationHistory($donations)
     {
         echo '<div class="donation-history">';
         echo '<h2>Donation History</h2>';
         echo '<ul>';
         foreach ($donations as $donation) {
-            echo '<li>Date: ' . htmlspecialchars($donation->date) . ' - Amount: ' . htmlspecialchars($donation->amount) . '</li>';
+            echo '<li>Date: ' . $donation->date . ' - Amount: ' . $donation->donationsHistory . '</li>';
         }
         echo '</ul>';
         echo '</div>';
@@ -66,75 +62,23 @@ class DonorView
     {
         echo '<div class="total-donations">';
         echo '<h2>Total Donations</h2>';
-        echo '<p><strong>Total Amount Donated:</strong> $' . htmlspecialchars($total) . '</p>';
+        echo '<p><strong>Total Amount Donated:</strong> $' . $total->totalDonations . '</p>';
         echo '</div>';
     }
 
-    public function displayEventStatus($events)
+       
+    public function displayEventList($donor)
     {
-        echo '<div class="event-status">';
-        echo '<h2>Event Participation Status</h2>';
+        echo '<div class="event-list">';
+        echo '<h2>Event List for ' . htmlspecialchars($donor->name) . '</h2>';
         echo '<ul>';
-        foreach ($events as $event) {
-            echo '<li>' . htmlspecialchars($event->name) . ' - Status: ' . htmlspecialchars($event->status) . '</li>';
+        foreach ($donor->events as $event) {
+            echo '<li>' . $event->name . ' - Date: ' . $event->date . '</li>';
         }
         echo '</ul>';
         echo '</div>';
-
-        echo "<script>function eventStatus(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    eventStatus: \'\',
-                    },
-                });
-            };<\script>";
     }
-       
-       public function displayEventList($donor)
-       {
-           echo '<div class="event-list">';
-           echo '<h2>Event List for ' . htmlspecialchars($donor->name) . '</h2>';
-           echo '<ul>';
-           foreach ($donor->events as $event) {
-               echo '<li>' . htmlspecialchars($event->name) . ' - Date: ' . htmlspecialchars($event->date) . '</li>';
-           }
-           echo '</ul>';
-           echo '</div>';
-           
-           echo "<script>function eventList(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    eventList: \'\',
-                    },
-                });
-            };<\script>";
-       }
-   
-    
-       public function displayEventReport($event)
-       {
-           echo '<div class="event-report">';
-           echo '<h2>Event Report: ' . htmlspecialchars($event->name) . '</h2>';
-           echo '<p><strong>Date:</strong> ' . htmlspecialchars($event->date) . '</p>';
-           echo '<p><strong>Location:</strong> ' . htmlspecialchars($event->location) . '</p>';
-           echo '<p><strong>Description:</strong> ' . htmlspecialchars($event->description) . '</p>';
-           echo '<p><strong>Total Donations:</strong> ' . htmlspecialchars($event->totalDonations) . '</p>';
-           echo '</div>';
 
-           echo "<script>function eventReport(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/Controller/DonorController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    eventReport: \'\',
-                    },
-                });
-            };<\script>";
-       }
 
 }
 

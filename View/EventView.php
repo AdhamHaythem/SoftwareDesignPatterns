@@ -19,8 +19,8 @@ class EventView
                     <span class="close" onclick="closeModal()">&times;</span>
                     <h2>Event Options</h2>
                     <div class="modal-buttons">
-                        <button onclick="loadEventStatus()">View Event Status</button>
-                        <button onclick="loadEventReport()">View Event Report</button>
+                        <button onclick="eventStatus()">View Event Status</button>
+                        <button onclick="eventReport()">View Event Report</button>
                     </div>
                 </div>
             </div>
@@ -40,82 +40,27 @@ class EventView
                 function closeModal() {
                     document.getElementById("eventModal").style.display = "none";
                 }
-
-                // Load event status
-                // function loadEventStatus() {
-                //     let eventName = sessionStorage.getItem("selectedEvent");
-                //     fetch("EventController.php?action=getEventStatus&event=" + encodeURIComponent(eventName))
-                //         .then(response => response.text())
-                //         .then(data => {
-                //             document.getElementById("eventModal").style.display = "none";
-                //             document.getElementById("content").innerHTML = data;
-                //         })
-                //         .catch(error => console.error("Error:", error));
-                // }
-
-                // Load event report
-                // function loadEventReport() {
-                //     let eventName = sessionStorage.getItem("selectedEvent");
-                //     fetch("EventController.php?action=getEventReport&event=" + encodeURIComponent(eventName))
-                //         .then(response => response.text())
-                //         .then(data => {
-                //             document.getElementById("eventModal").style.display = "none";
-                //             document.getElementById("content").innerHTML = data;
-                //         })
-                //         .catch(error => console.error("Error:", error));
-                }
             </script>
 
         </body>
         </html>';
     }
 
-
-    public function displayEventStatus($event)
-    {
-        echo '<div class="event-status">';
-        echo '<h2>Event Status: ' . htmlspecialchars($event->name) . '</h2>';
-        echo '<p><strong>Status:</strong> ' . htmlspecialchars($event->status) . '</p>';
-        echo '</div>';
-
-        
-        echo "<script>function eventStatus(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/View/EventController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    eventId: \'<?php echo $event -> eventId ?>\',
-                    eventStatus: \'\',
-                    },
-                });
-            };<\script>";
-    }
-
     public function displayEventReport($event)
     {
         echo '<div class="event-report">';
-        echo '<h2>Event Report: ' . htmlspecialchars($event->name) . '</h2>';
-        echo '<p><strong>Date:</strong> ' . htmlspecialchars($event->date) . '</p>';
-        echo '<p><strong>Location:</strong> ' . htmlspecialchars($event->location) . '</p>';
-        echo '<p><strong>Description:</strong> ' . htmlspecialchars($event->description) . '</p>';
-        echo '<p><strong>Total Donations:</strong> ' . htmlspecialchars($event->totalDonations) . '</p>';
+        echo '<h2>Event Report: ' . $event->name . '</h2>';
+        echo '<p><strong>Date:</strong> ' . $event->date . '</p>';
+        echo '<p><strong>Location:</strong> ' . $event->location . '</p>';
+        echo '<p><strong>Description:</strong> ' . $event->description . '</p>';
+        echo '<p><strong>Total Donations:</strong> ' . $event->totalDonations . '</p>';
         echo '</div>';
-
-        echo "<script>function eventReport(itemId) {
-            $.ajax({
-                url: <?php echo \"SoftwareDesignPatterns/View/EventController.php\" ?>,
-                type: \'POST\',
-                data: {
-                    eventId: \'<?php echo $event -> eventId ?>\',
-                    eventReport: \'\',
-                    },
-                });
-            };<\script>";
     }
 }
 
 // Usage example
 $eventView = new EventView();
 $eventView->EventViewDetails("Sample Data");
+
 
 ?>
