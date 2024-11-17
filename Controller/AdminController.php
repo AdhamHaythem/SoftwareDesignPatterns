@@ -36,10 +36,8 @@ if (isset($_POST['generateReports'])) {
     $adminController->generateReports($admin);
 }
 
-
 if (isset($_POST['viewDonationStatistics'])) {
     $admin = Admin::retrieve($_POST['AdminId']);
     $adminController->viewDonationStatistics($admin);
 }
-
 ?>
