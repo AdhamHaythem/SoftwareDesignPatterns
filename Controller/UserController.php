@@ -203,7 +203,7 @@ if(isset($_POST['updateAdmin']))
             $admin->setPhoneNumber($_POST['phoneNumber']);
         }
 
-        Admin::update($_POST['userId'],$admin);
+        Admin::update($admin);
 
     }
 }
@@ -240,7 +240,7 @@ if(isset($_POST['updateDonor']))
             $donor->setPhoneNumber($_POST['phoneNumber']);
         }
 
-        Donor::update($_POST['userId'],$donor);
+        Donor::update($donor);
     }
 }
 
@@ -275,7 +275,7 @@ if(isset($_POST['updateEmployee']))
         {
             $hr->setPhoneNumber($_POST['phoneNumber']);
         }
-        hrModel::update($_POST['userId'],$hr);
+        hrModel::update($hr);
     }
     }
 
@@ -310,7 +310,7 @@ if(isset($_POST['updateEmployee']))
             {
                 $technical->setPhoneNumber($_POST['phoneNumber']);
             }
-            technicalModel::update($_POST['userId'],$technical);
+            technicalModel::update($technical);
         }
         }
 
@@ -346,7 +346,7 @@ if(isset($_POST['updateEmployee']))
             {
                 $delivery->setPhoneNumber($_POST['phoneNumber']);
             }
-            DeliveryPersonnel::update($_POST['userId'],$delivery);
+            DeliveryPersonnel::update($delivery);
         }
         }
 }
