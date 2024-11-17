@@ -174,7 +174,7 @@ if(isset($_POST['changePassword']))
 
 if(isset($_POST['updateAdmin']))
 {
-    $admin = Admin::retrieve($_Post["userId"]);
+    $admin = Admin::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
@@ -194,7 +194,7 @@ if(isset($_POST['updateAdmin']))
         {
             $admin->setLastname($_POST['lastname']);
         }
-        if(isset($_Post['Location']))
+        if(isset($_POST['Location']))
         {
             $admin->setLocation($_POST['Location']);
         }   
@@ -211,7 +211,7 @@ if(isset($_POST['updateAdmin']))
 
 if(isset($_POST['updateDonor']))
 {
-    $donor = Donor::retrieve($_Post["userId"]);
+    $donor = Donor::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
@@ -246,8 +246,8 @@ if(isset($_POST['updateDonor']))
 
 if(isset($_POST['updateEmployee']))
 {
-    if(isset($_Post['hr'])){
-    $hr = hrModel::retrieve($_Post["userId"]);
+    if(isset($_POST['hr'])){
+    $hr = hrModel::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
@@ -281,8 +281,8 @@ if(isset($_POST['updateEmployee']))
 
 
 
-    if(isset($_Post['technical'])){
-        $technical = technicalModel::retrieve($_Post["userId"]);
+    if(isset($_POST['technical'])){
+        $technical = technicalModel::retrieve($_POST["userId"]);
         if(!empty($_POST['userId']))
         {
             if(isset($_POST['username']))
@@ -317,8 +317,8 @@ if(isset($_POST['updateEmployee']))
 
 
         
-    if(isset($_Post['delivery'])){
-        $delivery = DeliveryPersonnel::retrieve($_Post["userId"]);
+    if(isset($_POST['delivery'])){
+        $delivery = DeliveryPersonnel::retrieve($_POST["userId"]);
         if(!empty($_POST['userId']))
         {
             if(isset($_POST['username']))
