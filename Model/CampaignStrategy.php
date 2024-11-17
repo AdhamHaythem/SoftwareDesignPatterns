@@ -1,4 +1,4 @@
-<!-- setterrrr w getterrrrrrrr 3shann om el dbbbbb ya adhaaaaaaaaaaam -->
+<!-- setterrrr w getterrrrrrrr 3shann el dbbbbb ya adhaaaaaaaaaaam -->
 
 <?php
 
