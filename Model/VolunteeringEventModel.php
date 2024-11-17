@@ -2,16 +2,15 @@
 require_once 'IEvent.php'; 
 require_once 'IObserver.php';
 require_once 'db_connection.php';
-require_once 'Donor.php';
+require_once 'DonorModel.php';
 
 class VolunteeringEventStrategy extends Event {
     private array $observers = [];
 
 
     public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
-        parent::__construct($name, $time, $location, $volunteersNeeded, $eventID);
+        parent::__construct($time, $location, $volunteersNeeded, $eventID, $name);
     }
-
     public function getVolunteerInfo(Donor $volunteer): array {
         return [
             'id' => $volunteer->getDonorID(),
@@ -19,7 +18,6 @@ class VolunteeringEventStrategy extends Event {
 
         ];
     }
-
     public function getListObservers(): array {
         return $this->observers;
     }
@@ -96,9 +94,9 @@ class VolunteeringEventStrategy extends Event {
         unset($this->observers[$observerID]);
     }
     
-    public function notifyObservers(): void {
+    public function notifyObservers($EventStatus): void {
         foreach ($this->observers as $observer) {
-            $observer->update(); 
+            $observer->UpdateStatus($EventStatus); 
         }
     }
 
@@ -152,7 +150,7 @@ public function generateEventReport(): string {
     $report .= "Location: " . $this->getLocation() . "\n";
     $report .= "Volunteers Needed: " . $this->getVolunteersNeeded() . "\n";
     $report .= "Current Volunteers: " . count($this->getVolunteersList()) . "\n";
-    $report .= "Volunteering Event Status: " . $this->checkEventStatus($this) . "\n";
+    $report .= "Volunteering Event Status: " . $this->checkEventStatus() . "\n";
     return $report;
 }
 }

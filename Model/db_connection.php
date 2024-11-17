@@ -38,26 +38,48 @@ class DatabaseConnection {
 
     // Retrieve query results (SELECT)
     public function query($sql, $params = []) {
+        // Prepare the SQL statement
         $stmt = $this->conn->prepare($sql);
-
+    
         if ($stmt === false) {
             die("Statement preparation failed: " . $this->conn->error);
         }
-
+    
+        // Bind parameters if provided
         if (!empty($params)) {
-            $paramTypes = str_repeat('s', count($params)); // Adjust types based on the params
+            $paramTypes = str_repeat('s', count($params)); // Dynamically determine parameter types
             $stmt->bind_param($paramTypes, ...$params);
         }
-
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result === false) {
-            die("Query failed: " . $stmt->error);
+    
+        // Execute the statement
+        if (!$stmt->execute()) {
+            die("Query execution failed: " . $stmt->error);
         }
-
-        return $result->fetch_assoc(); // You can modify this to return all rows or a single row
+    
+        // Determine the type of query
+        $meta = $stmt->result_metadata();
+        if ($meta) {
+            // This is a SELECT query, fetch results
+            $fields = [];
+            $row = [];
+            while ($field = $meta->fetch_field()) {
+                $fields[] = &$row[$field->name]; // Bind result to associative array
+            }
+            call_user_func_array([$stmt, 'bind_result'], $fields);
+    
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = array_map(function ($value) {
+                    return $value;
+                }, $row);
+            }
+            return $results; // Return all rows
+        }
+    
+        // For non-SELECT queries, return affected rows
+        return $stmt->affected_rows;
     }
+    
 
     // Close the connection
     public function close() {

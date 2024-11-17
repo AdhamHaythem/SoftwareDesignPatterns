@@ -1,6 +1,6 @@
 <?php
-require "IMaintainable.php";
-require "ISubject.php.php";
+require_once "IMaintainable.php";
+require_once "ISubject.php";
 
 abstract class Event implements IMaintainable, ISubject {
     private string $name;
@@ -111,15 +111,15 @@ abstract class Event implements IMaintainable, ISubject {
         });
     }
 
-    public function notifyObservers(): void {
+    public function notifyObservers($EventStatus): void {
         foreach ($this->Eventobservers as $observer) {
-            $observer->UpdateStatus();
+            $observer->UpdateStatus($EventStatus);
         }
     }
 
     public function setStatus(string $EventStatus): void {
         $this->status = $EventStatus;
-        $this->notifyObservers();
+        $this->notifyObservers($EventStatus);
     }
 }
 

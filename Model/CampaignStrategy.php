@@ -265,7 +265,7 @@ class CampaignStrategy extends Event {
         $report .= "Location: " . $this->getLocation() . "\n";
         $report .= "Volunteers Needed: " . $this->getVolunteersNeeded() . "\n";
         $report .= "Current Volunteers: " . count($this->getVolunteersList()) . "\n";
-        $report .= "Campaign Event Status: " . $this->checkEventStatus($this) . "\n";
+        $report .= "Campaign Event Status: " . $this->checkEventStatus() . "\n";
         return $report;
     }
 

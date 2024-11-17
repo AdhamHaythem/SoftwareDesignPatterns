@@ -3,14 +3,16 @@
 require_once 'UserModel.php';
 
 class Donation {
+    private  static int $counter =1;
     private float $amount;
     private int $donationID;
     private int $donorID;
 
     public function __construct(float $amount, int $donationID, int $donorID) {
         $this->amount = $amount;
-        $this->donationID = $donationID;
+        $this->donationID = $this->counter;
         $this->donorID = $donorID;
+        $this->counter++;
     }
 
     // Getter and Setter Methods

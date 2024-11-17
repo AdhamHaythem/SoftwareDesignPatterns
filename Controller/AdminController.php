@@ -26,17 +26,20 @@ $adminController = new AdminController();
 
 if (isset($_POST['manageUsers'])) {
     if (!empty($_POST['userID'])) {
-        $adminController->manageUsers((int)$_POST['userID'],$_POST['Admin']);
+        $admin = Admin::retrieve($_POST['AdminId']);
+        $adminController->manageUsers((int)$_POST['userID'],$admin);
     }
 }
 
 if (isset($_POST['generateReports'])) {
-    $adminController->generateReports($_POST['Admin']);
+    $admin = Admin::retrieve($_POST['AdminId']);
+    $adminController->generateReports($admin);
 }
 
 
 if (isset($_POST['viewDonationStatistics'])) {
-    $adminController->viewDonationStatistics($_POST['Admin']);
+    $admin = Admin::retrieve($_POST['AdminId']);
+    $adminController->viewDonationStatistics($admin);
 }
 
 ?>

@@ -2,16 +2,16 @@
 require_once "../Model/DonorModel.php";
 require_once "../Model/AdminModel.php";
 require_once "../Model/EmployeeModel.php";
-require_once "../Model/DonorView.php";
+require_once "../View/DonorView.php";
 require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
 require_once "../View/UserView.php";
 
 class UserController{
-    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$event)
+    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
 
-        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash(),new VolunteeringEventStrategy(),$event);
+        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
         Donor::create($donor);
     }
 
@@ -90,7 +90,7 @@ if (isset($_POST['createUser'])) {
         if (!empty($_POST['userId']) && !empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname'])
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
-            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],Event::retrieve($_POST['eventID']));
+            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
     }
     }
 elseif(isset($_POST['Admin']))
@@ -174,36 +174,36 @@ if(isset($_POST['changePassword']))
 
 if(isset($_POST['updateAdmin']))
 {
-    $updates = array();
+    $admin = Admin::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_POST['username'];
+            $admin->setUsername($_POST['username']) ;
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_POST['email'];
+            $admin->setEmail($_POST['email']);
         }
 
         if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_POST['firstname'];
+            $admin->setFirstname($_POST['firstname']) ;
         }
         if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_POST['lastname'];
+            $admin->setLastname($_POST['lastname']);
         }
-        if(isset($_Location))
+        if(isset($_POST['Location']))
         {
-            $updates['Location'] = $_POST['Location'];
+            $admin->setLocation($_POST['Location']);
         }   
         if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_POST['phoneNumber'];
+            $admin->setPhoneNumber($_POST['phoneNumber']);
         }
 
-        Admin::update($_POST['userId'],$updates);
+        Admin::update($admin);
 
     }
 }
@@ -211,90 +211,142 @@ if(isset($_POST['updateAdmin']))
 
 if(isset($_POST['updateDonor']))
 {
-    $updates = array();
+    $donor = Donor::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_POST['username'];
+            $donor->setUsername($_POST['username']) ;
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_POST['email'];
+            $donor->setEmail($_POST['email']);
         }
 
         if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_POST['firstname'];
+            $donor->setFirstname($_POST['firstname']) ;
         }
         if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_POST['lastname'];
+            $donor->setLastname($_POST['lastname']);
         }
         if(isset($_Location))
         {
-            $updates['Location'] = $_POST['Location'];
+            $donor->setLocation($_POST['Location']);
         }   
         if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_POST['phoneNumber'];
+            $donor->setPhoneNumber($_POST['phoneNumber']);
         }
 
-        if(isset($_POST['phoneNumber']))
-        {
-            $updates['phoneNumber'] = $_POST['phoneNumber'];
-        }
-        Donor::update($_POST['userId'],$updates);
+        Donor::update($donor);
     }
 }
 
-if(isset($_POST['updateDonor']))
+if(isset($_POST['updateEmployee']))
 {
-    $updates = array();
+    if(isset($_POST['hr'])){
+    $hr = hrModel::retrieve($_POST["userId"]);
     if(!empty($_POST['userId']))
     {
         if(isset($_POST['username']))
         {
-            $updates['username'] = $_POST['username'];
+            $hr->setUsername($_POST['username']) ;
         }
         if(isset($_POST['email']))
         {
-            $updates['email'] = $_POST['email'];
+            $hr->setEmail($_POST['email']);
         }
 
         if(isset($_POST['firstname']))
         {
-            $updates['firstname'] = $_POST['firstname'];
+            $hr->setFirstname($_POST['firstname']) ;
         }
         if(isset($_POST['lastname']))
         {
-            $updates['lastname'] = $_POST['lastname'];
+            $hr->setLastname($_POST['lastname']);
         }
         if(isset($_Location))
         {
-            $updates['Location'] = $_POST['Location'];
+            $hr->setLocation($_POST['Location']);
         }   
         if(isset($_POST['phoneNumber']))
         {
-            $updates['phoneNumber'] = $_POST['phoneNumber'];
+            $hr->setPhoneNumber($_POST['phoneNumber']);
+        }
+        hrModel::update($hr);
+    }
+    }
+
+
+
+    if(isset($_POST['technical'])){
+        $technical = technicalModel::retrieve($_POST["userId"]);
+        if(!empty($_POST['userId']))
+        {
+            if(isset($_POST['username']))
+            {
+                $technical->setUsername($_POST['username']) ;
+            }
+            if(isset($_POST['email']))
+            {
+                $technical->setEmail($_POST['email']);
+            }
+    
+            if(isset($_POST['firstname']))
+            {
+                $technical->setFirstname($_POST['firstname']) ;
+            }
+            if(isset($_POST['lastname']))
+            {
+                $technical->setLastname($_POST['lastname']);
+            }
+            if(isset($_Location))
+            {
+                $technical->setLocation($_POST['Location']);
+            }   
+            if(isset($_POST['phoneNumber']))
+            {
+                $technical->setPhoneNumber($_POST['phoneNumber']);
+            }
+            technicalModel::update($technical);
+        }
         }
 
-        if(isset($_POST['phoneNumber']))
+
+
+        
+    if(isset($_POST['delivery'])){
+        $delivery = DeliveryPersonnel::retrieve($_POST["userId"]);
+        if(!empty($_POST['userId']))
         {
-            $updates['phoneNumber'] = $_POST['phoneNumber'];
+            if(isset($_POST['username']))
+            {
+                $delivery->setUsername($_POST['username']) ;
+            }
+            if(isset($_POST['email']))
+            {
+                $delivery->setEmail($_POST['email']);
+            }
+    
+            if(isset($_POST['firstname']))
+            {
+                $delivery->setFirstname($_POST['firstname']) ;
+            }
+            if(isset($_POST['lastname']))
+            {
+                $delivery->setLastname($_POST['lastname']);
+            }
+            if(isset($_Location))
+            {
+                $delivery->setLocation($_POST['Location']);
+            }   
+            if(isset($_POST['phoneNumber']))
+            {
+                $delivery->setPhoneNumber($_POST['phoneNumber']);
+            }
+            DeliveryPersonnel::update($delivery);
         }
-        if(isset($_POST['title']))
-        {
-            $updates['title'] = $_POST['title'];
         }
-        if(isset($_POST['salary']))
-        {
-            $updates['salary'] = $_POST['salary'];
-        }
-        if(isset($_POST['workingHours']))
-        {
-            $updates['workingHours'] = $_POST['workingHours'];
-        }
-        EmployeeModel::update($_POST['userId'],$updates);
-    }
 }

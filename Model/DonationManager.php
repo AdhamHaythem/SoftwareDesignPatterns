@@ -5,11 +5,12 @@ require_once 'Campaign.php';
 require_once 'DonorModel.php';
 require_once 'IMaintainable.php';
 
-class DonationManager implements IMaintainable{
+class DonationManager implements IMaintainable {
     private array $donationsByDonor;
     private float $totalDonations;
     private float $goalAmount;
     private array $campaigns;
+    private static DatabaseConnection $dbConnection; // Static variable for database connection
 
     public function __construct(float $goalAmount = 0.0, array $donations = [], array $campaigns = []) {
         $this->donationsByDonor = $donations;
@@ -25,77 +26,68 @@ class DonationManager implements IMaintainable{
         $this->campaigns = $campaigns;
     }
 
-    public static function create($object): bool { //ESTA5DEMNA Polymorphism with same interface 
-        if ($object instanceof Donation) {
-            $donorID = $object->getDonorID();
-            if (!isset(self::$donationsByDonor[$donorID])) {
-                self::$donationsByDonor[$donorID] = [];
-            }
-            self::$donationsByDonor[$donorID][] = $object;
-            return true;
-        } elseif ($object instanceof CampaignModel) {
-            self::$campaigns[] = $object;
-            return true;
-        }
-        return false;
+    // Setter for database connection
+    public static function setDatabaseConnection(DatabaseConnection $dbConnection): void {
+        self::$dbConnection = $dbConnection;
     }
 
-    public static function retrieve($key): ?object {
-        foreach (self::$donationsByDonor as $donorID => $donations) {
-            foreach ($donations as $donation) {
-                if ($donation->getId() == $key) {
-                    return $donation;
-                }
-            }
+    // Getter for database connection
+    public static function getDatabaseConnection(): DatabaseConnection {
+        return self::$dbConnection;
+    }
+
+    // CRUD Methods for DonationManager
+
+    // Create a new DonationManager record in the database
+    public static function create($manager): bool {
+        $sql = "INSERT INTO donation_managers (goalAmount, totalDonations) VALUES (:goalAmount, :totalDonations)";
+        $params = [
+            ':goalAmount' => $manager->goalAmount,
+            ':totalDonations' => $manager->totalDonations
+        ];
+
+        return self::$dbConnection->execute($sql, $params);
+    }
+
+    // Retrieve a DonationManager record from the database by ID
+    public static function retrieve($managerID): ?DonationManager {
+        $sql = "SELECT * FROM donation_managers WHERE id = :managerID";
+        $params = [':managerID' => $managerID];
+
+        $result = self::$dbConnection->query($sql, $params);
+        if ($result && !empty($result)) {
+            return new DonationManager(
+                $result['goalAmount'],
+                [], // Empty donations, you might want to populate these separately
+                []  // Empty campaigns, you might want to populate these separately
+            );
         }
-        foreach (self::$campaigns as $campaign) {
-            if ($campaign->getCampaignID() == $key) {
-                return $campaign;
-            }
-        }
+
         return null;
     }
 
-    public static function update($object): bool {
-        if ($object instanceof Donation) {
-            foreach (self::$donationsByDonor as $donorID => &$donations) {
-                foreach ($donations as &$donation) {
-                    if ($donation->getDonationID() == $object->getDonationID()) {
-                        $donation = $object;
-                        return true;
-                    }
-                }
-            }
-        } elseif ($object instanceof CampaignModel) {
-            foreach (self::$campaigns as &$campaign) {
-                if ($campaign->getCampaignID() == $object->getCampaignID()) {
-                    $campaign = $object;
-                    return true;
-                }
-            }
-        }
-        return false;
+    // Update a DonationManager record in the database
+    public static function update($manager): bool {
+        $sql = "UPDATE donation_managers SET goalAmount = :goalAmount, totalDonations = :totalDonations WHERE id = :managerID";
+        $params = [
+            ':goalAmount' => $manager->goalAmount,
+            ':totalDonations' => $manager->totalDonations,
+            ':managerID' => $manager->managerID
+        ];
+
+        return self::$dbConnection->execute($sql, $params);
     }
 
-    public static function delete($key): bool {
-        foreach (self::$donationsByDonor as $donorID => &$donations) {
-            foreach ($donations as $index => $donation) {
-                if ($donation->getId() == $key) {
-                    unset($donations[$index]);
-                    return true;
-                }
-            }
-        }
-        foreach (self::$campaigns as $index => $campaign) {
-            if ($campaign->getCampaignID() == $key) {
-                unset(self::$campaigns[$index]);
-                return true;
-            }
-        }
-        return false;
+    // Delete a DonationManager record from the database by ID
+    public static function delete($managerID): bool {
+        $sql = "DELETE FROM donation_managers WHERE id = :managerID";
+        $params = [':managerID' => $managerID];
+
+        return self::$dbConnection->execute($sql, $params);
     }
 
-    public function addDonationForDonor(int $donorID, Donation $donation): bool {// ma5dnash donationhistory direct from donor class 3shan hyb2a totally dependent 3aleh ->decoupling concept
+    // Additional Methods for DonationManager
+    public function addDonationForDonor(int $donorID, Donation $donation): bool {
         if (!isset($this->donationsByDonor[$donorID])) {
             $this->donationsByDonor[$donorID] = [];
         }
@@ -123,7 +115,7 @@ class DonationManager implements IMaintainable{
         return null;
     }
 
-    public function getCampaignDetails(int $campaignID): ?CampaignModel {
+    public function getCampaignDetails(int $campaignID): ?CampaignStrategy {
         foreach ($this->campaigns as $campaign) {
             if ($campaign->getCampaignID() == $campaignID) {
                 return $campaign;
@@ -142,7 +134,6 @@ class DonationManager implements IMaintainable{
 
     public function getDonationStatistics(): array {
         $statistics = [];
-
         foreach ($this->donationsByDonor as $donorID => $donations) {
             foreach ($donations as $donation) {
                 $statistics[] = [
@@ -152,7 +143,6 @@ class DonationManager implements IMaintainable{
                 ];
             }
         }
-
         return $statistics;
     }
 }

@@ -14,6 +14,7 @@ class TechnicalController {
  // TechnicalController actions
     $technicalController = new TechnicalController();
     if (isset($_POST['getReports'])) {
-        $technicalController->getReports($_post['techical']);
+        $tech = technicalModel::retrieve($_POST['userId']);
+        $technicalController->getReports($tech);
     } 
 ?>

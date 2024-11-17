@@ -1,60 +1,49 @@
 <?php
-
-require_once 'Donor.php'; 
-require_once 'IEvent.php';
-
-
+require_once 'configurations.php';
+require_once 'db_connection.php';
+require_once 'data.php';
 
 function main() {
- //   $event = new Event(new DateTime(), "Central Park",20, 10, 1);
-    $startDate = new DateTime('2024-12-31 00:00:00');   
-    $paymentMethod1 = new IPaymentStrategy(); 
-    $paymentMethod2 = new IPaymentStrategy(); 
-    $event = new CampaignStrategy(
-        100, $startDate, "", 9, 100, 
-        "", "", "", 100000
-    );
+    // Initialize database connection
+    $config = require 'configurations.php';
+    $db = new DatabaseConnection($config);
 
-    $donor1 = new Donor(
-        userID: 1,
-        username: "donor1",
-        firstname: "Alice",
-        lastname: "Smith",
-        email: "alice.smith@example.com",
-        password: "password123",
-        location: ["city" => "New York", "country" => "USA"],
-        phoneNumber: 1234567890,
-        paymentMethod: $paymentMethod1,
-        eventStrategy: $event,
-        eventData: $event
-    );
+    // Create tables
+    try {
+        createTables($db); // Calls the createTables function from data.php
+    } catch (Exception $e) {
+        echo "Error creating tables: " . $e->getMessage() . "<br>";
+    }
 
-    $donor2 = new Donor(
-        userID: 2,
-        username: "donor2",
-        firstname: "Bob",
-        lastname: "Johnson",
-        email: "bob.johnson@example.com",
-        password: "password456",
-        location: ["city" => "Los Angeles", "country" => "USA"],
-        phoneNumber: 9876543210,
-        paymentMethod: $paymentMethod2,
-        eventStrategy: $event,
-        eventData: $event
-    );
+    // Insert sample data for testing
+    try {
+        $sampleDataSQL = "INSERT INTO `user` (username, firstName, lastName, email, password, locationList, phoneNumber, isActive) VALUES
+            ('testuser1', 'Test', 'User1', 'testuser1@example.com', MD5('password1'), '[\"New York\", \"Los Angeles\"]', '1234567890', TRUE),
+            ('testuser2', 'Test', 'User2', 'testuser2@example.com', MD5('password2'), '[\"Chicago\"]', '9876543210', FALSE)";
+        $db->execute($sampleDataSQL);
+        echo "Sample data inserted successfully.<br>";
+    } catch (Exception $e) {
+        echo "Error inserting sample data: " . $e->getMessage() . "<br>";
+    }
 
-    $event->registerObserver($donor1);
-    $event->registerObserver($donor2);
+    // Fetch and display data for testing
+    try {
+        $users = $db->query("SELECT * FROM `user`");
+        if ($users) {
+            foreach ($users as $user) {
+                echo "UserID: {$user['userID']}, Username: {$user['username']}, Email: {$user['email']}<br>";
+            }
+        } else {
+            echo "No users found.<br>";
+        }
+    } catch (Exception $e) {
+        echo "Error fetching data: " . $e->getMessage() . "<br>";
+    }
 
-    echo "Both donors have been registered as observers to the event.\n";
-    $event->setStatus("The event has been postponed due to weather conditions!");
-
-    echo "Both donors have been registered as observers to the event.\n";
-    $event->setStatus("The event has been postponed due to weather conditions!");
-
+    // Close the database connection
+    $db->close();
 }
 
+// Run the main function
 main();
-
-
 ?>
