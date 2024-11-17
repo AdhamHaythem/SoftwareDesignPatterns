@@ -96,7 +96,7 @@ class VolunteeringEventStrategy extends Event {
         unset($this->observers[$observerID]);
     }
     
-    public function notifyObservers(): void {
+    public function notifyObservers($EventStatus): void {
         foreach ($this->observers as $observer) {
             $observer->update(); 
         }
