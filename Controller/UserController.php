@@ -2,16 +2,16 @@
 require_once "../Model/DonorModel.php";
 require_once "../Model/AdminModel.php";
 require_once "../Model/EmployeeModel.php";
-require_once "../Model/DonorView.php";
+require_once "../View/DonorView.php";
 require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
 require_once "../View/UserView.php";
 
 class UserController{
-    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber,$event)
+    function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
 
-        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash(),$event,$event);
+        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
         Donor::create($donor);
     }
 
@@ -90,7 +90,7 @@ if (isset($_POST['createUser'])) {
         if (!empty($_POST['userId']) && !empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname'])
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
-            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],Event::retrieve($_POST['eventID']));
+            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
     }
     }
 elseif(isset($_POST['Admin']))
