@@ -1,6 +1,6 @@
 <?php
 require_once 'employee.php';
-require_once 'LessonModel.php';
+require_once 'Lesson.php';
 
 class InstructorModel extends EmployeeModel {
     private array $lessons = []; // Array to hold LessonModel instances
@@ -49,32 +49,82 @@ class InstructorModel extends EmployeeModel {
 
     // Create a new Instructor record in the database
     public static function create($instructor): bool {
-        $sql = "INSERT INTO instructors (userID, username, firstname, lastname, email, password, location, phoneNumber, title, salary, workingHours)
-                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :title, :salary, :workingHours)";
-
-        $params = [
-            ':userID' => $instructor->getUserID(),
-            ':username' => $instructor->getUsername(),
-            ':firstname' => $instructor->getFirstname(),
-            ':lastname' => $instructor->getLastname(),
-            ':email' => $instructor->getEmail(),
-            ':password' => password_hash($instructor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($instructor->getLocation()), // Assuming location is an array
-            ':phoneNumber' => $instructor->getPhoneNumber(),
-            ':title' => $instructor->getTitle(),
-            ':salary' => $instructor->getSalary(),
-            ':workingHours' => $instructor->getHoursWorked()
-        ];
-
-        return self::$dbConnection->execute($sql, $params);
+        // Check if the provided object is an instance of the expected model
+        if (!$instructor instanceof InstructorModel) {
+            throw new InvalidArgumentException("Expected instance of InstructorModel");
+        }
+    
+        // Get the database connection
+        $dbConnection = UserModel::getDatabaseConnection();
+    
+        try {
+            // 1. Insert into the `user` table
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $userParams = [
+                $instructor->getUserID(),
+                $instructor->getUsername(),
+                $instructor->getFirstname(),
+                $instructor->getLastname(),
+                $instructor->getEmail(),
+                password_hash($instructor->getPassword(), PASSWORD_DEFAULT), // Hash the password
+                json_encode($instructor->getLocation()), // Serialize location as JSON
+                $instructor->getPhoneNumber(),
+                1 // isActive (true)
+            ];
+    
+            // Execute the insertion into the `user` table
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert into `user` table.");
+            }
+    
+            // 2. Insert into the `employee` table
+            $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)
+                            VALUES (?, ?, ?, ?)";
+            
+            $employeeParams = [
+                $instructor->getUserID(),
+                $instructor->getTitle(),
+                $instructor->getSalary(),
+                $instructor->getHoursWorked()
+            ];
+    
+            // Execute the insertion into the `employee` table
+            if (!$dbConnection->execute($employeeSql, $employeeParams)) {
+                throw new Exception("Failed to insert into `employee` table.");
+            }
+    
+            // 3. Insert into the `instructor` table
+            $instructorSql = "INSERT INTO instructor (userID, lessons)
+                              VALUES (?, ?)";
+            
+            $instructorParams = [
+                $instructor->getUserID(),
+                json_encode($instructor->getLessons()) // Serialize managedEmployees as JSON
+            ];
+    
+            // Execute the insertion into the `instructor` table
+            if (!$dbConnection->execute($instructorSql, $instructorParams)) {
+                throw new Exception("Failed to insert into `instructor` table.");
+            }
+    
+            // If all insertions are successful, return true
+            return true;
+        } catch (Exception $e) {
+            // Log any errors and return false
+            error_log("Error creating instructor: " . $e->getMessage());
+            return false;
+        }
     }
+    
 
     // Retrieve an Instructor record from the database by userID
     public static function retrieve($userID): ?InstructorModel {
         $sql = "SELECT * FROM instructors WHERE userID = :userID";
         $params = [':userID' => $userID];
 
-        $result = self::$dbConnection->query($sql, $params);
+        $result = UserModel::getDatabaseConnection()->query($sql, $params);
         if ($result && !empty($result)) {
             return new InstructorModel(
                 $result['username'],
@@ -123,7 +173,7 @@ class InstructorModel extends EmployeeModel {
             ':userID' => $instructor->getUserID()
         ];
 
-        return self::$dbConnection->execute($sql, $params);
+        return UserModel::getDatabaseConnection()->execute($sql, $params);
     }
 
     // Delete an Instructor record from the database by userID
@@ -131,7 +181,7 @@ class InstructorModel extends EmployeeModel {
         $sql = "DELETE FROM instructors WHERE userID = :userID";
         $params = [':userID' => $userID];
 
-        return self::$dbConnection->execute($sql, $params);
+        return UserModel::getDatabaseConnection()->execute($sql, $params);
     }
 
     // Additional Methods for Lessons
@@ -139,7 +189,19 @@ class InstructorModel extends EmployeeModel {
     // Add a lesson to the instructor's managed lessons
     public function createLesson(LessonModel $lesson): bool {
         $this->lessons[] = $lesson;
-        return true;
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "INSERT INTO lesson (lessonID,lessonName,lessonSubject,duration,instructorID,views)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+
+        $params = [
+             $lesson->getLessonId(),
+            $lesson->getLessonName(),
+            $lesson->getLessonSubject(),
+            $lesson->getDuration(),
+            $this->getUserID(),
+            $lesson->getStudentView(),
+    ];
+    return $dbConnection->execute($sql, $params);
     }
 
     // Retrieve a lesson by its ID

@@ -4,7 +4,7 @@ require_once 'db_connection.php';
 function createTables($conn){
 //USER TABLEEEEEEE
 $sql_user = "CREATE TABLE IF NOT EXISTS `user` (
-    `userID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,        
+    `userID` INT NOT NULL PRIMARY KEY,        
     `username` VARCHAR(50) NOT NULL UNIQUE,                    
     `firstName` VARCHAR(50) NOT NULL,                          
     `lastName` VARCHAR(50) NOT NULL,                          
@@ -115,7 +115,7 @@ if ($conn->query($sql_instructor) === TRUE) {
 }
 
 $sql_donor = "CREATE TABLE IF NOT EXISTS donor (
-    donorID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    donorID INT NOT NULL PRIMARY KEY,
     userID INT NOT NULL UNIQUE, 
     donationHistory TEXT,
     totalDonations DOUBLE,
@@ -138,7 +138,7 @@ if ($conn->query($sql_donor) === TRUE) {
 
 
 $sql_donation = "CREATE TABLE IF NOT EXISTS `Donation` (
-    `donationID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `donationID` INT NOT NULL PRIMARY KEY,
     `amount` DOUBLE NOT NULL,
     `donorID` INT NOT NULL,
     UNIQUE (`donorID`, `amount`),  -- Prevent duplicate donations for the same donor
@@ -166,7 +166,7 @@ if ($conn->query($sql_donation_manager) === TRUE) {
 
 
 $sql_lesson = "CREATE TABLE IF NOT EXISTS `Lesson` (
-    `lessonID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `lessonID` INT NOT NULL PRIMARY KEY,
     `lessonName` VARCHAR(255) NOT NULL,
     `lessonSubject` VARCHAR(255) NOT NULL,
     `duration` INT NOT NULL, -- Duration in minutes
@@ -201,7 +201,7 @@ if ($conn->query($sql_student) === TRUE) {
 
 
 $sql_event = "CREATE TABLE IF NOT EXISTS Event (
-    eventID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    eventID INT NOT NULL PRIMARY KEY, 
     name VARCHAR(255) NOT NULL,                  
     time DATETIME NOT NULL,                         
     location VARCHAR(255) NOT NULL,                  
@@ -217,9 +217,8 @@ if ($conn->query($sql_event) === TRUE) {
 
 // VolunteeringEventStrategy Table
 $sql_volunteering_event_strategy = "CREATE TABLE IF NOT EXISTS `VolunteeringEventStrategy` (
-    `strategyID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each strategy
+    `strategyID` INT NOT NULL PRIMARY KEY, -- Unique identifier for each strategy
     `eventID` INT NOT NULL,                               -- Foreign key referencing Event
-    `description` TEXT,                                   -- Description of the strategy
     FOREIGN KEY (`eventID`) REFERENCES `Event`(`eventID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
@@ -233,7 +232,7 @@ if ($conn->query($sql_volunteering_event_strategy) === TRUE) {
 
 // CampaignStrategy Table
 $sql_campaign_strategy = "CREATE TABLE IF NOT EXISTS `CampaignStrategy` (
-    `campaignID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `campaignID` INT NOT NULL PRIMARY KEY,
     `target` DOUBLE NOT NULL,                           
     `title` VARCHAR(255) NOT NULL,                      
     `donations` TEXT,                                   

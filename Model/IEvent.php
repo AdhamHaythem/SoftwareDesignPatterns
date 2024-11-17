@@ -6,6 +6,8 @@ abstract class Event implements IMaintainable, ISubject {
     private string $name;
     private array $Eventobservers = [];
     private DateTime $time;
+
+    private static int $counter =1 ;
     private string $location;
     private int $volunteersNeeded;
     private int $eventID;
@@ -23,8 +25,9 @@ abstract class Event implements IMaintainable, ISubject {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
-        $this->eventID = $eventID;
+        $this->eventID = self::$counter;
         $this->name = $name;
+        self::$counter++;
     }
 
     abstract public function signUp(int $donorID): bool;
