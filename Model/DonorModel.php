@@ -27,11 +27,12 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        Event $eventStrategy = null, //defaultevent
-        ISubject $eventData =null//defaulttttttttt
+
+        Event $eventStrategy = new CampaignStrategy(200 ,new DateTime('2024-11-20 10:00:00'),"",40,100,"",50.0,"",300), //defaultevent
+        ISubject $eventData //defaulttttttttt
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = $this->getUserID();
+        $this->donorID = $userID;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         $this->campaignsJoined = [];
@@ -44,80 +45,63 @@ class Donor extends UserModel implements IObserver {
 
     public static function create($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
-    
-        // 1. Insert into `user` table first
-        $userSql = "INSERT IGNORE INTO users (userID, username, firstname, lastname, email, password, location, phoneNumber)
-                    VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber)";
+        $sql = "INSERT INTO donors (userID, username, firstname, lastname, email, password, location, phoneNumber, totalDonations)
+                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :totalDonations)";
         
-        $userParams = [
+        $params = [
             ':userID' => $donor->getDonorID(),
             ':username' => $donor->getUsername(),
             ':firstname' => $donor->getFirstname(),
             ':lastname' => $donor->getLastname(),
             ':email' => $donor->getEmail(),
             ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($donor->getLocation()),
-            ':phoneNumber' => $donor->getPhoneNumber()
-        ];
-    
-        $userInserted = $dbConnection->execute($userSql, $userParams);
-    
-        // 2. Insert into `donors` table
-        $donorSql = "INSERT INTO donors (userID, totalDonations)
-                     VALUES (:userID, :totalDonations)
-                     ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations)";
-    
-        $donorParams = [
-            ':userID' => $donor->getDonorID(),
+            ':location' => json_encode($donor->getLocation()), 
+            ':phoneNumber' => $donor->getPhoneNumber(),
             ':totalDonations' => $donor->getTotalDonations()
         ];
-    
-        $donorInserted = $dbConnection->execute($donorSql, $donorParams);
-    
-        // 3. Return whether both inserts were successful
-        return $userInserted && $donorInserted;
-    }
-    
 
-    // public static function retrieve($donorID): ?Donor {
-    //     $dbConnection = UserModel::getDatabaseConnection();
-    //     $sql = "SELECT * FROM donors WHERE userID = :donorID";
-    //     $params = [':donorID' => $donorID];
+        return $dbConnection->execute($sql, $params);
+    }
+
+    public static function retrieve($donorID): ?Donor {
+        $dbConnection = UserModel::getDatabaseConnection();
+        $sql = "SELECT * FROM donors WHERE userID = :donorID";
+        $params = [':donorID' => $donorID];
     
-    //     $result = $dbConnection->query($sql, $params);
+        $result = $dbConnection->query($sql, $params);
     
-    //     if ($result && !empty($result)) {
-    //         $location = json_decode($result['location'], true);
-    //         $paymentMethod = new IPaymentStrategy();
-    //         $eventStrategy = new CampaignStrategy(
-    //             $result['eventBudget'] ?? 200,
-    //             new DateTime($result['eventStartDate'] ?? '2024-11-20 10:00:00'),
-    //             $result['eventName'] ?? "",
-    //             $result['eventParticipants'] ?? 40,
-    //             $result['eventMaxParticipants'] ?? 100,
-    //             $result['eventDescription'] ?? "",
-    //             $result['eventCost'] ?? 50.0,
-    //             $result['eventLocation'] ?? "",
-    //             $result['eventDuration'] ?? 300
-    //         ); 
-    //         $eventData = new ISubject();
-    //         return new Donor(
-    //             $result['userID'],
-    //             $result['username'],
-    //             $result['firstname'],
-    //             $result['lastname'],
-    //             $result['email'],
-    //             $result['password'],
-    //             $location,
-    //             $result['phoneNumber'],
-    //             $paymentMethod,
-    //             $eventStrategy,
-    //             $eventData
-    //         );
-    //     }
+        if ($result && !empty($result)) {
+            $location = json_decode($result['location'], true);
+            $paymentMethod = new IPaymentStrategy();
+            $eventStrategy = new CampaignStrategy(
+                $result['eventBudget'] ?? 200,
+                new DateTime($result['eventStartDate'] ?? '2024-11-20 10:00:00'),
+                $result['eventName'] ?? "",
+                $result['eventParticipants'] ?? 40,
+                $result['eventMaxParticipants'] ?? 100,
+                $result['eventDescription'] ?? "",
+                $result['eventCost'] ?? 50.0,
+                $result['eventLocation'] ?? "",
+                $result['eventDuration'] ?? 300
+            ); 
+            $eventData = new ISubject();
+            return new Donor(
+                $result['userID'],
+                $result['username'],
+                $result['firstname'],
+                $result['lastname'],
+                $result['email'],
+                $result['password'],
+                $location,
+                $result['phoneNumber'],
+                $paymentMethod,
+                $eventStrategy,
+                $eventData
+            );
+        }
     
-    //     return null;
-    // }
+        return null;
+    }
     
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
