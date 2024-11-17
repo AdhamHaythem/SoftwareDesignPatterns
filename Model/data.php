@@ -200,13 +200,13 @@ if ($conn->query($sql_student) === TRUE) {
 
 
 
-$sql_event = "CREATE TABLE IF NOT EXISTS `Event` (
-    `eventID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each event
-    `name` VARCHAR(255) NOT NULL,                      -- Name of the event
-    `time` DATETIME NOT NULL,                          -- Time and date of the event
-    `location` VARCHAR(255) NOT NULL,                  -- Location of the event
-    `volunteers_needed` INT NOT NULL,                  -- Number of volunteers needed
-    `volunteersList` TEXT                              -- JSON or serialized list of volunteers (donor IDs)
+$sql_event = "CREATE TABLE IF NOT EXISTS Event (
+    eventID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    name VARCHAR(255) NOT NULL,                  
+    time DATETIME NOT NULL,                         
+    location VARCHAR(255) NOT NULL,                  
+    volunteers_needed INT NOT NULL,                
+    volunteersList TEXT                          
 )";
 
 if ($conn->query($sql_event) === TRUE) {
@@ -233,11 +233,11 @@ if ($conn->query($sql_volunteering_event_strategy) === TRUE) {
 
 // CampaignStrategy Table
 $sql_campaign_strategy = "CREATE TABLE IF NOT EXISTS `CampaignStrategy` (
-    `campaignID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each campaign
-    `target` DOUBLE NOT NULL,                            -- Target amount for the campaign
-    `title` VARCHAR(255) NOT NULL,                      -- Title of the campaign
-    `donations` TEXT,                                   -- JSON or serialized list of donations
-    `moneyEarned` FLOAT DEFAULT 0.0                     -- Total money earned so far
+    `campaignID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `target` DOUBLE NOT NULL,                           
+    `title` VARCHAR(255) NOT NULL,                      
+    `donations` TEXT,                                   
+    `moneyEarned` FLOAT DEFAULT 0.0                   
 )";
 
 if ($conn->query($sql_campaign_strategy) === TRUE) {
