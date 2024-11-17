@@ -73,7 +73,7 @@ function donationDetails($donationId) {
 
 function donorProfile($donorId) {
     $.ajax({
-        url: "../Controller/DonorController.php",
+        url: "../Controller/UserController.php",
         type: 'POST',
         data: {
             donorId: $donorId,
