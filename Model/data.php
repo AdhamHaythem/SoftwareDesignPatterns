@@ -71,4 +71,3 @@ if ($conn->query($insert_user_sql) === TRUE) {
 // Close the connection
 $conn->close();
 ?>
-

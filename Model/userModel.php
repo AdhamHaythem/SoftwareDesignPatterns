@@ -1,8 +1,8 @@
 <?php
-require_once 'db_connection.php';
+//require_once 'db_connection.php';
 require_once 'IMaintainable.php';
 require_once 'configurations.php';
-require_once 'data.php';
+//require_once 'data.php';
 
 class UserModel implements IMaintainable {
     private string $username;

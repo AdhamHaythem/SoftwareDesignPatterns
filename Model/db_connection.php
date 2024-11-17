@@ -16,19 +16,19 @@ class DatabaseConnection {
     // Execute a query (used for INSERT, UPDATE, DELETE)
     public function execute($sql, $params = []) {
         $stmt = $this->conn->prepare($sql);
-        
+
         if ($stmt === false) {
             die("Statement preparation failed: " . $this->conn->error);
         }
 
-    
+
         if (!empty($params)) {
             $paramTypes = str_repeat('s', count($params));
             $stmt->bind_param($paramTypes, ...$params);
         }
 
         $result = $stmt->execute();
-        
+
         if (!$result) {
             die("Execution failed: " . $stmt->error);
         }
