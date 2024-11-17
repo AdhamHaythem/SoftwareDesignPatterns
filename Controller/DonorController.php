@@ -27,8 +27,11 @@ class DonorController{
     
     public function joinEvent($donorId){
         $donor= Donor::retrieve($donorId);
-        $donor->joinEvent();
-        return true;
+        if ($donor){
+            $donor->joinEvent();
+            return true;
+        }
+        return false;
     }
 
     public function setPaymentMethod($strategy,$donorId): bool{
