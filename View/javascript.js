@@ -3,11 +3,10 @@ function users(userId) {
         url: "../Controller/UserController.php",
         type: 'POST',
         data: {
-            users: ''  // Add any necessary data here
+            users: '' 
         },
         success: function(response) {
             console.log("Server response:", response);
-            // Display the response in a specific div or handle it as needed
             document.getElementById("content").innerHTML = response;
         },
         error: function(xhr, status, error) {
@@ -26,16 +25,6 @@ function donationHistory(itemId) {
         });
 }
 
-function generateReports(itemId) {
-$.ajax({
-    url: "../Controller/AdminController.php",
-    type: 'POST',
-    data: {
-        generateReports: ''
-        },
-    });
-}
-
 
 function viewDonationStatistics(itemId) {
     $.ajax({
@@ -43,18 +32,6 @@ function viewDonationStatistics(itemId) {
         type: 'POST',
         data: {
             viewDonationStatistics: '',
-            },
-        });
-}
-
-
-function getCampaignData(itemId) {
-    $.ajax({
-        url: "../Controller/EventController.php",
-        type: 'POST',
-        data: {
-            retrieveCampaign: '',
-            eventId : itemId,
             },
         });
 }
@@ -73,14 +50,14 @@ function donationDetails($donationId) {
 
 function donorProfile($donorId) {
     $.ajax({
-        url: "../Controller/DonorController.php",
+        url: "../Controller/UserController.php",
         type: 'POST',
         data: {
             donorId: $donorId,
             retrieveDonor: '',
             },
         });
-}
+};
 
 function donationHistory(itemId) {
 $.ajax({
@@ -91,7 +68,17 @@ data: {
     donorId:itemId,
     },
 });
-}
+};
+
+function donationReport(itemId) {
+    $.ajax({
+        url: '../Controller/DonationManagerController.php',
+        type: 'POST',
+        data: {
+            generateDonationReport: '',
+        },
+    });
+};
 
 function totalDonations(itemId) {
 $.ajax({
@@ -162,3 +149,149 @@ function displaysignUp(){
         },
         });
     };
+
+function campaignDetails(campId){
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            retrieveCampaign: '',
+            eventId: campId,
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function volunteerDetails(campId){
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            retrieveCampaign: '',
+            eventId: campId,
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+
+
+function eventStatus(statusId) {
+    $.ajax({
+        url: "../Controller/DonorController.php",
+        type: 'POST',
+        data: {
+            eventId: statusId,
+            status: '',
+            },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function eventReport(reportId) {
+    $.ajax({
+        url: "../Controller/DonorController.php",
+        type: 'POST',
+        data: {
+            eventId: reportId,
+            eventReport: '',
+            },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+
+function eventList(itemId) {
+    $.ajax({
+        url: "../Controller/DonorController.php",
+        type: 'POST',
+        data: {
+            eventList: '',
+            },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function enrollLesson(itemId) {
+    $.ajax({
+        url: "../Controller/StudentController.php",
+        type: 'POST',
+        data: {
+            enrollLesson: '',
+            lessonId: itemId,
+            studendId: itemId,
+            instructorId:itemId,
+            },
+        success: function(response) {
+            $('.container').html(response);
+            alert("Enrolled in Lesson Name: ' 1 '");
+        },
+    });
+};
+
+function LessonDetails(itemId) {
+    $.ajax({
+        url: '../Controller/LessonController.php',
+        type: 'POST',
+        data: {
+            lessonId: itemId,
+            retrieveLesson: '',
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function EnrolledLessons(itemId) {
+    $.ajax({
+        url: '../Controller/StudentController.php',
+        type: 'POST',
+        data: {
+            lessonId: itemId,
+            getlessonList: '',
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function LessonsEnstructor(itemId) {
+    $.ajax({
+        url: '../Controller/InstructorController.php',
+        type: 'POST',
+        data: {
+            lessonId: itemId,
+            instructorId: itemId,
+            retrieveLesson: '',
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function AllLessonsEnstructor(itemId) {
+    $.ajax({
+        url: '../Controller/InstructorController.php',
+        type: 'POST',
+        data: {
+            instructorId: itemId,
+            getLessons: '',
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};

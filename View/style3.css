@@ -1,0 +1,104 @@
+
+.enroll-button {
+display: inline-block;
+padding: 10px 20px;
+font-size: 16px;
+color: #fff;
+background-color: #007bff;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+margin-top: 20px;
+}
+
+.enroll-button:hover {
+background-color: #0056b3;
+}
+
+/* Other styling similar to DonationView */
+/* Reset some basic styling */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+/* Set a background color for the body and font settings */
+body {
+font-family: Arial, sans-serif;
+line-height: 1.6;
+background-color: #f4f4f4;
+color: #333;
+padding: 20px;
+}
+
+/* Style for the lesson details section */
+.lesson-details {
+background-color: #fff;
+border-radius: 8px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+padding: 30px;
+margin-bottom: 30px;
+}
+
+.lesson-details h2 {
+font-size: 28px;
+color: #333;
+margin-bottom: 20px;
+}
+
+.lesson-details ul {
+list-style-type: none;
+}
+
+.lesson-details ul li {
+font-size: 18px;
+margin-bottom: 10px;
+}
+
+.lesson-details ul li strong {
+color: #555;
+}
+
+.payment-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.payment-button:hover {
+    background-color: #218838;
+}
+
+.donation-details {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.donation-details h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.donation-details ul {
+    list-style-type: none;
+}
+
+.donation-details ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.donation-details ul li strong {
+    color: #555;
+}
