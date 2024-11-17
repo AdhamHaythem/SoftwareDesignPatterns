@@ -1,15 +1,14 @@
 <?php
 
-require_once 'userModel.php';
-require_once 'DonationModel.php';
-require_once 'CampaignStrategy.php';
+require_once 'User.php';
+require_once 'Donation.php';
+require_once 'Campaign.php';
 require_once 'IPaymentStrategy.php';
 require_once 'ISubject.php';
 require_once 'IObserver.php';
 require_once 'IEvent.php';
 
 class Donor extends UserModel implements IObserver {
-    private static int $counter = 1;
     private int $donorID;
     private array $donationsHistory;
     private float $totalDonations;
@@ -28,17 +27,19 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod,
-        Event $event=null
+
+        Event $eventStrategy = new CampaignStrategy(200 ,new DateTime('2024-11-20 10:00:00'),"",40,100,"",50.0,"",300), //defaultevent
+        ISubject $eventData //defaulttttttttt
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = $this->counter;
+        $this->donorID = $userID;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
-        if ($event !== null) {
-            $this->campaignsJoined[] = $event;
-        }
+        $this->campaignsJoined = [];
         $this->paymentMethod = $paymentMethod;
-        $this->counter++;
+        $this->eventData = $eventData;
+        $this->eventStrategy = $eventStrategy;
+        $this->eventData->registerObserver($this);
     }
 
 
@@ -66,9 +67,24 @@ class Donor extends UserModel implements IObserver {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "SELECT * FROM donors WHERE userID = :donorID";
         $params = [':donorID' => $donorID];
-
+    
         $result = $dbConnection->query($sql, $params);
+    
         if ($result && !empty($result)) {
+            $location = json_decode($result['location'], true);
+            $paymentMethod = new IPaymentStrategy();
+            $eventStrategy = new CampaignStrategy(
+                $result['eventBudget'] ?? 200,
+                new DateTime($result['eventStartDate'] ?? '2024-11-20 10:00:00'),
+                $result['eventName'] ?? "",
+                $result['eventParticipants'] ?? 40,
+                $result['eventMaxParticipants'] ?? 100,
+                $result['eventDescription'] ?? "",
+                $result['eventCost'] ?? 50.0,
+                $result['eventLocation'] ?? "",
+                $result['eventDuration'] ?? 300
+            ); 
+            $eventData = new ISubject();
             return new Donor(
                 $result['userID'],
                 $result['username'],
@@ -76,15 +92,17 @@ class Donor extends UserModel implements IObserver {
                 $result['lastname'],
                 $result['email'],
                 $result['password'],
-                json_decode($result['location'], true),
+                $location,
                 $result['phoneNumber'],
-                $result['paymentMethod'], 
-                $result['eventStrategy'],    
+                $paymentMethod,
+                $eventStrategy,
+                $eventData
             );
         }
-
+    
         return null;
     }
+    
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "UPDATE donors SET 
@@ -131,14 +149,7 @@ class Donor extends UserModel implements IObserver {
         $this->totalDonations += $donation->getAmount();
         return true;
     }
-
-    public function addEvent(Event $event): void {
-        $this->campaignsJoined[] = $event;
-    }    
-
-    public function getEvents(): array {
-        return $this->campaignsJoined;
-    }
+    
     //StrategyMethods
 
     public function joinEvent() {
@@ -152,7 +163,7 @@ class Donor extends UserModel implements IObserver {
 
     public function checkEventStatusStrategy(){
 
-        return $this->eventStrategy->checkEventStatus();
+        return $this->eventStrategy->checkEventStatus($this->donorID);
     }
 
     public function generateEventReportStrategy(){
@@ -184,7 +195,6 @@ class Donor extends UserModel implements IObserver {
     public function getPaymentMethod(): IPaymentStrategy {
         return $this->paymentMethod;
     }
-
 
 
     public function getEventMethod(): Event{
