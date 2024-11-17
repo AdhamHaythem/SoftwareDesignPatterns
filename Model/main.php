@@ -1,93 +1,49 @@
 <?php
-
-require_once 'DonorModel.php'; 
-require_once 'IEvent.php';
-require_once 'cash.php';
-require_once 'VolunteeringEventModel.php';
-
-function printCampaigns(Donor $donor): void {
-    if (empty($donor->getEvents())) {
-        echo "No campaigns joined.\n";
-        return;
-    }
-
-    echo "List of campaigns joined:\n";
-    foreach ($donor->getEvents() as $campaign) {
-        // Assuming the $campaign object has a __toString() method or properties to display
-        echo $campaign->getName() . "\n"; // Replace with specific campaign details if needed
-    }
-}
+require_once 'configurations.php';
+require_once 'db_connection.php';
+require_once 'data.php';
 
 function main() {
- //   $event = new Event(new DateTime(), "Central Park",20, 10, 1);
-    $startDate = new DateTime('2024-12-31 00:00:00');
-    $FayoomDate = new DateTime('2024-11-30 08:00:00');
-    $paymentMethod1 = new Cash(); 
-    $paymentMethod2 = new Cash(); 
-    $event = new CampaignStrategy(
-        100, $startDate, "", 9, 100, 
-        "Sha3boly", 1000, "", 100000
-    );
+    // Initialize database connection
+    $config = require 'configurations.php';
+    $db = new DatabaseConnection($config);
 
-    $newEvent= new VolunteeringEventStrategy(name: "Fayoom", time: $FayoomDate, location: "Fayoom,Asyout", volunteersNeeded: 9, eventID: 100);
-    $donor1 = new Donor(
-        userID: 1,
-        username: "donor1",
-        firstname: "Alice",
-        lastname: "Smith",
-        email: "alice.smith@example.com",
-        password: "password123",
-        location: ["city" => "New York", "country" => "USA"],
-        phoneNumber: 1234567890,
-        paymentMethod: $paymentMethod1,
-        event:  $event
-    );
+    // Create tables
+    try {
+        createTables($db); // Calls the createTables function from data.php
+    } catch (Exception $e) {
+        echo "Error creating tables: " . $e->getMessage() . "<br>";
+    }
 
-    $donor2 = new Donor(
-        userID: 2,
-        username: "donor2",
-        firstname: "Bob",
-        lastname: "Johnson",
-        email: "bob.johnson@example.com",
-        password: "password456",
-        location: ["city" => "Los Angeles", "country" => "USA"],
-        phoneNumber: 9876543210,
-        paymentMethod: $paymentMethod2,
-    );
+    // Insert sample data for testing
+    try {
+        $sampleDataSQL = "INSERT INTO `user` (username, firstName, lastName, email, password, locationList, phoneNumber, isActive) VALUES
+            ('testuser1', 'Test', 'User1', 'testuser1@example.com', MD5('password1'), '[\"New York\", \"Los Angeles\"]', '1234567890', TRUE),
+            ('testuser2', 'Test', 'User2', 'testuser2@example.com', MD5('password2'), '[\"Chicago\"]', '9876543210', FALSE)";
+        $db->execute($sampleDataSQL);
+        echo "Sample data inserted successfully.<br>";
+    } catch (Exception $e) {
+        echo "Error inserting sample data: " . $e->getMessage() . "<br>";
+    }
 
+    // Fetch and display data for testing
+    try {
+        $users = $db->query("SELECT * FROM `user`");
+        if ($users) {
+            foreach ($users as $user) {
+                echo "UserID: {$user['userID']}, Username: {$user['username']}, Email: {$user['email']}<br>";
+            }
+        } else {
+            echo "No users found.<br>";
+        }
+    } catch (Exception $e) {
+        echo "Error fetching data: " . $e->getMessage() . "<br>";
+    }
 
-    $newEvent->registerObserver($donor1);
-    $newEvent->registerObserver($donor2);
-
-    // echo "Both donors have been registered as observers to the event.\n";
-    // $event->setStatus("The event has been postponed due to to2l damo!");
-    echo"First Additions \n";
-
-    echo "Donor 1 \n";
-    
-    printCampaigns($donor1);
-
-    echo "Donor 2 \n";
-    printCampaigns($donor2);
-    
-    echo"Elfayoom Event\n";
-    // $newEvent->setStatus("Msh tal33eeen fayoom due to to2l dam eldban!");
-
-
-    $donor2->addEvent($newEvent);
-    // echo "Both donors have been registered as observers to the event.\n";
-    // $event->setStatus("The event has been postponed due to 3'aba2!");
-    echo"Second Additions \n";
-
-    echo "Donor 1 \n";
-    
-    printCampaigns($donor1);
-
-    echo "Donor 2 \n";
-    printCampaigns($donor2);
+    // Close the database connection
+    $db->close();
 }
 
+// Run the main function
 main();
-
-
 ?>

@@ -1,7 +1,7 @@
 <?php
 require_once 'db_connection.php';
 
-
+function createTables($conn){
 //USER TABLEEEEEEE
 $sql_user = "CREATE TABLE IF NOT EXISTS `user` (
     `userID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,         
@@ -264,4 +264,6 @@ if ($conn->query($insert_user_sql) === TRUE) {
 
 // Close the connection
 $conn->close();
+
+}
 ?>
