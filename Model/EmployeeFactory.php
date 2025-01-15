@@ -1,6 +1,6 @@
 <?php
 
-require_once '../employee.php';
+require_once 'employee.php';
 require_once 'hr.php';
 require_once 'technical.php';
 require_once 'delivery.php';
@@ -76,6 +76,22 @@ class EmployeeFactory {
                     $workingHours
                 );
                 break;
+
+                case "Instructor":
+                    $employee = new InstructorModel(
+                        $username,
+                        $firstname,
+                        $lastname,
+                        $userID,
+                        $email,
+                        $password,
+                        $location,
+                        $phoneNumber,
+                        $title,
+                        $salary,
+                        $workingHours
+                    );
+                    break;
 
             default:
                 throw new InvalidArgumentException("Invalid Employee Type: $EmployeeType");
