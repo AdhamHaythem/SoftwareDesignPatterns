@@ -7,6 +7,7 @@ class Donation {
     private float $amount;
     private int $donationID;
     private int $donorID;
+    private ?float $previousAmount = null;
 
     public function __construct(float $amount, int $donationID = 0, int $donorID) {
         $this->amount = $amount;
@@ -14,10 +15,17 @@ class Donation {
         $this->donorID = $donorID;
         self::$counter++;
     }
-
-    // Getter and Setter Methods
+    public function setAmount(float $amount): void {
+        $this->previousAmount = $this->amount; 
+        $this->amount = $amount;
+        echo "Setting previous amount to: {$this->previousAmount}\n";
+        echo "Donation updated: {$this->amount}\n";
+    }
     public function amountPaid(float $amount): float {
+        echo "Amount before update: {$this->amount}\n";  
+        $this->previousAmount = $this->amount;
         $this->amount += $amount;
+        echo "Amount after update: {$this->amount}\n";  
         return $this->amount;
     }
 
@@ -39,8 +47,11 @@ class Donation {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): void {
-        $this->amount = $amount;
+
+
+    public function getPreviousAmount(): ?float {
+       // echo "Previous Amount: {$this->previousAmount}\n";
+        return $this->previousAmount; 
     }
 
     // CRUD Operations

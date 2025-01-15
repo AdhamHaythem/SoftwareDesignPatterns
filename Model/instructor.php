@@ -50,12 +50,10 @@ class InstructorModel extends EmployeeModel {
     // Create a new Instructor record in the database
     public static function create($instructor): bool {
         // Check if the provided object is an instance of the expected model
+        $dbConnection = DatabaseConnection::getInstance();
         if (!$instructor instanceof InstructorModel) {
             throw new InvalidArgumentException("Expected instance of InstructorModel");
         }
-    
-        // Get the database connection
-        $dbConnection = UserModel::getDatabaseConnection();
     
         try {
             // 1. Insert into the `user` table
