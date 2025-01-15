@@ -136,7 +136,9 @@ class Admin extends UserModel {
         }
     }
     
-
+    public function getDonationManager(): DonationManager{
+        return $this->donationManager;
+    }
     public static function delete($userID): bool {
         $dbConnection = UserModel::getDatabaseConnection();
     
