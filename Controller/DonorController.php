@@ -83,7 +83,8 @@ class DonorController{
         }
 
         if (isset($_POST['Food'])) {
-            $donation= new Food($_POST['amount'],$_POST['donorId'],$donation);
+            $food = new Food($_Post['weight']);
+            $donation= new FoodAdapter($_POST['donorId'],$donation,$food);
         }
 
         if (isset($_POST['MedicalSupplies'])) {
