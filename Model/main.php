@@ -5,99 +5,99 @@ require_once 'DonorModel.php';
 require_once 'DonationUndoCommand.php';
 require_once 'DonationRedoCommand.php';
 require_once 'db_connection.php';
-//require_once 'ReportGenerator.php';
-//require_once 'InstructorModel.php';
+require_once 'ReportGenerator.php';
+require_once 'InstructorModel.php';
 require_once 'EventUndoCommand.php';
 require_once 'EventRedoCommand.php';
 require_once 'VolunteeringEventModel.php';
 
-//............Main to test Report Generator for Instructor
-
-// function main() {
-
-//     $config = require 'configurations.php';
-
-//     $db = new DatabaseConnection($config);
-
-
-
-//     $instructor = new InstructorModel(
-//         'john_doe',       // username
-//         'John',           // firstname
-//         'Doe',            // lastname
-//         1,                // userID (ensure this is unique)
-//         'john@example.com', // email
-//         'password123',    // password
-//         ['New York', 'USA'], // location (array)
-//         1234567890,       // phoneNumber
-//         'Instructor',     // title
-//         50000,            // salary
-//         40                // workingHours
-//     );
-    
-//     // Add the instructor to the database
-//     if (InstructorModel::create($instructor)) {
-//         echo "Instructor created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create instructor.\n";
-//     }
-
-
-//     $Generator = new ReportGenerator();
-//     $Generator->finalizeReport('Instructor');
-// }
-
-//main();
-
-//...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
+// ............Main to test Report Generator for Instructor
 
 function main() {
-    $donor = new Donor(
-        1, // userID
-        'mariam', // username
-        'mariaam', // firstName
-        'badawy', // lastName
-        'mariambadawy@gmail.com', // email
-        '123456', // password
-        ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
+
+    $config = require 'configurations.php';
+
+    $db = new DatabaseConnection($config);
+
+
+
+    $instructor = new InstructorModel(
+        'john_doe',       // username
+        'John',           // firstname
+        'Doe',            // lastname
+        1,                // userID (ensure this is unique)
+        'john@example.com', // email
+        'password123',    // password
+        ['New York', 'USA'], // location (array)
+        1234567890,       // phoneNumber
+        'Instructor',     // title
+        50000,            // salary
+        40                // workingHours
     );
+    
+    // Add the instructor to the database
+    if (InstructorModel::create($instructor)) {
+        echo "Instructor created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create instructor.\n";
+    }
 
-    // $event = new VolunteeringEventStrategy(
-    //     "Charity Run", // name
-    //     new DateTime('2023-12-01'), // time
-    //     "Central Park", // location
-    //     10, // volunteersNeeded
-    //     1 // eventID
-    // );
- 
-    $event = new CampaignStrategy(
-        1,
-        new DateTime('2023-12-01'), // time
-        "Central Park", // location
-        10, // volunteersNeeded
-        1, // eventID
-        "Charity Run", // name
-        1.0,
-        "Campaignnn",
-        90000.0
-    );
 
-    $donor->setEvent($event);
-
-    $eventJoinCommand = new EventUndoCommand();
-    $donor->setCommand($eventJoinCommand);
-
-    echo "Performing Undo...\n";
-    $donor->undo();
-
-    echo "Performing Redo...\n";
-    $donor->redo();
-
-    echo "Final Events: " . implode(", ", array_map(fn($e) => $e->getName(), $donor->getEvents())) . "\n";
+    $Generator = new ReportGenerator();
+    $Generator->finalizeReport('Instructor');
 }
 
 main();
+
+//...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
+
+// function main() {
+//     $donor = new Donor(
+//         1, // userID
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
+
+//     // $event = new VolunteeringEventStrategy(
+//     //     "Charity Run", // name
+//     //     new DateTime('2023-12-01'), // time
+//     //     "Central Park", // location
+//     //     10, // volunteersNeeded
+//     //     1 // eventID
+//     // );
+ 
+//     $event = new CampaignStrategy(
+//         1,
+//         new DateTime('2023-12-01'), // time
+//         "Central Park", // location
+//         10, // volunteersNeeded
+//         1, // eventID
+//         "Charity Run", // name
+//         1.0,
+//         "Campaignnn",
+//         90000.0
+//     );
+
+//     $donor->setEvent($event);
+
+//     $eventJoinCommand = new EventUndoCommand();
+//     $donor->setCommand($eventJoinCommand);
+
+//     echo "Performing Undo...\n";
+//     $donor->undo();
+
+//     echo "Performing Redo...\n";
+//     $donor->redo();
+
+//     echo "Final Events: " . implode(", ", array_map(fn($e) => $e->getName(), $donor->getEvents())) . "\n";
+// }
+
+// main();
 
 //..................Main to test DonationUndo/RedoCommand
 // function main() {
