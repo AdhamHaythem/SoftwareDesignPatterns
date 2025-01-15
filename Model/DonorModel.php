@@ -442,11 +442,11 @@ class Donor extends UserModel implements IObserver {
         return $this->donationsHistory;
     }
 
-    // public function addDonation(Donation $donation): bool {
-    //     $this->donationsHistory[] = $donation;
-    //     $this->totalDonations += $donation->getAmount();
-    //     return true;
-    // }
+    public function addDonation(Donation $donation): bool {
+        $this->donationsHistory[] = $donation;
+        $this->totalDonations += $donation->getAmount();
+        return true;
+    }
 
     // public function addEvent(Event $event): void {
     //     $this->campaignsJoined[] = $event;

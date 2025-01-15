@@ -49,7 +49,7 @@ require_once 'VolunteeringEventModel.php';
 
 //main();
 
-//...................Main to test EventUndo/RedoCommand
+//...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
 
 function main() {
     $donor = new Donor(
@@ -62,12 +62,25 @@ function main() {
         ['Cairo', 'Dubai'], // location
         '01001449338' // phoneNumber
     );
-    $event = new VolunteeringEventStrategy(
-        "Charity Run", // name
+
+    // $event = new VolunteeringEventStrategy(
+    //     "Charity Run", // name
+    //     new DateTime('2023-12-01'), // time
+    //     "Central Park", // location
+    //     10, // volunteersNeeded
+    //     1 // eventID
+    // );
+ 
+    $event = new CampaignStrategy(
+        1,
         new DateTime('2023-12-01'), // time
         "Central Park", // location
         10, // volunteersNeeded
-        1 // eventID
+        1, // eventID
+        "Charity Run", // name
+        1.0,
+        "Campaignnn",
+        90000.0
     );
 
     $donor->setEvent($event);
