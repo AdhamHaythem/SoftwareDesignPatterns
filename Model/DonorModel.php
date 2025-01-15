@@ -24,6 +24,7 @@ class Donor extends UserModel implements IObserver {
     private ?float $previousAmount = null;
     private ?Donation $donation = null;
     private ?float $previousDonationAmount = null;
+    private ?Event $event = null;
 
     public function __construct(
         int $userID,
@@ -101,13 +102,8 @@ class Donor extends UserModel implements IObserver {
     // In the Donor class
 
     //.....................................................................................................
-    public function setDonation(Donation $donation): void {
-        if ($this->donation !== null) {
-            $this->previousAmount = $this->donation->getAmount();
-        } else {
-            $this->previousAmount = 0.0;
-        }
-        $this->donation = $donation;
+    public function setEvent(Event $event): void {
+        $this->event = $event;
     }
 
     public function setCommand(ICommand $command): void {
@@ -119,6 +115,12 @@ class Donor extends UserModel implements IObserver {
         } elseif ($command instanceof DonationRedoCommand) {
             $command->setDonation($this->donation);
             $command->setNextAmount($this->donation->getAmount());
+        } elseif ($command instanceof EventUndoCommand) {
+            $command->setDonor($this);
+            $command->setEvent($this->event);
+        } elseif ($command instanceof EventRedoCommand) {
+            $command->setDonor($this);
+            $command->setEvent($this->event);
         }
 
         $this->undoStack[] = $command;
@@ -135,6 +137,11 @@ class Donor extends UserModel implements IObserver {
                 $redoCommand = new DonationRedoCommand();
                 $redoCommand->setDonation($this->donation);
                 $redoCommand->setNextAmount($this->donation->getAmount());
+                $this->redoStack[] = $redoCommand;
+            } elseif ($command instanceof EventUndoCommand) {
+                $redoCommand = new EventRedoCommand();
+                $redoCommand->setDonor($this);
+                $redoCommand->setEvent($this->event);
                 $this->redoStack[] = $redoCommand;
             }
 
@@ -153,14 +160,34 @@ class Donor extends UserModel implements IObserver {
             if ($command instanceof DonationRedoCommand) {
                 $undoCommand = new DonationUndoCommand();
                 $undoCommand->setDonation($this->donation);
-                $undoCommand->setPreviousAmount($this->donation->getAmount()); // Set the previous amount
+                $undoCommand->setPreviousAmount($this->donation->getAmount());
+                $this->undoStack[] = $undoCommand;
+            } elseif ($command instanceof EventRedoCommand) {
+                $undoCommand = new EventUndoCommand();
+                $undoCommand->setDonor($this);
+                $undoCommand->setEvent($this->event);
                 $this->undoStack[] = $undoCommand;
             }
 
-            $command->execute(); // Execute the redo command
+            $command->execute();
             echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
         } else {
             echo "Nothing to redo.\n";
+        }
+    }
+
+    public function addEvent(Event $event): void {
+        $this->campaignsJoined[] = $event;
+        echo "Event added: {$event->getName()}\n";
+    }
+
+    public function removeEvent(Event $event): void {
+        $index = array_search($event, $this->campaignsJoined, true);
+        if ($index !== false) {
+            array_splice($this->campaignsJoined, $index, 1);
+            echo "Event removed: {$event->getName()}\n";
+        } else {
+            echo "Event not found in donor's joined events.\n";
         }
     }
 
@@ -421,9 +448,9 @@ class Donor extends UserModel implements IObserver {
     //     return true;
     // }
 
-    public function addEvent(Event $event): void {
-        $this->campaignsJoined[] = $event;
-    }    
+    // public function addEvent(Event $event): void {
+    //     $this->campaignsJoined[] = $event;
+    // }    
 
     public function getEvents(): array {
         return $this->campaignsJoined;
