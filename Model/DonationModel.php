@@ -3,22 +3,28 @@
 require_once 'UserModel.php';
 
 class Donation {
-    private  static int $counter =1;
+    private static int $counter = 1;
     private float $amount;
     private int $donationID;
     private int $donorID;
 
-    public function __construct(float $amount, int $donationID, int $donorID) {
+    public function __construct(float $amount, int $donationID = 0, int $donorID) {
         $this->amount = $amount;
-        $this->donationID = $this->counter;
+        $this->donationID = $donationID === 0 ? self::$counter : $donationID;
         $this->donorID = $donorID;
-        $this->counter++;
+        self::$counter++;
     }
 
     // Getter and Setter Methods
     public function amountPaid(float $amount): float {
         $this->amount += $amount;
         return $this->amount;
+    }
+
+
+    public static function update(Donation $donation): bool {
+        echo "Donation updated: {$donation->getAmount()}\n";
+        return true;
     }
 
     public function getDonorID(): int { 
@@ -70,19 +76,19 @@ class Donation {
     }
 
     // Update
-    public static function update(Donation $donation): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "UPDATE donations SET 
-                    amount = :amount,
-                    donorID = :donorID
-                WHERE donationID = :donationID";
-        $params = [
-            ':amount' => $donation->getAmount(),
-            ':donorID' => $donation->getDonorID(),
-            ':donationID' => $donation->getDonationID()
-        ];
-        return $dbConnection->execute($sql, $params);
-    }
+    // public static function update(Donation $donation): bool {
+    //     $dbConnection = UserModel::getDatabaseConnection();
+    //     $sql = "UPDATE donations SET 
+    //                 amount = :amount,
+    //                 donorID = :donorID
+    //             WHERE donationID = :donationID";
+    //     $params = [
+    //         ':amount' => $donation->getAmount(),
+    //         ':donorID' => $donation->getDonorID(),
+    //         ':donationID' => $donation->getDonationID()
+    //     ];
+    //     return $dbConnection->execute($sql, $params);
+    // }
 
     // Delete
     public static function delete(int $donationID): bool {

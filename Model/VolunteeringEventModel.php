@@ -39,7 +39,7 @@ class VolunteeringEventStrategy extends Event {
     public static function create($object): bool {
 
         $dbConnection=Event::getDatabaseConnection();
-        $Eventsql = "INSERT INTO events (eventID,name,time,location,volunteers_needed,volunteersList) 
+        $Eventsql = "INSERT INTO event (eventID,name,time,location,volunteers_needed,volunteersList) 
         VALUES (?,?,?,?,?,?)";
         $Eventparams = [
             $object->getEventID(),

@@ -1,17 +1,18 @@
 <?php
 
 class DatabaseConnection {
-    private $conn;
+    public $conn;
 
     public function __construct($config) {
-        // Establish connection
         $this->conn = new mysqli($config['DB_HOST'], $config['DB_USER'], $config['DB_PASS'], $config['DB_NAME']);
+        echo($this->conn->connect_error);
 
         // Check for connection errors
         if ($this->conn->connect_error) {
-            die("Connection failed: " . $this->conn->connect_error);
+            throw new Exception("Connection failed: " . $this->conn->connect_error);
         }
-    }
+        
+        }
 
     // Execute a query (used for INSERT, UPDATE, DELETE)
     public function execute($sql, $params = []) {
@@ -30,7 +31,8 @@ class DatabaseConnection {
         $result = $stmt->execute();
 
         if (!$result) {
-            die("Execution failed: " . $stmt->error);
+            //die("Execution failed: " . $stmt->error);
+            throw new Exception("Execution failed: " . $stmt->error);
         }
 
         return $result;
@@ -53,7 +55,8 @@ class DatabaseConnection {
     
         // Execute the statement
         if (!$stmt->execute()) {
-            die("Query execution failed: " . $stmt->error);
+           // die("Query execution failed: " . $stmt->error);
+           throw new Exception("Query failed: " . $stmt->error);
         }
     
         // Determine the type of query

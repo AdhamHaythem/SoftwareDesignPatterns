@@ -18,6 +18,10 @@ class Donor extends UserModel implements IObserver {
     private ?ISubject $eventData;
     private ?Event $eventStrategy;
 
+    private ?ICommand $currentCommand = null;  
+    private array $undoStack = [];  // Stack -> undo commands
+    private array $redoStack = [];   // Stack -> redo commands
+ 
     public function __construct(
         int $userID,
         string $username,
@@ -40,6 +44,34 @@ class Donor extends UserModel implements IObserver {
         $this->paymentMethod = $paymentMethod;
         $this->donorID = self::$counter++;
     }
+
+    public function setCommand(ICommand $command): void {
+        $this->currentCommand = $command;
+        $this->undoStack[] = $command;
+    }
+
+    public function undo(): void {
+        if (count($this->undoStack) > 0) {
+            $command = array_pop($this->undoStack);
+            $command->execute();
+            $this->redoStack[] = $command;
+            echo "Undo executed.\n";
+        } else {
+            echo "Nothing to undo.\n";
+        }
+    }
+
+    public function redo(): void {
+        if (count($this->redoStack) > 0) {
+            $command = array_pop($this->redoStack);
+            $command->execute();
+            $this->undoStack[] = $command;
+            echo "Redo executed.\n";
+        } else {
+            echo "Nothing to redo.\n";
+        }
+    }
+
 
 
     public static function create($donor): bool {
@@ -162,11 +194,11 @@ class Donor extends UserModel implements IObserver {
         return $this->donationsHistory;
     }
 
-    public function addDonation(Donation $donation): bool {
-        $this->donationsHistory[] = $donation;
-        $this->totalDonations += $donation->getAmount();
-        return true;
-    }
+    // public function addDonation(Donation $donation): bool {
+    //     $this->donationsHistory[] = $donation;
+    //     $this->totalDonations += $donation->getAmount();
+    //     return true;
+    // }
 
     public function addEvent(Event $event): void {
         $this->campaignsJoined[] = $event;

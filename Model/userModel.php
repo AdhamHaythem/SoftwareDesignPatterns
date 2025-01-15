@@ -49,28 +49,43 @@ class UserModel implements IMaintainable {
 
     // Create a new user in the database
     public static function create($object): bool {
+        echo("ANA HENAAAAA");
         if (!$object instanceof UserModel) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
-
+    
         $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)";
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE
+                        username = VALUES(username),
+                        firstName = VALUES(firstName),
+                        lastName = VALUES(lastName),
+                        email = VALUES(email),
+                        password = VALUES(password),
+                        locationList = VALUES(locationList),
+                        phoneNumber = VALUES(phoneNumber),
+                        isActive = VALUES(isActive)";
         
         $params = [
-            $object->userID,
+            $object->userID, // Ensure this is not NULL unless auto-increment
             $object->username,
             $object->firstname,
             $object->lastname,
             $object->email,
             password_hash($object->password, PASSWORD_DEFAULT),
-            $object->location,
+            json_encode($object->location), // Convert to JSON if it's an array
             $object->phoneNumber,
             1
         ];
-
-        return self::$dbConnection->execute($userSql, $params);
+    
+        if (!self::$dbConnection->execute($userSql, $params)) {
+            error_log("Failed to execute query: " . self::$dbConnection->getLastError());
+            echo("Failedddddddd henaaaaaaaaaaaaa");
+            return false;
+        }
+        return true;
     }
+    
 
     public static function retrieve($key): ?UserModel {
         $sql = "SELECT * FROM user WHERE userID = :userID";

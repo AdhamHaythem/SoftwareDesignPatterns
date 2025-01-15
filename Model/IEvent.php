@@ -133,7 +133,7 @@ abstract class Event implements IMaintainable, ISubject {
         $dbConnection = Event::getDatabaseConnection();
     
         try {
-            $Eventsql = "INSERT INTO events (eventID, name, time, location, volunteers_needed, volunteersList) 
+            $Eventsql = "INSERT INTO event (eventID, name, time, location, volunteers_needed, volunteersList) 
                          VALUES (?, ?, ?, ?, ?, ?)";
     
             $Eventparams = [
