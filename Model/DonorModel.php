@@ -7,6 +7,7 @@ require_once 'IPaymentStrategy.php';
 require_once 'ISubject.php';
 require_once 'IObserver.php';
 require_once 'IEvent.php';
+require_once 'DonationUndoCommand.php';
 
 class Donor extends UserModel implements IObserver {
     private static int $counter = 1;
@@ -18,10 +19,13 @@ class Donor extends UserModel implements IObserver {
     private ?ISubject $eventData;
     private ?Event $eventStrategy;
 
-    private ?ICommand $currentCommand = null;  
     private array $undoStack = [];  // Stack -> undo commands
-    private array $redoStack = [];   // Stack -> redo commands
- 
+    private array $redoStack = [];  // Stack -> redo commands
+    private ?float $previousAmount = null;
+    private ?Donation $donation = null;
+    private ?float $previousDonationAmount = null;
+    private ?Event $event = null;
+
     public function __construct(
         int $userID,
         string $username,
@@ -31,31 +35,118 @@ class Donor extends UserModel implements IObserver {
         string $password,
         array $location,
         int $phoneNumber,
-        IPaymentStrategy $paymentMethod=null,
-        Event $event=null
+        IPaymentStrategy $paymentMethod = null,
+        Event $event = null
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID =self::$counter;
+        $this->donorID = self::$counter++;
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         if ($event !== null) {
             $this->campaignsJoined[] = $event;
         }
         $this->paymentMethod = $paymentMethod;
-        $this->donorID = self::$counter++;
+    }
+
+    //WORKEDDDDDDDD WITH DONATION AND AMOUNT AS A PARAMETER
+
+    // public function setCommand(ICommand $command): void {
+    //     echo "Executing command...\n";
+    //     $command->execute();
+    //     $this->undoStack[] = $command;
+    //     $this->redoStack = []; // Clear redo stack after a new command
+    //     echo "Command executed and added to undo stack. Current undo stack size: " . count($this->undoStack) . "\n";
+    // }
+
+    // public function undo(): void {
+    //     if (count($this->undoStack) > 0) {
+    //         $command = array_pop($this->undoStack);
+    //         echo "Undoing last command...\n";
+    
+    //         if ($command instanceof DonationUndoCommand) {
+    //             $redoCommand = new DonationRedoCommand($command->getDonation(), $command->getAmount()); //Reverseeeee and put in  stack
+    //         } else {
+    //             echo "Command type not recognized for undo.\n";
+    //             return;
+    //         }
+    
+    //         $command->execute(); 
+    //         $this->redoStack[] = $redoCommand;
+    
+    //         echo "Undo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+    //     } else {
+    //         echo "Nothing to undo.\n";
+    //     }
+    // }
+    
+    // public function redo(): void {
+    //     if (count($this->redoStack) > 0) {
+    //         $command = array_pop($this->redoStack);
+    //         echo "Redoing last undone command...\n";
+     
+    //         if ($command instanceof DonationRedoCommand) {
+    //             $undoCommand = new DonationUndoCommand($command->getDonation(), $command->getAmount()); //Reverseeeee and put in undo stack
+    //         } else {
+    //             echo "Command type not recognized for redo.\n";
+    //             return;
+    //         }
+    
+    //         $command->execute();
+    //         $this->undoStack[] = $undoCommand;
+    
+    //         echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+    //     } else {
+    //         echo "Nothing to redo.\n";
+    //     }
+    // }
+    // In the Donor class
+
+    //.....................................................................................................
+    public function setEvent(Event $event): void {
+        $this->event = $event;
     }
 
     public function setCommand(ICommand $command): void {
-        $this->currentCommand = $command;
+        echo "Setting up command...\n";
+
+        if ($command instanceof DonationUndoCommand) {
+            $command->setDonation($this->donation);
+            $command->setPreviousAmount($this->previousAmount);
+        } elseif ($command instanceof DonationRedoCommand) {
+            $command->setDonation($this->donation);
+            $command->setNextAmount($this->donation->getAmount());
+        } elseif ($command instanceof EventUndoCommand) {
+            $command->setDonor($this);
+            $command->setEvent($this->event);
+        } elseif ($command instanceof EventRedoCommand) {
+            $command->setDonor($this);
+            $command->setEvent($this->event);
+        }
+
         $this->undoStack[] = $command;
+        $this->redoStack = [];
+        echo "Command added to undo stack. Current undo stack size: " . count($this->undoStack) . "\n";
     }
 
     public function undo(): void {
         if (count($this->undoStack) > 0) {
             $command = array_pop($this->undoStack);
+            echo "Undoing last command...\n";
+
+            if ($command instanceof DonationUndoCommand) {
+                $redoCommand = new DonationRedoCommand();
+                $redoCommand->setDonation($this->donation);
+                $redoCommand->setNextAmount($this->donation->getAmount());
+                $this->redoStack[] = $redoCommand;
+            } elseif ($command instanceof EventUndoCommand) {
+                $redoCommand = new EventRedoCommand();
+                $redoCommand->setDonor($this);
+                $redoCommand->setEvent($this->event);
+                $this->redoStack[] = $redoCommand;
+            }
+
             $command->execute();
-            $this->redoStack[] = $command;
-            echo "Undo executed.\n";
+            echo "Undo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
         } else {
             echo "Nothing to undo.\n";
         }
@@ -64,13 +155,170 @@ class Donor extends UserModel implements IObserver {
     public function redo(): void {
         if (count($this->redoStack) > 0) {
             $command = array_pop($this->redoStack);
+            echo "Redoing last undone command...\n";
+
+            if ($command instanceof DonationRedoCommand) {
+                $undoCommand = new DonationUndoCommand();
+                $undoCommand->setDonation($this->donation);
+                $undoCommand->setPreviousAmount($this->donation->getAmount());
+                $this->undoStack[] = $undoCommand;
+            } elseif ($command instanceof EventRedoCommand) {
+                $undoCommand = new EventUndoCommand();
+                $undoCommand->setDonor($this);
+                $undoCommand->setEvent($this->event);
+                $this->undoStack[] = $undoCommand;
+            }
+
             $command->execute();
-            $this->undoStack[] = $command;
-            echo "Redo executed.\n";
+            echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
         } else {
             echo "Nothing to redo.\n";
         }
     }
+
+    public function addEvent(Event $event): void {
+        $this->campaignsJoined[] = $event;
+        echo "Event added: {$event->getName()}\n";
+    }
+
+    public function removeEvent(Event $event): void {
+        $index = array_search($event, $this->campaignsJoined, true);
+        if ($index !== false) {
+            array_splice($this->campaignsJoined, $index, 1);
+            echo "Event removed: {$event->getName()}\n";
+        } else {
+            echo "Event not found in donor's joined events.\n";
+        }
+    }
+
+    public function getDonation(): ?Donation {
+        return $this->donation;
+    }
+
+    public function getPreviousDonationAmount(): float {
+        return $this->previousAmount ?? 0.0;
+
+    }
+
+    //......................................................................................................
+
+    // public function getPreviousDonationAmount(): ?float {
+    //     return $this->previousDonationAmount;  // Return the saved previous donation amount
+    // }
+
+    // public function setDonation(Donation $donation): void {
+    //     $this->donation = $donation;
+    //     $this->previousDonationAmount = $donation->getAmount();  // Save the current amount before any changes
+    // }
+
+    // // Get the donation amount
+    // public function getDonation(): ?Donation {
+    //     return $this->donation;
+    // }
+
+    // // Command methods
+    // public function setCommand(ICommand $command): void {
+    //     $command->setDonor($this);
+    //     echo "Executing command...\n";
+    //     $command->execute();  // No parameters passed
+    //     $this->undoStack[] = $command;
+    //     $this->redoStack = [];
+    //     echo "Command executed and added to undo stack. Current undo stack size: " . count($this->undoStack) . "\n";
+    // }
+
+    // public function undo(): void {
+    //     if (count($this->undoStack) > 0) {
+    //         $command = array_pop($this->undoStack);
+    //         echo "Undoing last command...\n";
+
+    //         if ($command instanceof DonationUndoCommand) {
+    //             $redoCommand = new DonationRedoCommand();  // Prepare redo command
+    //         } else {
+    //             echo "Command type not recognized for undo.\n";
+    //             return;
+    //         }
+
+    //         $command->execute();  // Execute without parameters
+    //         $this->redoStack[] = $redoCommand;
+    //         echo "Undo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+    //     } else {
+    //         echo "Nothing to undo.\n";
+    //     }
+    // }
+
+    // public function redo(): void {
+    //     if (count($this->redoStack) > 0) {
+    //         $command = array_pop($this->redoStack);
+    //         echo "Redoing last undone command...\n";
+
+    //         if ($command instanceof DonationRedoCommand) {
+    //             $undoCommand = new DonationUndoCommand();  // Prepare undo command
+    //         } else {
+    //             echo "Command type not recognized for redo.\n";
+    //             return;
+    //         }
+
+    //         $command->execute();  // Execute without parameters
+    //         $this->undoStack[] = $undoCommand;
+    //         echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+    //     } else {
+    //         echo "Nothing to redo.\n";
+    //     }
+    // }
+    
+
+    //..................sha8aaaaaaaaaaal bas mn 8er access undo/redo fl donor
+
+
+
+    // public function addDonation(Donation $donation): void {
+    //     if (count($this->donationsHistory) > 0) {
+    //         $this->previousAmount = $this->donationsHistory[count($this->donationsHistory) - 1]->getAmount();
+    //     }
+
+    //     $this->donationsHistory[] = $donation;
+    // }
+
+    // public function getPreviousAmount(): ?float {
+    //     return $this->previousAmount;  // Return the last saved amount
+    // }
+
+    // public function getCurrentAmount(): float {
+    //     return end($this->donationsHistory)->getAmount();  // Return the last donation amount
+    // }
+
+    // public function undo(): void {
+    //     if (count($this->undoStack) > 0) {
+        
+    //         $lastDonation = array_pop($this->undoStack);
+    //         $this->redoStack[] = $lastDonation;
+    //         echo "Undo: Donation amount set to " . $lastDonation . "\n";
+    //     } else {
+    //         echo "Nothing to undo.\n";
+    //     }
+    // }
+
+ 
+    // public function redo(): void {
+    //     if (count($this->redoStack) > 0) {
+    //         // Retrieve last undone donation
+    //         $redoAmount = array_pop($this->redoStack);
+    //         $this->donationsHistory[] = $redoAmount;
+    //         echo "Redo: Donation amount set to " . $redoAmount . "\n";
+    //     } else {
+    //         echo "Nothing to redo.\n";
+    //     }
+    // }
+
+    // public function getPreviousDonationAmount(): float {
+    //     return end($this->donationsHistory); // Get last amount in the history
+    // }
+
+    // public function setCommand(ICommand $command): void {
+    //     echo "Executing command...\n";
+    //     $command->execute(); // Just call execute with no parameters
+        
+    // }
 
 
 
@@ -194,15 +442,15 @@ class Donor extends UserModel implements IObserver {
         return $this->donationsHistory;
     }
 
-    // public function addDonation(Donation $donation): bool {
-    //     $this->donationsHistory[] = $donation;
-    //     $this->totalDonations += $donation->getAmount();
-    //     return true;
-    // }
+    public function addDonation(Donation $donation): bool {
+        $this->donationsHistory[] = $donation;
+        $this->totalDonations += $donation->getAmount();
+        return true;
+    }
 
-    public function addEvent(Event $event): void {
-        $this->campaignsJoined[] = $event;
-    }    
+    // public function addEvent(Event $event): void {
+    //     $this->campaignsJoined[] = $event;
+    // }    
 
     public function getEvents(): array {
         return $this->campaignsJoined;

@@ -47,11 +47,11 @@ if (isset($_POST['viewDonationStatistics'])) {
     $adminController->viewDonationStatistics($admin);
 }
 
-if(isset($_Post['DonationState']))
+if(isset($_POST['DonationState']))
 {
-    if(!empty($_post['donationID']))
+    if(!empty($_POST['donationID']))
     {
-    $adminController->changeState($_post['donationID']);
+    $adminController->changeState($_POST['donationID']);
     }
 }
 
