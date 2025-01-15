@@ -40,6 +40,22 @@ class DonorController{
         return true;
     }
 
+    public function undoDonation($Id)
+    {
+        $donationundo = new DonationUndoCommand();
+        $donor = Donor::retrieve($Id);
+        $donor->setCommand($donationundo);
+        $donor->undo();
+    }
+
+    public function redoDonation($Id)
+    {
+        $donationredo = new DonationRedoCommand();
+        $donor = Donor::retrieve($Id);
+        $donor->setCommand($donationredo);
+        $donor->redo();
+    }
+
 }
 
     $donorController= new DonorController();
@@ -77,8 +93,28 @@ class DonorController{
         if (isset($_POST['CashDonation'])) {
             $donation= new CashDonation($_POST['amount'],$_POST['donorId'],$donation);
         }
+        $review = new UnderReview();
+        $donation->setSate($review);
+        Donation::create($donation);
+    }
 
-        $donation->amountPaid($_POST['amount']);
+    if(isset($_POST['changeDonation']))
+    {
+        if(isset($_POST['undo']))
+        {
+            if(!empty($_post['donorID']))
+            {
+                $donorController->undoDonation($_post['donorID']);
+            }
+            
+        }
+        if(isset($_POST['redo']))
+        {
+            if(!empty($_post['donorID']))
+            {
+                $donorController->redoDonation($_post['donorID']);
+            }
+        }
     }
 
     if (isset($_POST['setPayment'])) {

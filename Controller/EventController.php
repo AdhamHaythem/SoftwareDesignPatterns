@@ -84,6 +84,23 @@ class EventController {
     public function deleteVolunteeringEvent(int $key): bool {
         return VolunteeringEventStrategy::delete($key);
     }
+
+    public function undoEventJoin(int $Id)
+    {
+        $eventUndoCommand = new EventUndoCommand();
+        $donor = Donor::retrieve($Id);
+        $donor->setCommand($eventUndoCommand);
+        $donor->undo();
+    }
+
+    public function redoEventJoin(int $Id)
+    {
+        $eventRedoCommand = new EventRedoCommand();
+        $donor = Donor::retrieve($Id);
+        $donor->setCommand($eventRedoCommand);
+        $donor->redo();
+    }
+
 }
 
 $eventController = new EventController();
@@ -175,7 +192,7 @@ if (isset($_POST['updateEvent'])) {
 
     if (!empty($_POST['eventId'])) {
         if (isset($_POST['eventName'])) {
-            $event->setEventName($_POST['eventName']);
+            $event->setName($_POST['eventName']);
         }
         if (isset($_POST['volunteers_needed'])) {
             $event->setVolunteersNeeded($_POST['volunteers_needed']);
@@ -210,6 +227,23 @@ if (isset($_POST['deleteCampaign'])) {
     }
     exit;
 }
+
+
+if (isset($_POST['undoEvent'])) {
+    if(!empty($_post['donorID']))
+    {
+        $eventController->undoEventJoin($_post['donorID']);
+    }
+}
+
+
+if (isset($_POST['redoEvent'])) {
+    if(!empty($_post['donorID']))
+    {
+        $eventController->redoEventJoin($_post['donorID']);
+    }
+}
+
 
 if (isset($_POST['deleteVolunteeringEvent'])) {
     if (!empty($_POST['eventId'])) {

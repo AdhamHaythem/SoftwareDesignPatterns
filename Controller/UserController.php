@@ -21,9 +21,10 @@ class UserController{
         Admin::create($admin);
     }
 
-    function createEmployee($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours)
+    function createEmployee($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours,$vehicleType,$skills,$certifications,$EmployeeType)
     {
-        $employee = new EmployeeModel($username,$firstname,$lastname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours);
+        $factory = new EmployeeFactory();
+        $employee = $factory->createEmployee($username,$firstname,$lastname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours,$vehicleType,$skills,$certifications,$EmployeeType);
         EmployeeModel::create($employee);
     }
 
@@ -109,7 +110,25 @@ elseif(isset($_POST['Employee']))
     && !empty($_POST['salary'])&& !empty($_POST['workingHours'])
 )
     {
-        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours']);
+    if(isset($_POST["HR"]))
+    {
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"HR");
+    }
+
+        if(isset($_POST["Delivery"]))
+    {
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],"Car",null,null,"Delivery");
+    }
+
+        if(isset($_POST["Technical"]))
+    {
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,[1,2,3],[1,2,3],"Technical");
+    }
+
+        if(isset($_POST["Instructor"]))
+    {
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"Instructor");
+    }
     }
 }
     return 0;
