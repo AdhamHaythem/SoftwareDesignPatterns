@@ -11,6 +11,7 @@ class EventView
             <title>Event Information</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
+            <link rel="stylesheet" href="style3.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
         </head>
         <body>
@@ -33,7 +34,6 @@ class EventView
             <script>
                 function openModal(eventName) {
                     document.getElementById("eventModal").style.display = "block";
-                    // Store event name for use in loading status or report
                     sessionStorage.setItem("selectedEvent", eventName);
                 }
 
@@ -47,20 +47,26 @@ class EventView
     }
 
     public function displayEventReport($event)
-    {
-        echo '<div class="event-report">';
-        echo '<h2>Event Report: ' . $event->name . '</h2>';
-        echo '<p><strong>Date:</strong> ' . $event->date . '</p>';
-        echo '<p><strong>Location:</strong> ' . $event->location . '</p>';
-        echo '<p><strong>Description:</strong> ' . $event->description . '</p>';
-        echo '<p><strong>Total Donations:</strong> ' . $event->totalDonations . '</p>';
-        echo '</div>';
-    }
+{
+    echo '<div class="container">
+            <section>
+                <div class="lesson-details">
+                    <h2>Event Report: ' . $event->name . '</h2>
+                    <p><strong>Date:</strong> ' . $event->date . '</p>
+                    <p><strong>Location:</strong> ' . $event->location . '</p>
+                    <p><strong>Description:</strong> ' . $event->description . '</p>
+                    <p><strong>Total Donations:</strong> $' . $event->totalDonations . '</p>
+                </div>
+            </section>
+        </div>';
+}
+
 }
 
 // Usage example
 $eventView = new EventView();
 $eventView->EventViewDetails("Sample Data");
+$eventView->displayEventReport("ll");
 
 
 ?>

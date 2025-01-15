@@ -14,7 +14,7 @@ class UserView
         </head>
         <body>
             <nav>
-                <label class="logo">Engedny</label>
+                <label class="logo">Donation</label>
                 <ul>
                     <li><a href="#" onclick="loadHome()">Home</a></li>
                     <li><a href="#" onclick="displayLogin()">sign in</a></li>
@@ -23,7 +23,7 @@ class UserView
             </nav>
             <div class="container">
                 <div id="home">
-                    <h2>Welcome to Engedny website</h2>
+                    <h2>Welcome to Donation website</h2>
                     <img src="assets\donation.jpg" alt="Welcome Image" style="max-width:100%;">
                 </div>
             </div>

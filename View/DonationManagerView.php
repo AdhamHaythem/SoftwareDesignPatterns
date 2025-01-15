@@ -55,7 +55,7 @@ class DonationManagerView
         echo '<div class="donations-statistics">';
         echo '<h2>Donation Statistics</h2>';
         foreach ($statistics as $statistic) {
-            echo '<li>Donation: ' . htmlspecialchars($statistic->amount) . ' - Statistics: ' . htmlspecialchars($statistic->statistic) . '</li>';
+            echo '<li>Donation: ' . $statistic->amount . ' - Statistics: ' . $statistic->statistic . '</li>';
         }
         echo '</div>';
 
@@ -65,7 +65,7 @@ class DonationManagerView
     {
         echo '<div class="campaign-details">';
         echo '<h2>Campaign Details</h2>';
-        echo '<p>Details about campaign: ' . htmlspecialchars($campaignID) . '</p>';
+        echo '<p>Details about campaign: ' . $campaignID . '</p>';
         echo '</div>';
     }
 

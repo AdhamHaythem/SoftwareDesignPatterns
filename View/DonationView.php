@@ -46,10 +46,9 @@ class DonationView
         </head>
         <body>
             <nav>
-                <label class="logo">Campaign Manager</label>
+                <label class="logo">Donation Payment</label>
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Campaigns</a></li>
                     <li><a href="#">Donations</a></li>
                 </ul>
             </nav>
@@ -58,7 +57,6 @@ class DonationView
                     <div class="donation-details">
                         <h2>Donation Details</h2>
                         <ul>
-                            <li><strong>Donation ID:</strong> ' . $donation->id . '</li>
                             <li><strong>Amount:</strong> ' . $donation->amount . '</li>
                             <li><strong>Date:</strong> ' . $donation->date . '</li>
                             <li><strong>Donor Name:</strong> ' . $donation->donorName . '</li>
@@ -70,7 +68,7 @@ class DonationView
             
             <script>
                 function makePayment() {
-                    alert("Payment process initiated for Donation ID: ' . $donation->id . '");
+                    alert("Payment process initiated for Donation: ' . $donation->donorName . '");
                     // Add actual payment handling logic here
                 }
             </script>
@@ -83,10 +81,9 @@ class DonationView
 $donationView = new DonationView();
 $donationView->DonationViewDetails("Sample Data");
 $donation = (object)[
-    'id' => 1,
     'amount' => 10000,
     'date' => '2024-01-01',
-    'donorName' => 'la',
+    'donorName' => 'Medhat',
 ];
 $donationView->displayDonationDetails($donation);
 ?>
