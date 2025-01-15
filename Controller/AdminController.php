@@ -20,6 +20,12 @@ class AdminController {
         $statistics = $admin->viewDonationStatistics();
         $view->displayDonationStatistics($statistics);
     }
+
+    public function changeState($donationId)
+    {
+        $donation = Donation::retrieve($donationId);
+        $donation->handleChange();
+    }
 }
 
 $adminController = new AdminController();
@@ -40,4 +46,14 @@ if (isset($_POST['viewDonationStatistics'])) {
     $admin = Admin::retrieve($_POST['AdminId']);
     $adminController->viewDonationStatistics($admin);
 }
+
+if(isset($_Post['DonationState']))
+{
+    if(!empty($_post['donationID']))
+    {
+    $adminController->changeState($_post['donationID']);
+    }
+}
+
+
 ?>
