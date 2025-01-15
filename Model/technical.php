@@ -44,7 +44,6 @@ class technicalModel extends EmployeeModel {
         if (!$tech instanceof technicalModel) {
             throw new InvalidArgumentException("Expected instance of tech");
         }
-    
         $userSql = "INSERT INTO user (username, firstname, lastname, userID, email, password, locationList, phoneNumber, isActive)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
@@ -60,7 +59,7 @@ class technicalModel extends EmployeeModel {
             1 
         ];
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $userCreated = $dbConnection->execute($userSql, $userParams);
     
         $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)

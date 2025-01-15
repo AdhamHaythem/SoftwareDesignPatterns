@@ -5,15 +5,16 @@ require_once 'DonorModel.php';
 require_once 'DonationUndoCommand.php';
 require_once 'DonationRedoCommand.php';
 require_once 'db_connection.php';
+require_once 'reportGeneratingTemplate.php';
 require_once 'ReportGenerator.php';
-require_once 'InstructorModel.php';
-require_once 'DatabaseConnection.php';
+require_once 'instructor.php';
+require_once 'db_connection.php';
 
 function main() {
 
     $config = require 'configurations.php';
 
-    $db = new DatabaseConnection($config);
+    $db = DatabaseConnection::getInstance();
 
 
 

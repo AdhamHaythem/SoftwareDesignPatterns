@@ -75,7 +75,7 @@ class Donor extends UserModel implements IObserver {
 
 
     public static function create($donor): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
             // 1. Insert into `user` table
