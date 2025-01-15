@@ -95,7 +95,7 @@ class DonorController{
             $donation= new CashDonation($_POST['amount'],$_POST['donorId'],$donation);
         }
         $review = new UnderReview();
-        $donation->setSate($review);
+        $donation->setState($review);
         Donation::create($donation);
     }
 
@@ -105,7 +105,7 @@ class DonorController{
         {
             if(!empty($_post['donorID']))
             {
-                $donorController->undoDonation($_post['donorID']);
+                $donorController->undoDonation($_POST['donorID']);
             }
             
         }
@@ -113,7 +113,7 @@ class DonorController{
         {
             if(!empty($_post['donorID']))
             {
-                $donorController->redoDonation($_post['donorID']);
+                $donorController->redoDonation($_POST['donorID']);
             }
         }
     }
