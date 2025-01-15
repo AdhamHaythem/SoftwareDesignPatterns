@@ -230,17 +230,17 @@ if (isset($_POST['deleteCampaign'])) {
 
 
 if (isset($_POST['undoEvent'])) {
-    if(!empty($_post['donorID']))
+    if(!empty($_POST['donorID']))
     {
-        $eventController->undoEventJoin($_post['donorID']);
+        $eventController->undoEventJoin($_POST['donorID']);
     }
 }
 
 
 if (isset($_POST['redoEvent'])) {
-    if(!empty($_post['donorID']))
+    if(!empty($_POST['donorID']))
     {
-        $eventController->redoEventJoin($_post['donorID']);
+        $eventController->redoEventJoin($_POST['donorID']);
     }
 }
 
