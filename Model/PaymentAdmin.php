@@ -7,6 +7,8 @@ require_once 'DonorModel.php';
 
 class PaymentAdmin {
     private array $transactions = [];
+    private $visaTransactions = new SplFixedArray(0);
+    private $cashTransactions = new SplFixedArray(0);
     private static int $transactionCounter = 0;
 
     public function processPayment(Donor $donor, float $amount): bool {
