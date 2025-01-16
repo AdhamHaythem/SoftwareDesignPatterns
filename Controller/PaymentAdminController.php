@@ -11,97 +11,47 @@ class PaymentController {
     }
 
     // Handle processing payment
-    public function handleProcessPayment(Donor $donor, float $amount): void {
+    public function handleProcessPayment(Donor $donor, float $amount): bool {
         try {
-            $success = $this->paymentAdmin->processPayment($donor, $amount);
-
-            if ($success) {
-                echo "Payment of $amount processed successfully for Donor ID: " . $donor->getDonorID() . "\\n";
-            } else {
-                echo "Payment failed for Donor ID: " . $donor->getDonorID() . "\\n";
-            }
+            return $this->paymentAdmin->processPayment($donor, $amount);
         } catch (RuntimeException $e) {
-            echo "Error: " . $e->getMessage() . "\\n";
+            throw new RuntimeException($e->getMessage());
         }
     }
 
     // List all transactions
-    public function listTransactions(): void {
-        $transactions = $this->paymentAdmin->getTransactions();
-
-        if (empty($transactions)) {
-            echo "No transactions recorded.\\n";
-            return;
-        }
-
-        foreach ($transactions as $transaction) {
-            echo "Transaction ID: " . $transaction['transactionID'] . ", ";
-            echo "Donor ID: " . $transaction['donorID'] . ", ";
-            echo "Payment Method: " . $transaction['strategy'] . ", ";
-            echo "Amount: " . $transaction['amount'] . ", ";
-            echo "Status: " . $transaction['status'] . ", ";
-            echo "Timestamp: " . $transaction['timestamp'] . "\\n";
-        }
+    public function listTransactions(): array {
+        return $this->paymentAdmin->getTransactions();
     }
 
     // List transactions by donor ID
-    public function listTransactionsByDonor(int $donorID): void {
-        $transactions = $this->paymentAdmin->getTransactionsByDonor($donorID);
-
-        if (empty($transactions)) {
-            echo "No transactions recorded for Donor ID: $donorID.\\n";
-            return;
-        }
-
-        foreach ($transactions as $transaction) {
-            echo "Transaction ID: " . $transaction['transactionID'] . ", ";
-            echo "Amount: " . $transaction['amount'] . ", ";
-            echo "Status: " . $transaction['status'] . ", ";
-            echo "Timestamp: " . $transaction['timestamp'] . "\\n";
-        }
+    public function listTransactionsByDonor(int $donorID): array {
+        return $this->paymentAdmin->getTransactionsByDonor($donorID);
     }
 
     // Get a transaction by transaction ID
-    public function getTransactionByID(int $transactionID): void {
-        $transaction = $this->paymentAdmin->getTransactionByID($transactionID);
-
-        if ($transaction === null) {
-            echo "Transaction ID: $transactionID not found.\\n";
-            return;
-        }
-
-        echo "Transaction Details:\\n";
-        echo "Donor ID: " . $transaction['donorID'] . "\\n";
-        echo "Payment Method: " . $transaction['strategy'] . "\\n";
-        echo "Amount: " . $transaction['amount'] . "\\n";
-        echo "Status: " . $transaction['status'] . "\\n";
-        echo "Timestamp: " . $transaction['timestamp'] . "\\n";
+    public function getTransactionByID(int $transactionID): ?array {
+        return $this->paymentAdmin->getTransactionByID($transactionID);
     }
 
     // Clear all transactions
     public function clearTransactions(): void {
         $this->paymentAdmin->clearTransactions();
-        echo "All transactions have been cleared.\\n";
     }
 
     // Calculate total fees for Visa payments
-    public function calculateTotalFees(): void {
-        $totalFees = $this->paymentAdmin->calculateTotalFees();
-        echo "Total fees for Visa transactions: $totalFees\\n";
+    public function calculateTotalFees(): float {
+        return $this->paymentAdmin->calculateTotalFees();
     }
 
     // Refund a transaction by transaction ID
-    public function refundTransaction(int $transactionID): void {
+    public function refundTransaction(int $transactionID): bool {
         try {
-            $success = $this->paymentAdmin->refundTransaction($transactionID);
-
-            if ($success) {
-                echo "Transaction ID: $transactionID has been refunded successfully.\\n";
-            }
+            return $this->paymentAdmin->refundTransaction($transactionID);
         } catch (InvalidArgumentException $e) {
-            echo "Error: " . $e->getMessage() . "\\n";
+            throw new InvalidArgumentException($e->getMessage());
         } catch (RuntimeException $e) {
-            echo "Error: " . $e->getMessage() . "\\n";
+            throw new RuntimeException($e->getMessage());
         }
     }
 }
@@ -112,34 +62,39 @@ $PaymentAdminController = new PaymentController();
 if (isset($_POST['HandlePayment'])) {
     if (!empty($_POST["donorID"]) && !empty($_POST["amount"])) {
         $donor = Donor::retrieve($_POST['donorID']);
-        $PaymentAdminController->handleProcessPayment($donor, (float)$_POST['amount']);
+        $success = $PaymentAdminController->handleProcessPayment($donor, (float)$_POST['amount']);
+        // Handle success or failure in the caller
     }
 }
 
 if (isset($_POST['ListTransactions'])) {
-    $PaymentAdminController->listTransactions();
+    $transactions = $PaymentAdminController->listTransactions();
+    // Handle transactions array in the caller
 }
 
 if (isset($_POST['ListTransactionsByDonor']) && !empty($_POST['donorID'])) {
-    $PaymentAdminController->listTransactionsByDonor((int)$_POST['donorID']);
+    $transactions = $PaymentAdminController->listTransactionsByDonor((int)$_POST['donorID']);
+    // Handle transactions array in the caller
 }
 
 if (isset($_POST['GetTransactionByID']) && !empty($_POST['transactionID'])) {
-    $PaymentAdminController->getTransactionByID((int)$_POST['transactionID']);
+    $transaction = $PaymentAdminController->getTransactionByID((int)$_POST['transactionID']);
+    // Handle transaction array in the caller
 }
 
 if (isset($_POST['ClearTransactions'])) {
     $PaymentAdminController->clearTransactions();
+    // Handle confirmation in the caller
 }
 
 if (isset($_POST['CalculateFees'])) {
-    $PaymentAdminController->calculateTotalFees();
+    $totalFees = $PaymentAdminController->calculateTotalFees();
+    // Handle total fees in the caller
 }
 
 if (isset($_POST['RefundTransaction']) && !empty($_POST['transactionID'])) {
-    $PaymentAdminController->refundTransaction((int)$_POST['transactionID']);
+    $success = $PaymentAdminController->refundTransaction((int)$_POST['transactionID']);
+    // Handle success or failure in the caller
 }
 
 ?>
-
-
