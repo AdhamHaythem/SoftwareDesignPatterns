@@ -7,11 +7,11 @@ abstract class MyIterator {
         $this->array = $array;
         $this->position = 0;
     }
-    abstract public function rewind();
-    abstract public function current();
-    abstract public function key();
-    abstract public function next();
-    abstract public function valid();
+    abstract public function rewind(): void;
+    abstract public function current(): mixed;
+    abstract public function key(): int;
+    abstract public function next(): mixed;
+    abstract public function valid(): bool;
 }
 
 ?>

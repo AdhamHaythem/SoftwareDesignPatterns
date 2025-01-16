@@ -12,15 +12,15 @@ class TransactionsIterator extends MyIterator {
         $this->position = 0;
     }
 
-    public function current() {
+    public function current(): mixed{
         return $this->transactions[$this->position];
     }
 
-    public function key() {
+    public function key(): int {
         return $this->position;
     }
 
-    public function next(){
+    public function next(): mixed{
         return $this->transactions[++$this->position];
     }
 
