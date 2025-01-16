@@ -7,6 +7,10 @@ require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
  require_once "../View/UserView.php";
 
+ require_once '../emailSetup/config.php';
+ 
+require 'vendor/autoload.php'; 
+
 class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
@@ -28,12 +32,31 @@ class UserController{
         EmployeeModel::create($employee);
     }
 
+    function sendLoginMail(Donor $donor){
+        $email = new \SendGrid\Mail\Mail(); 
+        $email->setFrom(From);
+        $email->setSubject("Account Login");
+        $email->addTo($donor->getEmail());
+        $email->addContent("text/plain", "You Have just logged in");
+        $email->addContent(
+            "text/html", "<strong>You Have just logged in</strong>"
+        );
+        $sendgrid = new \SendGrid(SENDGRID_API_KEY);
+        try {
+            $response = $sendgrid->send($email);
+            // print $response->statusCode() . "\n";
+            // print_r($response->headers());
+            // print $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: '. $e->getMessage() ."\n";
+        }
+}
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
         $view = new DonorView();
         $view->displayDonorProfile($donor);
-
+        $this->sendLoginMail($donor);
     }
 
     function retrieveuser($userId)
