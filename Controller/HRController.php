@@ -17,4 +17,5 @@ class HRController {
         $hr = HRModel::retrieve($_POST['userId']);
         $hrController->getReports($hr);
     } 
+    
 ?>
