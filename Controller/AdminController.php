@@ -8,16 +8,23 @@ class AdminController {
         $admin -> manageUsers($userID);
     }
 
-    public function generateReports(Admin $admin): string {
+    public function generateReports(Admin $admin,$id): string {
         $view = new AdminView();
+        $proxy= new ReportsGenerationProxy("admin",new ReportGenerator());
         $reports = $admin->generateReports();
+        $results= [];
+        $finalizedReports= $proxy->finalizeReport($id,$results);
         $view->displayReports($reports);
         return $reports;
     }
 
-    public function viewDonationStatistics(Admin $admin): void {
+    public function viewDonationStatistics(Admin $admin,$id): void {
         $view = new AdminView();
         $statistics = $admin->viewDonationStatistics();
+        $proxy= new ReportsGenerationProxy("admin",new statisticsGenerator());
+        $reports = $admin->generateReports();
+        $results= [];
+        $finalizedReports= $proxy->finalizeReport($id,$results);
         $view->displayDonationStatistics($statistics);
     }
 
@@ -39,12 +46,12 @@ if (isset($_POST['manageUsers'])) {
 
 if (isset($_POST['generateReports'])) {
     $admin = Admin::retrieve($_POST['AdminId']);
-    $adminController->generateReports($admin);
+    $adminController->generateReports($admin,$_POST['id']);
 }
 
 if (isset($_POST['viewDonationStatistics'])) {
     $admin = Admin::retrieve($_POST['AdminId']);
-    $adminController->viewDonationStatistics($admin);
+    $adminController->viewDonationStatistics($admin,$_POST['id']);
 }
 
 if(isset($_POST['DonationState']))
