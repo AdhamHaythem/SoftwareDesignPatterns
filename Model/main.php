@@ -217,4 +217,43 @@ main();
 
 //main();
 
+ //.......................Main To test stateeeeee
+//  function main() {
+  
+//     $donation = new Donation(100.0, 0, 1);
+//     echo "Donation created with ID: {$donation->getDonationID()}\n";
+//     $donation->handleChange();  // Output: Donation is under review.
+//     $donation->handleChange();  // Output: Donation is in progress.
+//     $donation->handleChange();  // Output: Donation is paid.
+
+//     $donation->amountPaid(50.0);
+//     $donation->setState(new UnderReviewState());
+//     $donation->handleChange();
+
+    //databaseeeeeeeeeeeeee
+    // Save the donation to the database
+    // if (Donation::create($donation)) {
+    //     echo "Donation saved to the database.\n";
+    // } else {
+    //     echo "Failed to save donation to the database.\n";
+    // }
+
+    // // Retrieve the donation from the database
+    // $retrievedDonation = Donation::retrieve($donation->getDonationID());
+    // if ($retrievedDonation) {
+    //     echo "Retrieved donation amount: {$retrievedDonation->getAmount()}\n";
+    // } else {
+    //     echo "Failed to retrieve donation.\n";
+    // }
+
+    // // Delete the donation from the database
+    // if (Donation::delete($donation->getDonationID())) {
+    //     echo "Donation deleted from the database.\n";
+    // } else {
+    //     echo "Failed to delete donation.\n";
+    // }
+}
+
+main();
+
 
