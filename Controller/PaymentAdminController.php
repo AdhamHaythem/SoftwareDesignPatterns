@@ -1,7 +1,7 @@
 <?php
 
 require_once 'PaymentAdmin.php';
-require_once 'DonorModel.php';
+require_once 'Donor.php';
 
 class PaymentController {
     private PaymentAdmin $paymentAdmin;
@@ -10,13 +10,17 @@ class PaymentController {
         $this->paymentAdmin = $paymentAdmin;
     }
 
-    // Handle payment processing for a donor
-    public function handleProcessPayment(Donor $donor, float $amount): void {
+    // Process payment for a donor
+    public function handleProcessPayment(
+        Donor $donor,
+        float $amount
+    ): void {
         try {
             if ($amount <= 0) {
                 throw new RuntimeException("Payment amount must be greater than zero.");
             }
 
+            // Process the payment through PaymentAdmin
             $success = $this->paymentAdmin->processPayment($donor, $amount);
 
             if ($success) {
@@ -29,7 +33,7 @@ class PaymentController {
         }
     }
 
-    // Get a summary of all transactions
+    // List all transactions
     public function listTransactions(): void {
         $transactions = $this->paymentAdmin->getTransactions();
 
@@ -58,18 +62,26 @@ class PaymentController {
 $paymentAdmin = new PaymentAdmin();
 $paymentController = new PaymentController($paymentAdmin);
 
-// Create a donor with a payment method
-$donor = new Donor();
-$donor->setDonorID(1);
-$donor->setPaymentMethod(new Visa());
+// Create a donor
+$donor = new Donor(
+    1,              // userID
+    "john_doe",     // username
+    "John",         // firstname
+    "Doe",          // lastname
+    "john@example.com", // email
+    "securepass123", // password
+    ["City", "Country"], // location
+    1234567890,      // phoneNumber
+    new Visa()       // Payment strategy
+);
 
-// Process a payment
-$paymentController->handleProcessPayment($donor, 100);
+// Process a payment for the donor
+$paymentController->handleProcessPayment($donor, 150.0);
 
 // List all transactions
 $paymentController->listTransactions();
 
-// Calculate total fees for Visa payments
+// Calculate total fees for Visa transactions
 $paymentController->calculateTotalFees();
-
 ?>
+
