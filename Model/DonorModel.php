@@ -37,6 +37,7 @@ class Donor extends UserModel implements IObserver {
         int $phoneNumber,
         IPaymentStrategy $paymentMethod = null,
         Event $event = null
+
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
         $this->donorID = self::$counter++;
@@ -178,7 +179,7 @@ class Donor extends UserModel implements IObserver {
 
     public function addEvent(Event $event): void {
         $this->campaignsJoined[] = $event;
-        echo "Event added: {$event->getName()}\n";
+       // echo "Event added: {$event->getName()}\n";
     }
 
     public function removeEvent(Event $event): void {
@@ -455,8 +456,10 @@ class Donor extends UserModel implements IObserver {
     public function getEvents(): array {
         return $this->campaignsJoined;
     }
-    //StrategyMethods
 
+
+    //StrategyMethods
+    
     public function joinEvent() {
         $this->eventStrategy->signUp($this->donorID);
     } 
@@ -497,10 +500,9 @@ class Donor extends UserModel implements IObserver {
         return $this->donorID;
     }
 
-    public function getPaymentMethod(): IPaymentStrategy {
+    public function getPaymentMethod(): ?IPaymentStrategy {
         return $this->paymentMethod;
     }
-
 
 
     public function getEventMethod(): Event{
