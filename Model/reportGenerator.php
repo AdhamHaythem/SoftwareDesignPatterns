@@ -7,7 +7,7 @@ class ReportGenerator extends ReportsGenerationTemplate {
 
     }
 
-    public function getData(String $dataType): void {
+    public function getData(String $dataType): array {
         if ($dataType == 'Instructor') {
             $sql = "
                 SELECT 
@@ -121,26 +121,41 @@ class ReportGenerator extends ReportsGenerationTemplate {
             // Execute the query using the custom query function
             try {
                 $results = $this->db->query($sql); // No need for `fetch_assoc`
-                if (!empty($results)) {
-                    foreach ($results as $row) {
-                        print_r($row); // Output each row of data
-                    }
-                } else {
-                    echo "No $dataType found.";
-                }
+                // if (!empty($results)) {
+                //     foreach ($results as $row) {
+                //         print_r($row); // Output each row of data
+                //     }
+                // } else {
+                //     echo "No $dataType found.";
+                // }
             } catch (Exception $e) {
                 echo "Query error: " . $e->getMessage();
             }
+            return $results;
     }
 
-    public function generate(): void {
+    public function generate(Object $object): void {
+
+    }
+    public function filterData(int $userID , array $results): array{
+        foreach ($results as $result) {
+            if ($result['userID'] == $userID) {
+            return $result;
+            }
+        }
+        return [];
+
     }
 
-    public function formatData(): void {
-    }
-
-    public function filterData(): void{
-
+    public function formatData(array $result): Object {
+        if (!empty($result)) {
+            $object = new stdClass();
+            foreach ($result as $key => $value) {
+                $object->$key = $value;
+            }
+            return $object;
+        }
+        return new stdClass();
     }
 }
 ?>
