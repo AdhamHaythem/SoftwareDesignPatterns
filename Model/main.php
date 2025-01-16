@@ -10,6 +10,7 @@ require_once 'db_connection.php';
 require_once 'EventUndoCommand.php';
 require_once 'EventRedoCommand.php';
 require_once 'VolunteeringEventModel.php';
+require_once 'UnderReviewState.php';
 
 //............Main to test Report Generator for Instructor
 
@@ -51,53 +52,53 @@ require_once 'VolunteeringEventModel.php';
 
 //...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
 
-function main() {
-    $donor = new Donor(
-        1, // userID
-        'mariam', // username
-        'mariaam', // firstName
-        'badawy', // lastName
-        'mariambadawy@gmail.com', // email
-        '123456', // password
-        ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
-    );
+// function main() {
+//     $donor = new Donor(
+//         1, // userID
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
 
-    // $event = new VolunteeringEventStrategy(
-    //     "Charity Run", // name
-    //     new DateTime('2023-12-01'), // time
-    //     "Central Park", // location
-    //     10, // volunteersNeeded
-    //     1 // eventID
-    // );
+//     // $event = new VolunteeringEventStrategy(
+//     //     "Charity Run", // name
+//     //     new DateTime('2023-12-01'), // time
+//     //     "Central Park", // location
+//     //     10, // volunteersNeeded
+//     //     1 // eventID
+//     // );
  
-    $event = new CampaignStrategy(
-        1,
-        new DateTime('2023-12-01'), // time
-        "Central Park", // location
-        10, // volunteersNeeded
-        1, // eventID
-        "Charity Run", // name
-        1.0,
-        "Campaignnn",
-        90000.0
-    );
+//     $event = new CampaignStrategy(
+//         1,
+//         new DateTime('2023-12-01'), // time
+//         "Central Park", // location
+//         10, // volunteersNeeded
+//         1, // eventID
+//         "Charity Run", // name
+//         1.0,
+//         "Campaignnn",
+//         90000.0
+//     );
 
-    $donor->setEvent($event);
+//     $donor->setEvent($event);
 
-    $eventJoinCommand = new EventUndoCommand();
-    $donor->setCommand($eventJoinCommand);
+//     $eventJoinCommand = new EventUndoCommand();
+//     $donor->setCommand($eventJoinCommand);
 
-    echo "Performing Undo...\n";
-    $donor->undo();
+//     echo "Performing Undo...\n";
+//     $donor->undo();
 
-    echo "Performing Redo...\n";
-    $donor->redo();
+//     echo "Performing Redo...\n";
+//     $donor->redo();
 
-    echo "Final Events: " . implode(", ", array_map(fn($e) => $e->getName(), $donor->getEvents())) . "\n";
-}
+//     echo "Final Events: " . implode(", ", array_map(fn($e) => $e->getName(), $donor->getEvents())) . "\n";
+// }
 
-main();
+// main();
 
 //..................Main to test DonationUndo/RedoCommand
 // function main() {
@@ -133,5 +134,44 @@ main();
 // }
 
 //main();
+
+ //.......................Main To test stateeeeee
+ function main() {
+  
+    $donation = new Donation(100.0, 0, 1);
+    echo "Donation created with ID: {$donation->getDonationID()}\n";
+    $donation->handleChange();  // Output: Donation is under review.
+    $donation->handleChange();  // Output: Donation is in progress.
+    $donation->handleChange();  // Output: Donation is paid.
+
+    $donation->amountPaid(50.0);
+    $donation->setState(new UnderReviewState());
+    $donation->handleChange();
+
+    //databaseeeeeeeeeeeeee
+    // Save the donation to the database
+    // if (Donation::create($donation)) {
+    //     echo "Donation saved to the database.\n";
+    // } else {
+    //     echo "Failed to save donation to the database.\n";
+    // }
+
+    // // Retrieve the donation from the database
+    // $retrievedDonation = Donation::retrieve($donation->getDonationID());
+    // if ($retrievedDonation) {
+    //     echo "Retrieved donation amount: {$retrievedDonation->getAmount()}\n";
+    // } else {
+    //     echo "Failed to retrieve donation.\n";
+    // }
+
+    // // Delete the donation from the database
+    // if (Donation::delete($donation->getDonationID())) {
+    //     echo "Donation deleted from the database.\n";
+    // } else {
+    //     echo "Failed to delete donation.\n";
+    // }
+}
+
+main();
 
 

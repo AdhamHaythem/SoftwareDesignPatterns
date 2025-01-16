@@ -8,11 +8,13 @@ class Donation {
     private int $donationID;
     private int $donorID;
     private ?float $previousAmount = null;
+    private IState $state;
 
     public function __construct(float $amount, int $donationID = 0, int $donorID) {
         $this->amount = $amount;
         $this->donationID = $donationID === 0 ? self::$counter : $donationID;
         $this->donorID = $donorID;
+        $this->state = new UnderReviewState();
         self::$counter++;
     }
     public function setAmount(float $amount): void {
@@ -45,6 +47,16 @@ class Donation {
 
     public function getAmount(): float {
         return $this->amount;
+    }
+
+    //for handling Stateeeeeeeeee
+    public function setState(iState $state): void {
+        $this->state = $state;
+        echo "State changed to " . get_class($state) . "\n";
+    }
+
+    public function handleChange(): void {
+        $this->state->handle($this);
     }
 
 
