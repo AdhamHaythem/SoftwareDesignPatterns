@@ -94,7 +94,7 @@ class DonorController{
         if (isset($_POST['CashDonation'])) {
             $donation= new CashDonation($_POST['amount'],$_POST['donorId'],$donation);
         }
-        $review = new UnderReview();
+        $review = new UnderReviewState();
         $donation->setState($review);
         Donation::create($donation);
     }
