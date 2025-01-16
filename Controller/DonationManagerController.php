@@ -34,8 +34,9 @@ class DonationManagerController {
 }
 
     public function createDonation($amount,$DonationID,$donorId){
-            $donationModel = new Donation($amount,$DonationID,$donorId);
-            DonationManager::create($donationModel);
+        $currentDateTime = new DateTime('now');
+        $donationModel = new Donation($amount,$DonationID,$donorId,$currentDateTime);
+        DonationManager::create($donationModel);
         
     }
 
@@ -96,9 +97,13 @@ class DonationManagerController {
 
 
     // Generates a report of all donations
-    public function generateDonationReport($managerId) {
+    public function generateDonationReport($managerId,$id) {
         $manager =  DonationManager::retrieve($managerId);
         $report = $manager->generateDonationReport();
+
+        $proxy= new ReportsGenerationProxy("DonationManager",new ReportGenerator());
+        $results= [];
+        $finalizedReports= $proxy->finalizeReport($id,$results);
         $view=new DonationManagerView();
         $view->displayDonationReport(); //TODO needs parameter
     }
@@ -194,7 +199,7 @@ if (isset($_POST['editCampaign'])) {
 }
 
 if (isset($_POST['generateDonationReport'])) {
-    $donationManagerController->generateDonationReport($_POST['managerId']);
+    $donationManagerController->generateDonationReport($_POST['managerId'],$_POST['id']);
     echo json_encode(['success' => true, 'report' => $report]);
     exit;
 }
