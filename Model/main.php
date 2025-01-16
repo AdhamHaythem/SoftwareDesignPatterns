@@ -21,7 +21,10 @@ require_once 'visa.php';
 //..............Main to test PaymentAdmin
 
 function main() {
-  
+
+    $cash = new Cash();
+    $visa = new Visa();
+
     $donor1 = new Donor(
         1, // userID
         'mariam', // username
@@ -30,7 +33,8 @@ function main() {
         'mariambadawy@gmail.com', // email
         '123456', // password
         ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
+        '01001449338', // phoneNumber
+        $cash // paymentMethod
     );
 
     $donor2 = new Donor(
@@ -41,27 +45,54 @@ function main() {
         'mariambadawy2@gmail.com', // email
         '123456', // password
         ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
+        '01001449338', // phoneNumber
+        $visa // paymentMethod
     );
 
-
     $admin = new PaymentAdmin();
-    $donor1->setPaymentMethod(new Cash());
+
 
     $admin->processPayment($donor1, 100); 
+    $admin->processPayment($donor2, 200);
 
-    $donor2->setPaymentMethod(new Visa());
-    $admin->processPayment($donor2, 200); 
 
     $transactions = $admin->getTransactions();
-    echo "Transactions:\n";
+    echo "All Transactions:\n";
     print_r($transactions);
 
-    $totalFees = $admin->calculateTotalFees();
-    echo "Total Fees: $" . $totalFees . "\n";
+
+    echo "Attempting to refund Transaction ID 0 (Cash)...\n";
+    try {
+        $refundSuccess = $admin->refundTransaction(0);
+        if ($refundSuccess) {
+            echo "Refund successful.\n";
+        } else {
+            echo "Refund failed.\n";
+        }
+    } catch (RuntimeException $e) {
+        echo "Error: " . $e->getMessage() . "\n";
+    }
+
+
+    echo "Refunding Transaction ID 1 (Visa)...\n";
+    try {
+        $refundSuccess = $admin->refundTransaction(1);
+        if ($refundSuccess) {
+            echo "Refund successful.\n";
+        } else {
+            echo "Refund failed.\n";
+        }
+    } catch (RuntimeException $e) {
+        echo "Error: " . $e->getMessage() . "\n";
+    }
+
+    $transactionsAfterRefund = $admin->getTransactions();
+    echo "Transactions After Refund:\n";
+    print_r($transactionsAfterRefund);
 }
 
 main();
+
 
 
 // ............Main to test Report Generator for Instructor
