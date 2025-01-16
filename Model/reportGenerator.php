@@ -134,7 +134,8 @@ class ReportGenerator extends ReportsGenerationTemplate {
             return $results;
     }
 
-    public function generate(Object $object): void {
+    public function generate(array $result): void {
+
 
     }
     public function filterData(int $userID , array $results): array{
@@ -144,18 +145,6 @@ class ReportGenerator extends ReportsGenerationTemplate {
             }
         }
         return [];
-
-    }
-
-    public function formatData(array $result): Object {
-        if (!empty($result)) {
-            $object = new stdClass();
-            foreach ($result as $key => $value) {
-                $object->$key = $value;
-            }
-            return $object;
-        }
-        return new stdClass();
     }
 }
 ?>
