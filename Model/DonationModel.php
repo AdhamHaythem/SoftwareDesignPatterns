@@ -10,12 +10,12 @@ class Donation {
     private ?float $previousAmount = null;
     private IState $state;
 
-    public function __construct(float $amount, int $donationID = 0, int $donorID) {
+    private DateTime $date;
+    public function __construct(float $amount, int $donationID = 0, int $donorID, DateTime $date) {
         $this->amount = $amount;
-        $this->donationID = self::$counter;
+        $this->donationID = $donationID === 0 ? self::$counter++ : $donationID;
         $this->donorID = $donorID;
         $this->state = new UnderReviewState();
-        self::$counter++;
     }
     public function setAmount(float $amount): void {
         $this->previousAmount = $this->amount; 
@@ -61,6 +61,10 @@ class Donation {
 
 
 
+    public function getDate(): DateTime {
+        return $this->date;
+    }
+
     public function getPreviousAmount(): ?float {
        // echo "Previous Amount: {$this->previousAmount}\n";
         return $this->previousAmount; 
@@ -69,17 +73,33 @@ class Donation {
     // CRUD Operations
 
     // Create
-    public static function create(Donation $donation): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "INSERT INTO donations (donationID, donorID, amount) 
-                VALUES (:donationID, :donorID, :amount)";
-        $params = [
-            ':donationID' => $donation->getDonationID(),
-            ':donorID' => $donation->getDonorID(),
-            ':amount' => $donation->getAmount()
-        ];
-        return $dbConnection->execute($sql, $params);
+    public static function create($donation): bool {
+        if (!$donation instanceof Donation) {
+            throw new InvalidArgumentException("Expected instance of Donation");
+        }
+    
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            $sql = "INSERT INTO donations (donationID, donorID, amount, donation_date) 
+                    VALUES (?, ?, ?, ?)";
+            $params = [
+                $donation->getDonationID(),
+                $donation->getDonorID(),
+                $donation->getAmount(),
+                $donation->getDate()->format('Y-m-d H:i:s')
+            ];
+            if (!$dbConnection->execute($sql, $params)) {
+                throw new Exception("Failed to insert into `donations` table.");
+            }
+            return true;
+    
+        } catch (Exception $e) {
+            error_log("Error creating donation: " . $e->getMessage());
+            return false;
+        }
     }
+    
 
     // Read
     public static function retrieve(int $donationID): ?Donation {
@@ -92,7 +112,8 @@ class Donation {
             return new Donation(
                 $result['amount'],
                 $result['donationID'],
-                $result['donorID']
+                $result['donorID'],
+                new DateTime($result['donation_date'])
             );
         }
         return null;

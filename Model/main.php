@@ -16,52 +16,87 @@ require_once 'delivery.php';
 require_once 'PaymentAdmin.php';
 require_once 'cash.php';
 require_once 'visa.php';
+require_once 'statisticsGenerator.php';
 
+
+
+//..............Main to test statisticsGenerator
+
+function main() {
+    $config = require 'configurations.php';
+
+    $db = new DatabaseConnection($config);
+
+    $delivery3 = new DeliveryPersonnel(
+                'summerwatermelon',         // username
+                'Summer',               // firstname
+                'Watermelon',              // lastname
+                2299944,               // userID
+                'watermelon@example.com',   // email
+                'watermelon2025',       // password
+                ['Fayoum', 'Egypt'], // location
+                98765434411,           // phoneNumber
+                'Delivery',           // title
+                4000,                // salary
+                39,                   // workingHours
+                'Scooter'           // vehicleType
+            );
+            if (DeliveryPersonnel::create($delivery3)) {
+                echo "DeliveryPersonnel 3 created and added to the database successfully.\n";
+            } else {
+                echo "Failed to create DeliveryPersonnel 3.\n";
+            }
+            
+            $Generator = new statisticsGenerator();
+            $Generator->getData('Donations');
+    
+
+}
 
 //..............Main to test PaymentAdmin
 
-function main() {
+// function main() {
   
-    $donor1 = new Donor(
-        1, // userID
-        'mariam', // username
-        'mariaam', // firstName
-        'badawy', // lastName
-        'mariambadawy@gmail.com', // email
-        '123456', // password
-        ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
-    );
+//     $donor1 = new Donor(
+//         1, // userID
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
 
-    $donor2 = new Donor(
-        2, // userID
-        'mariam2', // username
-        'mariaam2', // firstName
-        'badawy2', // lastName
-        'mariambadawy2@gmail.com', // email
-        '123456', // password
-        ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
-    );
+//     $donor2 = new Donor(
+//         2, // userID
+//         'mariam2', // username
+//         'mariaam2', // firstName
+//         'badawy2', // lastName
+//         'mariambadawy2@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
 
 
-    $admin = new PaymentAdmin();
-    $donor1->setPaymentMethod(new Cash());
+//     $admin = new PaymentAdmin();
+//     $donor1->setPaymentMethod(new Cash());
 
-    $admin->processPayment($donor1, 100); 
+//     $admin->processPayment($donor1, 100); 
 
-    $donor2->setPaymentMethod(new Visa());
-    $admin->processPayment($donor2, 200); 
+//     $donor2->setPaymentMethod(new Visa());
+//     $admin->processPayment($donor2, 200); 
 
-    $transactions = $admin->getTransactions();
-    echo "Transactions:\n";
-    print_r($transactions);
+//     $transactions = $admin->getTransactions();
+//     echo "Transactions:\n";
+//     print_r($transactions);
 
-    $totalFees = $admin->calculateTotalFees();
-    echo "Total Fees: $" . $totalFees . "\n";
-}
+//     $totalFees = $admin->calculateTotalFees();
+//     echo "Total Fees: $" . $totalFees . "\n";
+// }
 
-main();
+// main();
 
 
 // ............Main to test Report Generator for Instructor
@@ -427,17 +462,17 @@ main();
 //         echo "Failed to create DeliveryPersonnel 3.\n";
 //     }
     
-//     $Generator = new ReportGenerator();
-//     $Generator->getData('HR');
-//     $Generator->getData('Technical');
-//     $Generator->getData('Delivery');
-//     $Generator->getData('Donor');
+    // $Generator = new ReportGenerator();
+    // $Generator->getData('HR');
+    // $Generator->getData('Technical');
+    // $Generator->getData('Delivery');
+    // $Generator->getData('Donor');
 
-//     $result = $Generator->getData('Instructor');
+    // $result = $Generator->getData('Instructor');
 
-//     echo "Instructor Report:\n";
-//     $user = $Generator->filterData(1, $result);
-//     print(gettype($user));
+    // echo "Instructor Report:\n";
+    // $user = $Generator->filterData(1, $result);
+    // print(gettype($user));
 // }
 
 // main();
