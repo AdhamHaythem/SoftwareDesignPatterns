@@ -132,6 +132,7 @@ class DeliveryPersonnel extends EmployeeModel {
 
     // CRUD Methods
     public static function create($personnel): bool {
+        $dbConnection = DatabaseConnection::getInstance();
         if (!$personnel instanceof DeliveryPersonnel) {
             throw new InvalidArgumentException("Expected instance of DeliveryPersonnel");
         }
@@ -153,7 +154,6 @@ class DeliveryPersonnel extends EmployeeModel {
             ':vehicleType' => $personnel->getVehicleType(),
             ':deliveriesCompleted' => $personnel->getDeliveriesCompleted()
         ];
-        $dbConnection=UserModel::getDatabaseConnection();
         return $dbConnection->execute($sql, $params);
     }
 

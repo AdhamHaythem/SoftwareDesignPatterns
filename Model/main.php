@@ -5,50 +5,125 @@ require_once 'DonorModel.php';
 require_once 'DonationUndoCommand.php';
 require_once 'DonationRedoCommand.php';
 require_once 'db_connection.php';
-//require_once 'ReportGenerator.php';
-//require_once 'InstructorModel.php';
+require_once 'ReportGenerator.php';
+require_once 'InstructorModel.php';
 require_once 'EventUndoCommand.php';
 require_once 'EventRedoCommand.php';
 require_once 'VolunteeringEventModel.php';
-require_once 'UnderReviewState.php';
 
-//............Main to test Report Generator for Instructor
+// ............Main to test Report Generator for Instructor
 
-// function main() {
+function main() {
 
-//     $config = require 'configurations.php';
+    $config = require 'configurations.php';
 
-//     $db = new DatabaseConnection($config);
-
+    $db = new DatabaseConnection($config);
 
 
-//     $instructor = new InstructorModel(
-//         'john_doe',       // username
-//         'John',           // firstname
-//         'Doe',            // lastname
-//         1,                // userID (ensure this is unique)
-//         'john@example.com', // email
-//         'password123',    // password
-//         ['New York', 'USA'], // location (array)
-//         1234567890,       // phoneNumber
-//         'Instructor',     // title
-//         50000,            // salary
-//         40                // workingHours
-//     );
+
+    $instructor = new InstructorModel(
+        'john_doe',       // username
+        'John',           // firstname
+        'Doe',            // lastname
+        1,                // userID (ensure this is unique)
+        'john@example.com', // email
+        'password123',    // password
+        ['New York', 'USA'], // location (array)
+        1234567890,       // phoneNumber
+        'Instructor',     // title
+        50000,            // salary
+        40                // workingHours
+    );
     
-//     // Add the instructor to the database
-//     if (InstructorModel::create($instructor)) {
-//         echo "Instructor created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create instructor.\n";
-//     }
+    // Add the instructor to the database
+    if (InstructorModel::create($instructor)) {
+        echo "Instructor created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create instructor.\n";
+    }
 
+    $hr = new HRModel(
+        'nog_doe',       
+        'Nog',              
+        'Doe',               
+        254678,                   
+        'nog@example.com',  
+        'nog111',     
+        ['San Nogcisco', 'Nogland'], 
+        9876543210,          
+        'HR',              
+        600000,              
+        35                   
+    );
+    
+    if (HRModel::create($hr)) {
+        echo "HR created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create HR.\n";
+    }
+    $technical = new TechnicalModel(
+        'noga_lcd',          
+        'Noga',             
+        'LCD',          
+        33213,                   
+        'noga@lcd.com',   
+        'pass@789',        
+        ['Mansoura', 'UK'],  
+        5551234567,         
+        'Technical',         
+        750000,               
+        80,
+        ["Tea with Milk"],
+        []                   
+    );
+    
+    if (TechnicalModel::create($technical)) {
+        echo "Technical created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create technical.\n";
+    }
+    
+    $delivery = new DeliveryPersonnel(
+        "DeliveryMan",
+        "Delivery",
+        "Man",
+        "132801273",
+        "deliv@gmail.com",
+        "password",
+        ['Dubai', 'UAE'],     
+        1234568890,            
+        "Deliveryyy",
+        123123123,
+        33,
+        "Tuk-tuk"
+    );
+    if (DeliveryPersonnel::create($delivery)) {
+        echo "DeliveryPersonnel created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create DeliveryPersonnel.\n";
+    }
+    
+    $donor = new Donor(
+        '12345688878',     
+        'Motabare3',             
+        'Motabare3',            
+        "Tabaro3at",                     
+        'motabare3@example.com',   
+        '1234bnbb',    
+        ['Dubai', 'UFC'],     
+        1234567890,            
+    );
+    if (Donor::create($donor)) {
+        echo "Donor created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create Donor.\n";
+    }
 
-//     $Generator = new ReportGenerator();
-//     $Generator->finalizeReport('Instructor');
-// }
+    $Generator = new ReportGenerator();
+    $Generator->finalizeReport('Instructor');
+}
 
-//main();
+main();
 
 //...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
 

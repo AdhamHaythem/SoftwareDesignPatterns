@@ -40,7 +40,7 @@ class hrModel extends EmployeeModel {
             throw new InvalidArgumentException("Expected instance of HR");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
             $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)

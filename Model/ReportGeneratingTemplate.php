@@ -3,7 +3,7 @@
 abstract class ReportsGenerationTemplate {
 
     protected array $data = [];
-    protected $db =DatabaseConnection::getInstance();
+    protected $db ;
     abstract public function getData(String $dataType): void;
     abstract public function generate(): void;
 
@@ -18,4 +18,4 @@ abstract class ReportsGenerationTemplate {
         $this->generate();
     }
 }
-?>
+?> 
