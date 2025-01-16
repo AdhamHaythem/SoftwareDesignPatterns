@@ -12,7 +12,7 @@ class Donation {
 
     public function __construct(float $amount, int $donationID = 0, int $donorID) {
         $this->amount = $amount;
-        $this->donationID = $donationID === 0 ? self::$counter : $donationID;
+        $this->donationID = self::$counter;
         $this->donorID = $donorID;
         $this->state = new UnderReviewState();
         self::$counter++;
