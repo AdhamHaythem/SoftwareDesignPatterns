@@ -159,6 +159,24 @@ function main() {
     } else {
         echo "Failed to create Instructor 2.\n";
     }
+    $instructor3 = new InstructorModel(
+        'doctorbaseer',       // username
+        'Doctor',             // firstname
+        'Baseer',            // lastname
+        28690,                  // userID
+        'baseer@example.com', // email
+        'baseer',      // password
+        ['Imbaba', 'Egypt'], // location
+        49876543210,         // phoneNumber
+        'Instructor',       // title
+        550,              // salary
+        9                 // workingHours
+    );
+    if (InstructorModel::create($instructor3)) {
+        echo "Instructor 3 created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create Instructor 3.\n";
+    }
     $hr1 = new HRModel(
         'elnognog',       // username
         'ElNog',           // firstname
@@ -241,7 +259,7 @@ function main() {
         'tech_guru',         // username
         'Mark',              // firstname
         'Taylor',            // lastname
-        74532,               // userID
+        7453212,               // userID
         'mark@example.com',  // email
         'fixIt2025',         // password
         ['London', 'UK'],    // location
@@ -277,6 +295,26 @@ function main() {
         echo "Technical 3 created and added to the database successfully.\n";
     } else {
         echo "Failed to create Technical 3.\n";
+    }
+    $technical4 = new TechnicalModel(
+        'ramadan7aree2a',         // username
+        'Ramadan',              // firstname
+        '7aree2a',            // lastname
+        745365652,               // userID
+        'ramadan7aree2a@example.com',  // email
+        'ramadanfire',         // password
+        ['Shoubra', 'Egypt'],    // location
+        112945780090,          // phoneNumber
+        'Technical',         // title
+        100,               // salary
+        0,                  // workingHours
+        ['Banana with milk', 'Last order'], // skills
+        ['IBM Certified Closed', 'IELTS']  // certifications
+    );
+    if (TechnicalModel::create($technical4)) {
+        echo "Technical 4 created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create Technical 4.\n";
     }
 
     $delivery1 = new DeliveryPersonnel(
