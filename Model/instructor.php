@@ -29,7 +29,7 @@ class InstructorModel extends EmployeeModel {
             $password,
             $location,
             $phoneNumber,
-            $title,
+            "Instructor",
             $salary,
             $workingHours
         );

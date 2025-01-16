@@ -50,24 +50,28 @@ class ReportGenerator extends ReportsGenerationTemplate {
         }
         else if ($dataType == 'Technical') {
             $sql = "
-            SELECT 
-            user.userID,
-            user.username,
-            user.firstName,
-            user.lastName,
-            user.email,
-            user.locationList,
-            user.phoneNumber,
-            employee.title, 
-            employee.salary, 
-            employee.workingHours,
-            techincal.skills,
-            technical.certifications,
-            FROM user
-            INNER JOIN employee ON user.userID = employee.userID
-            INNER JOIN Techninal ON user.userID = Techninal.userID
-            WHERE employee.title = 'Techninal'
-        ";
+                SELECT 
+                    user.userID,
+                    user.username,
+                    user.firstName,
+                    user.lastName,
+                    user.email,
+                    user.locationList,
+                    user.phoneNumber,
+                    employee.title, 
+                    employee.salary, 
+                    employee.workingHours,
+                    technical.skills,
+                    technical.certifications
+                FROM 
+                    user
+                INNER JOIN 
+                    employee ON user.userID = employee.userID
+                INNER JOIN 
+                    technical ON user.userID = technical.userID
+                WHERE 
+                    employee.title = 'Technical'
+            ";
         }
         else if ($dataType == 'Delivery') {
             $sql = "
@@ -85,7 +89,7 @@ class ReportGenerator extends ReportsGenerationTemplate {
             deliverypersonnel.vehicleType,
             deliverypersonnel.driverLicense,
             deliverypersonnel.deliveriesCompleted,
-            deliverypersonnel.currentLoad,
+            deliverypersonnel.currentLoad
             FROM user
             INNER JOIN employee ON user.userID = employee.userID
             INNER JOIN deliverypersonnel ON user.userID = deliverypersonnel.userID

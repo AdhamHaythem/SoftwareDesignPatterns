@@ -28,7 +28,7 @@ class hrModel extends EmployeeModel {
             $password,
             $location,
             $phoneNumber,
-            $title,
+            "HR",
             $salary,
             $workingHours
         );
@@ -36,16 +36,38 @@ class hrModel extends EmployeeModel {
 
     // CRUD Methods
     public static function create($hr): bool {
+        // Check if the provided object is an instance of the expected model
+        $dbConnection = DatabaseConnection::getInstance();
         if (!$hr instanceof hrModel) {
-            throw new InvalidArgumentException("Expected instance of HR");
+            throw new InvalidArgumentException("Expected instance of hrModel");
         }
     
-        $dbConnection = DatabaseConnection::getInstance();
-    
         try {
+            // 1. Insert into the `user` table
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $userParams = [
+                $hr->getUserID(),
+                $hr->getUsername(),
+                $hr->getFirstname(),
+                $hr->getLastname(),
+                $hr->getEmail(),
+                password_hash($hr->getPassword(), PASSWORD_DEFAULT), // Hash the password
+                json_encode($hr->getLocation()), // Serialize location as JSON
+                $hr->getPhoneNumber(),
+                1 // isActive (true)
+            ];
+    
+            // Execute the insertion into the `user` table
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert into `user` table.");
+            }
+    
+            // 2. Insert into the `employee` table
             $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)
                             VALUES (?, ?, ?, ?)";
-    
+            
             $employeeParams = [
                 $hr->getUserID(),
                 $hr->getTitle(),
@@ -53,46 +75,34 @@ class hrModel extends EmployeeModel {
                 $hr->getHoursWorked()
             ];
     
-            $employeeInserted = $dbConnection->execute($employeeSql, $employeeParams);
-    
-            if ($employeeInserted) {
-                $userSql = "INSERT IGNORE INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-                $userParams = [
-                    $hr->getUserID(),
-                    $hr->getUsername(),
-                    $hr->getFirstname(),
-                    $hr->getLastname(),
-                    $hr->getEmail(),
-                    password_hash($hr->getPassword(), PASSWORD_DEFAULT), // Hash password
-                    json_encode($hr->getLocation()), // Assuming location is an array
-                    $hr->getPhoneNumber(),
-                    1
-                ];
-    
-                $userInserted = $dbConnection->execute($userSql, $userParams);
-    
-                if ($userInserted) {
-                    $hrSql = "INSERT INTO hr (userID, managedEmployees)
-                              VALUES (?, ?)";
-    
-                    $hrParams = [
-                        $hr->getUserID(),
-                        json_encode($hr->getManagedEmployees()),
-                    ];
-    
-                 
-                    return $dbConnection->execute($hrSql, $hrParams);
-                }
+            // Execute the insertion into the `employee` table
+            if (!$dbConnection->execute($employeeSql, $employeeParams)) {
+                throw new Exception("Failed to insert into `employee` table.");
             }
     
-            return false;
+            // 3. Insert into the `hr` table
+            $hrSql = "INSERT INTO hr (userID, managedEmployees)
+                      VALUES (?, ?)";
+            
+            $hrParams = [
+                $hr->getUserID(),
+                json_encode($hr->getManagedEmployees()) // Serialize managedEmployees as JSON
+            ];
+    
+            // Execute the insertion into the `hr` table
+            if (!$dbConnection->execute($hrSql, $hrParams)) {
+                throw new Exception("Failed to insert into `hr` table.");
+            }
+    
+            // If all insertions are successful, return true
+            return true;
         } catch (Exception $e) {
+            // Log any errors and return false
             error_log("Error creating HR: " . $e->getMessage());
             return false;
         }
     }
+    
     
 
     public static function retrieve($userID): ?hrModel {

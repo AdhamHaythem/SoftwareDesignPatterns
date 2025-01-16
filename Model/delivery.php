@@ -123,7 +123,7 @@ class DeliveryPersonnel extends EmployeeModel {
             $password,
             $location,
             $phoneNumber,
-            $title,
+            "Delivery",
             $salary,
             $workingHours
         );
@@ -132,30 +132,76 @@ class DeliveryPersonnel extends EmployeeModel {
 
     // CRUD Methods
     public static function create($personnel): bool {
-        $dbConnection = DatabaseConnection::getInstance();
+        // Check if the provided object is an instance of DeliveryPersonnel
         if (!$personnel instanceof DeliveryPersonnel) {
             throw new InvalidArgumentException("Expected instance of DeliveryPersonnel");
         }
-        $sql = "INSERT INTO delivery_personnel (userID, username, firstname, lastname, email, password, location, phoneNumber, title, salary, workingHours, vehicleType, deliveriesCompleted)
-                VALUES (:userID, :username, :firstname, :lastname, :email, :password, :location, :phoneNumber, :title, :salary, :workingHours, :vehicleType, :deliveriesCompleted)";
-        
-        $params = [
-            ':userID' => $personnel->getUserID(),
-            ':username' => $personnel->getUsername(),
-            ':firstname' => $personnel->getFirstname(),
-            ':lastname' => $personnel->getLastname(),
-            ':email' => $personnel->getEmail(),
-            ':password' => password_hash($personnel->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($personnel->getLocation()),
-            ':phoneNumber' => $personnel->getPhoneNumber(),
-            ':title' => $personnel->getTitle(),
-            ':salary' => $personnel->getSalary(),
-            ':workingHours' => $personnel->getHoursWorked(),
-            ':vehicleType' => $personnel->getVehicleType(),
-            ':deliveriesCompleted' => $personnel->getDeliveriesCompleted()
-        ];
-        return $dbConnection->execute($sql, $params);
+    
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            // 1. Insert into the `user` table
+            $userSql = "INSERT INTO user (userID, username, firstname, lastname, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+            $userParams = [
+                $personnel->getUserID(),
+                $personnel->getUsername(),
+                $personnel->getFirstname(),
+                $personnel->getLastname(),
+                $personnel->getEmail(),
+                password_hash($personnel->getPassword(), PASSWORD_DEFAULT), // Hash the password securely
+                json_encode($personnel->getLocation()), // Serialize location as JSON
+                $personnel->getPhoneNumber(),
+                1 // isActive (true)
+            ];
+    
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert into `user` table.");
+            }
+    
+            // 2. Insert into the `employee` table
+            $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)
+                            VALUES (?, ?, ?, ?)";
+    
+            $employeeParams = [
+                $personnel->getUserID(),
+                $personnel->getTitle(),
+                $personnel->getSalary(),
+                $personnel->getHoursWorked()
+            ];
+    
+            if (!$dbConnection->execute($employeeSql, $employeeParams)) {
+                throw new Exception("Failed to insert into `employee` table.");
+            }
+    
+            // 3. Insert into the `delivery_personnel` table
+            $deliverySql = "INSERT INTO deliverypersonnel (userID, vehicleType, driverLicense, deliveriesCompleted, currentLoad)
+                            VALUES (?, ?, ?, ?, ?)";
+    
+            $deliveryParams = [
+                $personnel->getUserID(),
+                $personnel->getVehicleType(),
+                1,
+                $personnel->getDeliveriesCompleted(),
+                $personnel->getCurrentLoad()
+            ];
+    
+            if (!$dbConnection->execute($deliverySql, $deliveryParams)) {
+                throw new Exception("Failed to insert into `delivery_personnel` table.");
+            }
+    
+            // If all insertions are successful, return true
+            return true;
+    
+        } catch (Exception $e) {
+            // Log the error and return false
+            error_log("Error creating delivery personnel: " . $e->getMessage());
+            return false;
+        }
     }
+    
+    
 
     public static function retrieve($userID): ?DeliveryPersonnel {
         $sql = "SELECT * FROM delivery_personnel WHERE userID = :userID";

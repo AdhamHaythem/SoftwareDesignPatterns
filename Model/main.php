@@ -6,10 +6,13 @@ require_once 'DonationUndoCommand.php';
 require_once 'DonationRedoCommand.php';
 require_once 'db_connection.php';
 require_once 'ReportGenerator.php';
-require_once 'InstructorModel.php';
+require_once 'instructor.php';
 require_once 'EventUndoCommand.php';
 require_once 'EventRedoCommand.php';
 require_once 'VolunteeringEventModel.php';
+require_once 'hr.php';
+require_once 'Technical.php';
+require_once 'delivery.php';
 
 // ............Main to test Report Generator for Instructor
 
@@ -92,7 +95,7 @@ function main() {
         "password",
         ['Dubai', 'UAE'],     
         1234568890,            
-        "Deliveryyy",
+        "Delivery",
         123123123,
         33,
         "Tuk-tuk"
@@ -121,6 +124,10 @@ function main() {
 
     $Generator = new ReportGenerator();
     $Generator->finalizeReport('Instructor');
+    $Generator->finalizeReport('HR');
+    $Generator->finalizeReport('Technical');
+    $Generator->finalizeReport('Delivery');
+    $Generator->finalizeReport('Donor');
 }
 
 main();
