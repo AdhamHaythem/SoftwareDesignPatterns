@@ -211,17 +211,17 @@ main();
 //main();
 
  //.......................Main To test stateeeeee
- function main() {
+//  function main() {
   
-    $donation = new Donation(100.0, 0, 1);
-    echo "Donation created with ID: {$donation->getDonationID()}\n";
-    $donation->handleChange();  // Output: Donation is under review.
-    $donation->handleChange();  // Output: Donation is in progress.
-    $donation->handleChange();  // Output: Donation is paid.
+//     $donation = new Donation(100.0, 0, 1);
+//     echo "Donation created with ID: {$donation->getDonationID()}\n";
+//     $donation->handleChange();  // Output: Donation is under review.
+//     $donation->handleChange();  // Output: Donation is in progress.
+//     $donation->handleChange();  // Output: Donation is paid.
 
-    $donation->amountPaid(50.0);
-    $donation->setState(new UnderReviewState());
-    $donation->handleChange();
+//     $donation->amountPaid(50.0);
+//     $donation->setState(new UnderReviewState());
+//     $donation->handleChange();
 
     //databaseeeeeeeeeeeeee
     // Save the donation to the database
