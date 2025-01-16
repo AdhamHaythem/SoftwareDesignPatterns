@@ -6,9 +6,9 @@ class InstructorController {
 
     public function getLessons($instructorId): void {
         $instructor= InstructorModel::retrieve($instructorId);
-        $instructor->getLessons();
+        $lesson = $instructor->getLessons();
         $view= new InstructorView();
-        $view->displayAllLessons();
+        $view->displayAllLessons($lesson);
     }
 
     public function retrieveLesson($lessonId,$instructorId): void {
