@@ -27,31 +27,136 @@ function main() {
 
     $db = new DatabaseConnection($config);
 
-    $delivery3 = new DeliveryPersonnel(
-                'summerwatermelon',         // username
-                'Summer',               // firstname
-                'Watermelon',              // lastname
-                2299944,               // userID
-                'watermelon@example.com',   // email
-                'watermelon2025',       // password
-                ['Fayoum', 'Egypt'], // location
-                98765434411,           // phoneNumber
-                'Delivery',           // title
-                4000,                // salary
-                39,                   // workingHours
-                'Scooter'           // vehicleType
-            );
-            if (DeliveryPersonnel::create($delivery3)) {
-                echo "DeliveryPersonnel 3 created and added to the database successfully.\n";
-            } else {
-                echo "Failed to create DeliveryPersonnel 3.\n";
-            }
-            
-            $Generator = new statisticsGenerator();
-            $Generator->getData('Donations');
+
+// // Donor 1
+// $donor1 = new Donor(
+//     10001,                    // userID
+//     'Motabare3',              // username
+//     'Motabare3',              // firstname
+//     'Tabaro3at',              // lastname
+//     'motabare3@example.com',  // email
+//     '1234bnbb',               // password
+//     ['Dubai', 'UFC'],         // location
+//     1234567890                // phoneNumber
+// );
+// if (Donor::create($donor1)) {
+//     echo "Donor 1 created and added to the database successfully.\n";
+// } else {
+//     echo "Failed to create Donor 1.\n";
+// }
+
+// // Donor 2
+// $donor2 = new Donor(
+//     10002,                    // userID
+//     'KindHeart',              // username
+//     'Kind',                   // firstname
+//     'Heart',                  // lastname
+//     'kindheart@example.com',  // email
+//     'mypassword',             // password
+//     ['Abu Dhabi', 'UAE'],     // location
+//     9876543210                // phoneNumber
+// );
+// if (Donor::create($donor2)) {
+//     echo "Donor 2 created and added to the database successfully.\n";
+// } else {
+//     echo "Failed to create Donor 2.\n";
+// }
+
+// // Donor 3
+// $donor3 = new Donor(
+//     10003,                    // userID
+//     'HelpfulHero',            // username
+//     'Helpful',                // firstname
+//     'Hero',                   // lastname
+//     'helpfulhero@example.com',// email
+//     'secure123',              // password
+//     ['Sharjah', 'UAE'],       // location
+//     8765432109                // phoneNumber
+// );
+// if (Donor::create($donor3)) {
+//     echo "Donor 3 created and added to the database successfully.\n";
+// } else {
+//     echo "Failed to create Donor 3.\n";
+// }
+
+// // Donor 4
+// $donor4 = new Donor(
+//     10004,                    // userID
+//     'CharityChamp',           // username
+//     'Charity',                // firstname
+//     'Champ',                  // lastname
+//     'charitychamp@example.com', // email
+//     'charitypass',            // password
+//     ['Cairo', 'Egypt'],       // location
+//     7654321098                // phoneNumber
+// );
+// if (Donor::create($donor4)) {
+//     echo "Donor 4 created and added to the database successfully.\n";
+// } else {
+//     echo "Failed to create Donor 4.\n";
+// }
+
+// // Donations for Donor 1 (donorID = $donor1->getUserID())
+// $donations1 = [
+//     new Donation(100.00, $donor1->getUserID(), new DateTime('2025-01-16 10:00:00')),
+//     new Donation(150.00, $donor1->getUserID(), new DateTime('2025-01-17 11:00:00')),
+//     new Donation(200.00, $donor1->getUserID(), new DateTime('2025-01-18 12:00:00')),
+//     new Donation(250.00, $donor1->getUserID(), new DateTime('2025-01-19 13:00:00'))
+// ];
+
+// // Donations for Donor 2 (donorID = $donor2->getUserID())
+// $donations2 = [
+//     new Donation(120.00, $donor2->getUserID(), new DateTime('2025-01-16 14:00:00')),
+//     new Donation(130.00, $donor2->getUserID(), new DateTime('2025-01-17 15:00:00')),
+//     new Donation(140.00, $donor2->getUserID(), new DateTime('2025-01-18 16:00:00')),
+//     new Donation(150.00, $donor2->getUserID(), new DateTime('2025-01-19 17:00:00'))
+// ];
+
+// // Donations for Donor 3 (donorID = $donor3->getUserID())
+// $donations3 = [
+//     new Donation(180.00, $donor3->getUserID(), new DateTime('2025-01-16 18:00:00')),
+//     new Donation(190.00, $donor3->getUserID(), new DateTime('2025-01-17 19:00:00')),
+//     new Donation(200.00, $donor3->getUserID(), new DateTime('2025-01-18 20:00:00')),
+//     new Donation(210.00, $donor3->getUserID(), new DateTime('2025-01-19 21:00:00'))
+// ];
+
+// // Donations for Donor 4 (donorID = $donor4->getUserID())
+// $donations4 = [
+//     new Donation(50.00, $donor4->getUserID(), new DateTime('2025-01-16 22:00:00')),
+//     new Donation(60.00, $donor4->getUserID(), new DateTime('2025-01-17 23:00:00')),
+//     new Donation(70.00, $donor4->getUserID(), new DateTime('2025-01-18 08:00:00')),
+//     new Donation(80.00, $donor4->getUserID(), new DateTime('2025-01-19 09:00:00'))
+// ];
+
+// // Create Donations in Database
+// foreach ($donations1 as $donation) {
+//     if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
+// }
+// foreach ($donations2 as $donation) {
+//     if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
+// }
+// foreach ($donations3 as $donation) {
+//     if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
+// }
+// foreach ($donations4 as $donation) {
+//     if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
+// }
+
+
+
+$Generator = new statisticsGenerator();
+$result = $Generator->getData('Donations'); // Only pass the required argument
+$finalReport = $Generator->finalizeReport(results: $result); // Skip userID, let it use its default value (0)
+
+echo "Final Report:\n";
+echo "Mean: " . $finalReport['mean'] . "\n";
+
+
     
 
 }
+
+main();
 
 //..............Main to test PaymentAdmin
 

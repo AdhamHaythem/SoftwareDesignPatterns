@@ -13,10 +13,6 @@ class statisticsGenerator extends ReportsGenerationTemplate {
                 SELECT * from donation
             ";
         }
-        else if ($dataType == 'Donor') {
-
-        }
-        
             // Execute the query using the custom query function
             try {
                 $results = $this->db->query($sql); // No need for `fetch_assoc`
@@ -33,17 +29,34 @@ class statisticsGenerator extends ReportsGenerationTemplate {
             return $results;
     }
 
-    public function generate(array $result): void {
-
+    public function generate(array &$result): void {
+         
+        $mean = $result['totalDonations'] / $result['numberOfDonations'];
+        $result['mean'] = $mean;
 
     }
-    public function filterData(int $userID , array $results): array{
+    public function filterData(?int $userID = null, array $results): array
+    {
+        $filteredResults = [];
+        $totalDonations = 0;
+        $numberOfDonations = 0;
+    
         foreach ($results as $result) {
-            if ($result['userID'] == $userID) {
-            return $result;
+            // Check if filtering by specific userID
+            if ($userID === null || $result['userID'] == $userID) {
+                $filteredResults[] = $result;
+                $totalDonations += $result['amount'];
+                $numberOfDonations++;
             }
         }
-        return [];
+    
+        // Return the aggregated results
+        return [
+            'donations' => $filteredResults,
+            'totalDonations' => $totalDonations,
+            'numberOfDonations' => $numberOfDonations,
+        ];
     }
+    
 }
 ?>

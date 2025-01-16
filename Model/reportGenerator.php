@@ -134,7 +134,7 @@ class ReportGenerator extends ReportsGenerationTemplate {
             return $results;
     }
 
-    public function generate(array $result): void {
+    public function generate(array &$result): void {
 
 
     }

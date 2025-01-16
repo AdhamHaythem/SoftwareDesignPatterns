@@ -1,6 +1,7 @@
 <?php
 
 require_once 'UserModel.php';
+require_once 'UnderReviewState.php';
 
 class Donation {
     private static int $counter = 1;
@@ -11,10 +12,11 @@ class Donation {
     private IState $state;
 
     private DateTime $date;
-    public function __construct(float $amount, int $donationID = 0, int $donorID, DateTime $date) {
+    public function __construct(float $amount, int $donorID, DateTime $date, int $donationID = 0) {
         $this->amount = $amount;
         $this->donationID = $donationID === 0 ? self::$counter++ : $donationID;
         $this->donorID = $donorID;
+        $this->date = $date;
         $this->state = new UnderReviewState();
     }
     public function setAmount(float $amount): void {
@@ -81,7 +83,7 @@ class Donation {
         $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $sql = "INSERT INTO donations (donationID, donorID, amount, donation_date) 
+            $sql = "INSERT INTO donation (donationID, donorID, amount, donation_date) 
                     VALUES (?, ?, ?, ?)";
             $params = [
                 $donation->getDonationID(),
@@ -112,8 +114,9 @@ class Donation {
             return new Donation(
                 $result['amount'],
                 $result['donationID'],
-                $result['donorID'],
-                new DateTime($result['donation_date'])
+                new DateTime($result['donation_date']),
+                $result['donorID']
+                
             );
         }
         return null;
