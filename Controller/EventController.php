@@ -190,6 +190,8 @@ if (isset($_POST['updateEvent'])) {
     $updates = [];
     $event = Event::retrieve($updates['eventId']);
 
+    if (isset($_POST['Campaign'])) {
+        $event = CampaignStrategy::retrieve($updates['eventId']);
     if (!empty($_POST['eventId'])) {
         if (isset($_POST['eventName'])) {
             $event->setName($_POST['eventName']);
@@ -204,19 +206,35 @@ if (isset($_POST['updateEvent'])) {
             $event->setTime($_POST['time']);
         }
 
-        if (isset($_POST['Campaign'])) {
+        
             if (isset($_POST['target'])) {
                 $event->setTarget($_POST['target']);
             }
-
+            
             $result = $eventController->updateCampaign($event);
             echo json_encode(['success' => $result]);
 
-        } elseif (isset($_POST['VolunteeringEvent'])) {
+    }
+}
+    elseif (isset($_POST['VolunteeringEvent'])) {
+        $event = VolunteeringEventStrategy::retrieve($updates['eventId']);
+        if (!empty($_POST['eventId'])) {
+            if (isset($_POST['eventName'])) {
+                $event->setName($_POST['eventName']);
+            }
+            if (isset($_POST['volunteers_needed'])) {
+                $event->setVolunteersNeeded($_POST['volunteers_needed']);
+            }
+            if (isset($_POST['location'])) {
+                $event->setLocation($_POST['location']);
+            }
+            if (isset($_POST['time'])) {
+                $event->setTime($_POST['time']);
+            }
+        }
             $result = $eventController->updateVolunteeringEvent($event);
             echo json_encode(['success' => $result]);
         }
-    }
     exit;
 }
 

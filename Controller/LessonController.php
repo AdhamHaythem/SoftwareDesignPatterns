@@ -17,13 +17,13 @@ class LessonController
        $instructor->deleteLesson($lessonId);
     }
 
-    function retrieveLesson($lessonId,$instructorId)
-    {
-        $instructor = InstructorModel::retrieve($instructorId);
-        $lesson = $instructor->retrieveLesson($lessonId);
-        $lessonView = new LessonView();
-        $lessonView->displayLessonDetails($lesson);
-    }
+    // function retrieveLesson($lessonId,$instructorId)
+    // {
+    //     $instructor = InstructorModel::retrieve($instructorId);
+    //     $lesson = $instructor->retrieveLesson($lessonId);
+    //     $lessonView = new LessonView();
+    //     $lessonView->displayLessonDetails($lesson);
+    // }
 
 
 }
