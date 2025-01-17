@@ -13,19 +13,270 @@ require_once 'VolunteeringEventModel.php';
 require_once 'hr.php';
 require_once 'Technical.php';
 require_once 'delivery.php';
-require_once 'PaymentAdmin.php';
+//require_once 'PaymentAdmin.php';
 require_once 'cash.php';
 require_once 'visa.php';
 require_once 'statisticsGenerator.php';
+require_once 'AdminModel.php';
+require_once 'DonationManager.php';
+require_once 'CampaignStrategy.php';
 
+
+
+
+//.............Main to test campain&volunteeringEvents
+
+function main(){
+    
+    $campaign1 = new CampaignStrategy(
+        new DateTime('2023-1-15 10:00:00'),
+        'New York',
+        10,
+        1,
+        'Charity Run',
+        1000.0,
+        'Annual Charity Run',
+        'descriptionnnnnn',
+        500.0
+    );
+
+   $campaign2 = new CampaignStrategy(
+        new DateTime('2023-1-11 10:00:00'),
+        'Los Angeles',
+        15,
+        2,
+        'Food Drive',
+        2000.0,
+        'Winter Food Drive',
+        'descriptionnnnnn',
+        1200.0
+    );
+   
+    $volunteering = new VolunteeringEventStrategy(
+       'Food Drive',
+        new DateTime('2023-1-11 10:00:00'),
+        'Los Angeles',
+        200,
+        3
+       
+    );
+
+    if (CampaignStrategy::create($campaign1)) {
+            echo "campaign1 created and added to the database successfully.\n";
+                } else {
+                    echo "Failed to create campaign1.\n";
+        }
+
+    if (CampaignStrategy::create($campaign2)) {
+            echo "campaign2 created and added to the database successfully.\n";
+            } else {
+            echo "Failed to create campaign2.\n";
+    }
+
+    if (VolunteeringEventStrategy::create($volunteering)) {
+        echo "volunteeringcreated and added to the database successfully.\n";
+        } else {
+        echo "Failed to create volunteering.\n";
+}
+
+}
+main();
+
+
+
+
+//.............Main to test DManager with db
+
+
+// function main() {
+//     $config = require 'configurations.php';
+
+//     $db = new DatabaseConnection($config);
+
+
+//     $donor1 = new Donor(
+//         1, // userID
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
+
+//     if (Donor::create($donor1)) {
+//             echo "Donor 1 created and added to the database successfully.\n";
+//         } else {
+//             echo "Failed to create Donor 1.\n";
+//         }
+
+//     $donor2 = new Donor(
+//         2, // userID
+//         'mariam2', // username
+//         'mariaam2', // firstName
+//         'badawy2', // lastName
+//         'mariambadawy2@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
+
+//     if (Donor::create($donor2)) {
+//             echo "Donor 2 created and added to the database successfully.\n";
+//         } else {
+//             echo "Failed to create Donor 2.\n";
+//         }
+
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
+
+//     $campaign2 = new CampaignStrategy(
+//         new DateTime('2023-1-11 10:00:00'),
+//         'Los Angeles',
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
+//     $campaigns = [$campaign1, $campaign2];
+
+//     $donation1 = new Donation(1000.0, 1,new DateTime(),1);
+//     $donation2 = new Donation(2000.0, 1,new DateTime(), 2);
+//     $donation3 =new Donation(3000.0, 2,new DateTime(), 3);
+
+//     $donations = [
+//         1 => [$donation1, $donation2], 
+//         2 => [$donation3],             
+//     ];
+
+//     $donationManager = new DonationManager(1000.0, $donations, $campaigns);
+
+//     // Insert the donation manager into the database
+//     if (DonationManager::create($donationManager)) {
+//         echo "DonationManager created successfully!\n";
+//     } else {
+//         echo "Failed to create DonationManager.\n";
+//     }
+
+//     $donation = new Donation(100.0, 1, new DateTime('2023-10-15 10:00:00'),1);
+
+//     // Insert the donation into the database
+//     if (Donation::create($donation)) {
+//         echo "Donation created successfully!\n";
+//     } else {
+//         echo "Failed to create donation.\n";
+//         return;
+    
+//     }
+//     $donation2 = new Donation(300.0, 2, new DateTime('2023-10-15 10:00:00'),2);
+
+//     // Insert the donation into the database
+//     if (Donation::create($donation2)) {
+//         echo "Donation created successfully!\n";
+//     } else {
+//         echo "Failed to create donation.\n";
+//         return;
+    
+//     }
+// }
+// main();
+
+
+//.............Main to test DManager without db
+
+// function main() {
+
+       
+//     $campaign1 = new CampaignStrategy(
+//         101,
+//         new DateTime('2023-10-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         500.0
+//     );
+
+//     $campaign2 = new CampaignStrategy(
+//         102,
+//         new DateTime('2023-11-20 14:00:00'),
+//         'Los Angeles',
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         1200.0
+//     );
+//     $campaigns = [$campaign1, $campaign2];
+
+//     $donation1 = new Donation(1000.0, 1,new DateTime(),1);
+//     $donation2 = new Donation(2000.0, 1,new DateTime(), 2);
+//     $donation3 =new Donation(3000.0, 2,new DateTime(), 3);
+
+//     $donations = [
+//         1 => [$donation1, $donation2], 
+//         2 => [$donation3],             
+//     ];
+
+//     $donationManager = new DonationManager(1000.0, $donations, $campaigns);
+
+//     // $donationManager->addDonationForDonor(1, new Donation(1000.0, 1,new DateTime(),1));
+//     // $donationManager->addDonationForDonor(1, new Donation(2000.0, 1,new DateTime(), 2));
+//     // $donationManager->addDonationForDonor(2, new Donation(3000.0, 2,new DateTime(), 3));
+
+//     echo "Total Donations: " . $donationManager->calculateTotalDonations() . "\n";
+
+//     echo "Donations for Donor 1:\n";
+//     foreach ($donationManager->getDonationsByDonor(1) as $donation) {
+//         echo "Donation ID: " . $donation->getDonationID() . ", Amount: " . $donation->getAmount() . "\n";
+//     }
+
+
+//     echo "Campaign Details for ID 101:\n";
+//     $campaignDetails = $donationManager->getCampaignDetails(101);
+//     if ($campaignDetails) {
+//         echo "Campaign ID: " . $campaignDetails->getCampaignID() . "\n";
+//         echo "Title: " . $campaignDetails->getTitle() . "\n";
+//         echo "Target: " . $campaignDetails->getTarget() . "\n";
+//         echo "Money Earned: " . $campaignDetails->getMoneyEarned() . "\n";
+//     } else {
+//         echo "Campaign not found.\n";
+//     }
+
+//     echo "\nDonation Details for ID 2:\n";
+//     $donationDetails = $donationManager->getDonationDetails(2);
+//     if ($donationDetails) {
+//         echo " Amount: " . $donationDetails->getAmount() . "\n";
+//     } else {
+//         echo "Donation not found.\n";
+//     }
+// }
+
+// main();
 
 
 //..............Main to test statisticsGenerator
 
-function main() {
-    $config = require 'configurations.php';
+//function main() {
+//     $config = require 'configurations.php';
 
-    $db = new DatabaseConnection($config);
+//     $db = new DatabaseConnection($config);
 
 
 // // Donor 1
@@ -144,19 +395,19 @@ function main() {
 
 
 
-$Generator = new statisticsGenerator();
-$result = $Generator->getData('Donations'); // Only pass the required argument
-$finalReport = $Generator->finalizeReport(results: $result); // Skip userID, let it use its default value (0)
+// $Generator = new statisticsGenerator();
+// $result = $Generator->getData('Donations'); // Only pass the required argument
+// $finalReport = $Generator->finalizeReport(results: $result); // Skip userID, let it use its default value (0)
 
-echo "Final Report:\n";
-echo "Mean: " . $finalReport['mean'] . "\n";
+// echo "Final Report:\n";
+// echo "Mean: " . $finalReport['mean'] . "\n";
 
 
     
 
-}
+// }
 
-main();
+//main();
 
 //..............Main to test PaymentAdmin
 
@@ -567,17 +818,17 @@ main();
 //         echo "Failed to create DeliveryPersonnel 3.\n";
 //     }
     
-    // $Generator = new ReportGenerator();
-    // $Generator->getData('HR');
-    // $Generator->getData('Technical');
-    // $Generator->getData('Delivery');
-    // $Generator->getData('Donor');
+//     $Generator = new ReportGenerator();
+//     $Generator->getData('HR');
+//     $Generator->getData('Technical');
+//     $Generator->getData('Delivery');
+//     $Generator->getData('Donor');
 
-    // $result = $Generator->getData('Instructor');
+//     $result = $Generator->getData('Instructor');
 
-    // echo "Instructor Report:\n";
-    // $user = $Generator->filterData(1, $result);
-    // print(gettype($user));
+//     echo "Instructor Report:\n";
+//     $user = $Generator->filterData(1, $result);
+//     print(gettype($user));
 // }
 
 // main();

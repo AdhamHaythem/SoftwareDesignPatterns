@@ -1,5 +1,3 @@
-
-
 <?php
 
 require_once 'IEvent.php';
@@ -12,29 +10,32 @@ class CampaignStrategy extends Event {
     private array $totalEvents;
     private array $donations;
     private float $moneyEarned;
+    private string $description;
 
     public function __construct(
-        int $campaignID,
-        DateTime $time,
+        DateTime $time, 
         string $location,
         int $volunteersNeeded,
         int $eventID,
         string $name,
         float $target,
         string $title,
+        string $description,
         float $moneyEarned
     ) {
-        parent::__construct($time, $location, $volunteersNeeded, $eventID, $name);
-        $this->campaignID = $campaignID;
+        parent::__construct($time, $location, $volunteersNeeded, $eventID, $name, $description);
+        $this->campaignID = $eventID; //w henaaaaaaa
         $this->target = $target;
         $this->title = $title;
         $this->moneyEarned = $moneyEarned;
+        $this->description = $description;
     }
 
 
     public function getCampaignID(): int {
         return $this->campaignID;
     }
+  
 
     public function setCampaignID(int $campaignID): void {
         $this->campaignID = $campaignID;
@@ -75,6 +76,14 @@ class CampaignStrategy extends Event {
     public function getMoneyEarned(): float {
         return $this->moneyEarned;
     }
+    public function getdescription(): string {
+        return $this->description;
+    }
+    
+    public function setDescription(string $description): void {
+        $this->description = $description;
+    }
+ 
 
     public function setMoneyEarned(float $moneyEarned): void {
         $this->moneyEarned = $moneyEarned;
@@ -135,51 +144,78 @@ class CampaignStrategy extends Event {
         return $dbConnection->execute($sql, $params);
     }
 
+
     public static function create($campaign): bool {
+        $dbConnection = DatabaseConnection::getInstance();
 
         if (!$campaign instanceof CampaignStrategy) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
-        $sql = "INSERT INTO campaignstrategy (campaignID, campaignName, description, startDate, endDate, targetAmount, raisedAmount)
-                VALUES (:campaignID, :campaignName, :description, :startDate, :endDate, :targetAmount, :raisedAmount)";
+        
+        $Eventsql = "INSERT INTO event (eventID,name,time,location,volunteers_needed,volunteersList) 
+        VALUES (?, ?, ?, ?, ?, ?)";
+        $Eventparams = [
+            $campaign->getEventID(),
+            $campaign->getName(),
+            $campaign->getTime()->format('Y-m-d H:i:s'),
+            $campaign->getLocation(),
+            $campaign->getVolunteersNeeded(),
+            json_encode($campaign->getVolunteersList())
+        
+        ];
+        if (!$dbConnection->execute($Eventsql, $Eventparams)) {
+            throw new Exception("Failed to insert or update eventforcampaign record.");
+        }
+
+        $sql = "INSERT INTO campaignstrategy (eventID,target,title,description,moneyEarned)
+                VALUES (?, ?, ?, ?, ?)";
         
         $params = [
-            ':campaignID' => $campaign->campaignID,
-            ':campaignName' => $campaign->title,
-            ':startDate' => $campaign->totalEvents[0]->getStartDate()->format('Y-m-d H:i:s'),
-            ':endDate' => $campaign->totalEvents[0]->getEndDate()->format('Y-m-d H:i:s'),
-            ':targetAmount' => $campaign->target,
-            ':raisedAmount' => $campaign->moneyEarned
+             $campaign->getCampaignID(),
+             $campaign->getTitle(),
+            //  $campaign->getLocation(),
+            //  $campaign->getVolunteersNeeded(),
+             $campaign->getdescription(),
+            //  $campaign->getTime()->format('Y-m-d H:i:s'),
+             $campaign->getTarget(),
+             $campaign->getMoneyEarned()
         ];
-        $dbConnection= Event::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
+        if (!$dbConnection->execute($sql, $params)) {
+            throw new Exception("Failed to insert or update CAMPAIGN record.");
+        }
+
+        return true;
     }
 
     public static function retrieve($campaignID): ?CampaignStrategy {
-        $dbConnection = Event::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $sql = "SELECT * FROM campaignstrategy WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
-        
-        $result = $dbConnection->query($sql, $params);
-        if ($result) {
-            $startDate = new DateTime($result['startDate']);
-            $endDate = new DateTime($result['endDate']);
-            
-            return new CampaignStrategy(
-                $result['campaignID'],
-                $startDate,
-                $result['location'],
-                $result['volunteersNeeded'],
-                $result['eventID'],
-                $result['campaignName'],
-                $result['targetAmount'],
-                $result['campaignTitle'],
-                $result['raisedAmount']
-            );
-        }
-        return null;
-    }
     
+        $result = $dbConnection->query($sql, $params);
+    
+        if (!$result) {
+            return null; // Campaign not found
+        }
+    
+        $time = new DateTime($result['time']);
+      
+    
+        return new CampaignStrategy(
+            $time,
+            $result['location'],
+            $result['volunteersNeeded'],
+            $result['eventID'],
+            $result['name'],
+            $result['target'],
+            $result['title'],
+            $result['description'],
+            $result['moneyEarned']
+        );
+    }
+
+
+   ///update 8alaaaaaaaaaattt w feh redundancyyyyyyyyyy
 
     public static function update($campaign): bool {
         $sql = "UPDATE campaignstrategy SET 
@@ -196,14 +232,14 @@ class CampaignStrategy extends Event {
             ':campaignID' => $campaign->campaignID
         ];
 
-        return Event::getDatabaseConnection()->execute($sql, $params);
+        return DatabaseConnection::getInstance() ->execute($sql, $params);
     }
 
 
     public static function delete($campaignID): bool {
         $sql = "DELETE FROM campaignstrategy WHERE campaignID = :campaignID";
         $params = [':campaignID' => $campaignID];
-        $dbConnection= Event::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         return $dbConnection->execute($sql, $params);
     }
 
@@ -224,7 +260,7 @@ class CampaignStrategy extends Event {
     }
     
     public function getAllEvents(): array {
-        $dbConnection = Event::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $sql = "SELECT * FROM campaignstrategy";
         
         $result = $dbConnection->query($sql);
@@ -232,25 +268,25 @@ class CampaignStrategy extends Event {
         
         if ($result) {
             foreach ($result as $campaignData) {
-                $startDate = new DateTime($campaignData['startDate']);
-                $endDate = new DateTime($campaignData['endDate']);
+                $time = new DateTime($campaignData['time']);
                 $campaigns[] = new CampaignStrategy(
-                    $campaignData['campaignID'],
-                    $startDate,
+                    $time,
                     $campaignData['location'],
                     $campaignData['volunteersNeeded'],
-                    $campaignData['eventID'], 
-                    $campaignData['campaignName'],
-                    $campaignData['targetAmount'],
-                    $campaignData['campaignTitle'],
-                    $campaignData['raisedAmount']
+                    $campaignData['eventID'],
+                    $campaignData['name'],
+                    $campaignData['target'],
+                    $campaignData['title'],
+                    $campaignData['description'],
+                    $campaignData['moneyEarned']
+
                 );
             }
         }
         
         return $campaigns;
     }
-    
+
 
 
     public function checkEventStatus(): string {

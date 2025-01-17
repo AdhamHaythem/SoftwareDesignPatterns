@@ -108,8 +108,7 @@ class Donor extends UserModel implements IObserver {
     }
 
     public function setCommand(ICommand $command): void {
-        echo "Setting up command...\n";
-
+        
         if ($command instanceof DonationUndoCommand) {
             $command->setDonation($this->donation);
             $command->setPreviousAmount($this->previousAmount);
@@ -327,7 +326,6 @@ class Donor extends UserModel implements IObserver {
         $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            // 1. Insert into `user` table
             $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)";
@@ -344,12 +342,10 @@ class Donor extends UserModel implements IObserver {
                 true // isActive
             ];
     
-            // Execute user table insertion
             if (!$dbConnection->execute($userSql, $userParams)) {
                 throw new Exception("Failed to insert or update user record.");
             }
     
-            // 2. Insert into `donor` table
             $donorSql = "INSERT INTO donor (donorID,userID, donationHistory, totalDonations, goalAmount)
                          VALUES (?, ?, ?, ?,?)
                          ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations), goalAmount = VALUES(goalAmount)";
@@ -362,14 +358,13 @@ class Donor extends UserModel implements IObserver {
                 0// goalAmount
             ];
     
-            // Execute donor table insertion
             if (!$dbConnection->execute($donorSql, $donorParams)) {
                 throw new Exception("Failed to insert or update donor record.");
             }
     
             return true;
         } catch (Exception $e) {
-            // Log the error for debugging
+        
             error_log("Error creating donor: " . $e->getMessage());
             return false;
         }
@@ -402,6 +397,7 @@ class Donor extends UserModel implements IObserver {
         }
         return null;
     }
+    
     public static function update($donor): bool {
         $dbConnection = UserModel::getDatabaseConnection();
         $sql = "UPDATE donor SET 
