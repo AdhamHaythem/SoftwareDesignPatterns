@@ -70,19 +70,24 @@ class UserController{
         $view->displayUsers($admin);
     }
 
-    function deleteDonor($donorId)
-    {
-        Donor::delete($donorId);
-    }
+    // function deleteDonor($donorId)
+    // {
+    //     Donor::delete($donorId);
+    // }
 
-    function deleteAdmin($userId)
-    {
-        Admin::delete($userId);
-    }
+    // function deleteAdmin($userId)
+    // {
+    //     Admin::delete($userId);
+    // }
 
-    function deleteEmployee($userId)
+    // function deleteEmployee($userId)
+    // {
+    //     EmployeeModel::delete($userId);
+    // }
+
+    function deleteUser($userId)
     {
-        EmployeeModel::delete($userId);
+        UserModel::delete($userId);
     }
 
     function getFullName($userId)
@@ -177,29 +182,37 @@ if(isset($_POST['retrieveAdmin']))
     }
 }
 
-if(isset($_POST['deleteDonor']))
-{
-    if(!empty($_POST['donorId']))
-    {
-        $x->deleteDonor($_POST['donorId']);
-    }
-}
-
-if(isset($_POST['deleteAdmin']))
+if(isset($_POST['deleteUser']))
 {
     if(!empty($_POST['userId']))
     {
-        $x->deleteAdmin($_POST['userId']);
+        $x->deleteUser($_POST['donorId']);
     }
 }
 
-if(isset($_POST['deleteEmployee']))
-{
-    if(!empty($_POST['userId']))
-    {
-        $x->deleteEmployee($_POST['userId']);
-    }
-}
+// if(isset($_POST['deleteDonor']))
+// {
+//     if(!empty($_POST['donorId']))
+//     {
+//         $x->deleteDonor($_POST['donorId']);
+//     }
+// }
+
+// if(isset($_POST['deleteAdmin']))
+// {
+//     if(!empty($_POST['userId']))
+//     {
+//         $x->deleteAdmin($_POST['userId']);
+//     }
+// }
+
+// if(isset($_POST['deleteEmployee']))
+// {
+//     if(!empty($_POST['userId']))
+//     {
+//         $x->deleteEmployee($_POST['userId']);
+//     }
+// }
 
 if(isset($_POST['fullName']))
 {
@@ -325,8 +338,6 @@ if(isset($_POST['updateEmployee']))
     }
     }
 
-
-
     if(isset($_POST['technical'])){
         $technical = technicalModel::retrieve($_POST["userId"]);
         if(!empty($_POST['userId']))
@@ -359,9 +370,6 @@ if(isset($_POST['updateEmployee']))
             technicalModel::update($technical);
         }
         }
-
-
-
         
     if(isset($_POST['delivery'])){
         $delivery = DeliveryPersonnel::retrieve($_POST["userId"]);
