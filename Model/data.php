@@ -9,10 +9,7 @@ $config = [
 ];
 
 try {
-    // Create a new DatabaseConnection object
     $db = new DatabaseConnection($config);
-
-    // Create tables and handle other operations here
     createTables($db);
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
@@ -49,6 +46,7 @@ $sql_admin = "CREATE TABLE IF NOT EXISTS `admin` (
     `donation_manager` VARCHAR(255),
     FOREIGN KEY (`userID`) REFERENCES `user`(`userID`) ON DELETE CASCADE ON UPDATE CASCADE
 )";
+
 if ($db->execute($sql_admin) === TRUE) {
     echo "Table 'admin' created successfully.<br>";
 } else {
@@ -173,10 +171,12 @@ if ($db->execute($sql_donation) === TRUE) {
     echo "Error creating table 'Donation': " . $conn->error . "<br>";
 }
 
-$sql_donation_manager = "CREATE TABLE IF NOT EXISTS `donationManager` (                 
+$sql_donation_manager = "CREATE TABLE IF NOT EXISTS `donationManager` ( 
+    `adminID` INT PRIMARY KEY,                
     `totalDonations` DOUBLE NOT NULL DEFAULT 0.0,           
     `goalAmount` DOUBLE NOT NULL DEFAULT 0.0,               
-    `campaigns` TEXT NOT NULL                     -- JSON or serialized list of campaigns
+    `campaigns` JSON NOT NULL,                     -- JSON or serialized list of campaigns
+    FOREIGN KEY (`adminID`) REFERENCES Admin(`userID`)
 )";
 
 if ($db->execute($sql_donation_manager) === TRUE) {

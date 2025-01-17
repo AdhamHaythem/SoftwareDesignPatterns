@@ -23,6 +23,12 @@ require_once 'CampaignStrategy.php';
 require_once 'student.php';
 
 
+
+
+
+
+//..................Main to test donationManager
+
 // function main(){
 //     $donor = new Donor(
 //         'mariam', // username
@@ -122,141 +128,141 @@ require_once 'student.php';
 
 //................Main to test crud events
 
-function main() {
-    // Create campaigns
-    $campaign = new CampaignStrategy(
-        new DateTime('2023-1-15 10:00:00'),
-        'New York',
-        10,
-        1,
-        'Charity Run',
-        1000.0,
-        'Annual Charity Run',
-        'descriptionnnnnn',
-        500.0
-    );
+// function main() {
+//     // Create campaigns
+//     $campaign = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
 
-    $campaign1 = new CampaignStrategy(
-        new DateTime('2023-1-11 10:00:00'),
-        'Los Angeles',
-        15,
-        2,
-        'Food Drive',
-        2000.0,
-        'Winter Food Drive',
-        'descriptionnnnnn',
-        1200.0
-    );
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-1-11 10:00:00'),
+//         'Los Angeles',
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
 
-   // Create a volunteering event
-    $volunteering = new VolunteeringEventStrategy(
-        'Food Drive',
-        new DateTime('2023-1-11 10:00:00'),
-        'Los Angeles',
-        200,
-        3
-    );
+//    // Create a volunteering event
+//     // $volunteering = new VolunteeringEventStrategy(
+//     //     'Food Drive',
+//     //     new DateTime('2023-1-11 10:00:00'),
+//     //     'Los Angeles',
+//     //     200,
+//     //     3
+//     // );
 
-    // if (CampaignStrategy::create($campaign)) {
-    //     echo "campaign1 created and added to the database successfully.\n";
-    // } else {
-    //     echo "Failed to create campaign1.\n";
-    // }
+//     if (CampaignStrategy::create($campaign)) {
+//         echo "campaign1 created and added to the database successfully.\n";
+//     } else {
+//         echo "Failed to create campaign1.\n";
+//     }
 
-    // if (CampaignStrategy::create($campaign1)) {
-    //     echo "campaign2 created and added to the database successfully.\n";
-    // } else {
-    //     echo "Failed to create campaign2.\n";
-    // }
+//     if (CampaignStrategy::create($campaign1)) {
+//         echo "campaign2 created and added to the database successfully.\n";
+//     } else {
+//         echo "Failed to create campaign2.\n";
+//     }
 
-    if (VolunteeringEventStrategy::create($volunteering)) {
-        echo "volunteering created and added to the database successfully.\n";
-    } else {
-        echo "Failed to create volunteering.\n";
-    }
-    // $retrievedcampaign = CampaignStrategy::retrieve(1);
-    // if ($retrievedcampaign) {
-    //     echo "Campaign retrieved successfully:\n";
-    //     echo "Event ID: " . $retrievedcampaign->getEventID() . "\n";
-    //     echo "Name: " . $retrievedcampaign->getName() . "\n";
-    //     echo "Location: " . $retrievedcampaign->getLocation() . "\n";
-    //     echo "Volunteers Needed: " . $retrievedcampaign->getVolunteersNeeded() . "\n";
-    //     echo "Target: " . $retrievedcampaign->getTarget() . "\n";
-    //     echo "Title: " . $retrievedcampaign->getTitle() . "\n";
-    //     echo "Description: " . $retrievedcampaign->getDescription() . "\n";
-    //     echo "Money Earned: " . $retrievedcampaign->getMoneyEarned() . "\n";
-    // } else {
-    //     echo "Failed to retrieve campaign.\n";
-    // }
+//     // if (VolunteeringEventStrategy::create($volunteering)) {
+//     //     echo "volunteering created and added to the database successfully.\n";
+//     // } else {
+//     //     echo "Failed to create volunteering.\n";
+//     // }
+//     // $retrievedcampaign = CampaignStrategy::retrieve(1);
+//     // if ($retrievedcampaign) {
+//     //     echo "Campaign retrieved successfully:\n";
+//     //     echo "Event ID: " . $retrievedcampaign->getEventID() . "\n";
+//     //     echo "Name: " . $retrievedcampaign->getName() . "\n";
+//     //     echo "Location: " . $retrievedcampaign->getLocation() . "\n";
+//     //     echo "Volunteers Needed: " . $retrievedcampaign->getVolunteersNeeded() . "\n";
+//     //     echo "Target: " . $retrievedcampaign->getTarget() . "\n";
+//     //     echo "Title: " . $retrievedcampaign->getTitle() . "\n";
+//     //     echo "Description: " . $retrievedcampaign->getDescription() . "\n";
+//     //     echo "Money Earned: " . $retrievedcampaign->getMoneyEarned() . "\n";
+//     // } else {
+//     //     echo "Failed to retrieve campaign.\n";
+//     // }
 
-    // Retrieve and display volunteering event
-    echo "\nRetrieving volunteering event:\n";
-    $retrievedVolunteering = VolunteeringEventStrategy::retrieve(3);
+//     // Retrieve and display volunteering event
+//     echo "\nRetrieving volunteering event:\n";
+//     $retrievedVolunteering = VolunteeringEventStrategy::retrieve(3);
 
-    if ($retrievedVolunteering) {
-        echo "Retrieved Volunteering Event: " . $retrievedVolunteering->getName() . "\n";
-    } else {
-        echo "Failed to retrieve Volunteering Event.\n";
-    }
+//     if ($retrievedVolunteering) {
+//         echo "Retrieved Volunteering Event: " . $retrievedVolunteering->getName() . "\n";
+//     } else {
+//         echo "Failed to retrieve Volunteering Event.\n";
+//     }
 
-    // Update Campaign 1
-    // echo "\nUpdating Campaign 1...\n";
-    // if ($campaign) {
-    //     $campaign->setName("Updated Charity Run");
-    //     $campaign->setLocation("Updated New York");
-    //     if (CampaignStrategy::update($campaign)) {
-    //         echo "Campaign 1 updated successfully.\n";
-    //     } else {
-    //         echo "Failed to update Campaign 1.\n";
-    //     }
-    // }
+//     // Update Campaign 1
+//     // echo "\nUpdating Campaign 1...\n";
+//     // if ($campaign) {
+//     //     $campaign->setName("Updated Charity Run");
+//     //     $campaign->setLocation("Updated New York");
+//     //     if (CampaignStrategy::update($campaign)) {
+//     //         echo "Campaign 1 updated successfully.\n";
+//     //     } else {
+//     //         echo "Failed to update Campaign 1.\n";
+//     //     }
+//     // }
 
-    //Update Volunteering Event
-    echo "\nUpdating Volunteering Event...\n";
-    if ($retrievedVolunteering) {
-        $retrievedVolunteering->setLocation("Updated Los Angeles");
-        if (VolunteeringEventStrategy::update($retrievedVolunteering)) {
-            echo "Volunteering Event updated successfully.\n";
-        } else {
-            echo "Failed to update Volunteering Event.\n";
-        }
-    }
+//     //Update Volunteering Event
+//     echo "\nUpdating Volunteering Event...\n";
+//     if ($retrievedVolunteering) {
+//         $retrievedVolunteering->setLocation("Updated Los Angeles");
+//         if (VolunteeringEventStrategy::update($retrievedVolunteering)) {
+//             echo "Volunteering Event updated successfully.\n";
+//         } else {
+//             echo "Failed to update Volunteering Event.\n";
+//         }
+//     }
 
-    // Delete Campaign 2
-    // echo "\nDeleting Campaign 2...\n";
-    // if (CampaignStrategy::delete(2)) {
-    //     echo "Campaign 2 deleted successfully.\n";
-    // } else {
-    //     echo "Failed to delete Campaign 2.\n";
-    // }
+//     // Delete Campaign 2
+//     // echo "\nDeleting Campaign 2...\n";
+//     // if (CampaignStrategy::delete(2)) {
+//     //     echo "Campaign 2 deleted successfully.\n";
+//     // } else {
+//     //     echo "Failed to delete Campaign 2.\n";
+//     // }
 
-    // Delete Volunteering Event
-    // echo "\nDeleting Volunteering Event...\n";
-    // if (VolunteeringEventStrategy::delete(3)) {
-    //     echo "Volunteering Event deleted successfully.\n";
-    // } else {
-    //     echo "Failed to delete Volunteering Event.\n";
-    // }
+//     // Delete Volunteering Event
+//     // echo "\nDeleting Volunteering Event...\n";
+//     // if (VolunteeringEventStrategy::delete(3)) {
+//     //     echo "Volunteering Event deleted successfully.\n";
+//     // } else {
+//     //     echo "Failed to delete Volunteering Event.\n";
+//     // }
 
-    // Verify deletion
-    echo "\nVerifying deletion:\n";
-    $deletedCampaign2 = CampaignStrategy::retrieve(2);
-    $deletedVolunteering = VolunteeringEventStrategy::retrieve(3);
+//     // Verify deletion
+//     echo "\nVerifying deletion:\n";
+//     $deletedCampaign2 = CampaignStrategy::retrieve(2);
+//     $deletedVolunteering = VolunteeringEventStrategy::retrieve(3);
 
-    if (!$deletedCampaign2) {
-        echo "Campaign 2 is successfully deleted.\n";
-    } else {
-        echo "Campaign 2 still exists.\n";
-    }
+//     if (!$deletedCampaign2) {
+//         echo "Campaign 2 is successfully deleted.\n";
+//     } else {
+//         echo "Campaign 2 still exists.\n";
+//     }
 
-    if (!$deletedVolunteering) {
-        echo "Volunteering Event is successfully deleted.\n";
-    } else {
-        echo "Volunteering Event still exists.\n";
-    }
-}
+//     if (!$deletedVolunteering) {
+//         echo "Volunteering Event is successfully deleted.\n";
+//     } else {
+//         echo "Volunteering Event still exists.\n";
+//     }
+// }
 
-main();
+// main();
 
 
 
@@ -331,14 +337,16 @@ main();
 
 
 //     $donor1 = new Donor(
-//         1, // userID
 //         'mariam', // username
 //         'mariaam', // firstName
 //         'badawy', // lastName
 //         'mariambadawy@gmail.com', // email
 //         '123456', // password
 //         ['Cairo', 'Dubai'], // location
-//         '01001449338' // phoneNumber
+//         '01001449338', // phoneNumber
+//         null,
+//         null,
+//         1, // userID
 //     );
 
 
@@ -398,70 +406,121 @@ main();
 //     } else {
 // //         echo "Failed to retrieve updated Donor 1.\n";
 //     }
+//     // string $username,
+//     // string $firstname,
+//     // string $lastname,
+//     // string $email,
+//     // string $password,
+//     // array $location,
+//     // int $phoneNumber,
+//     // IPaymentStrategy $paymentMethod = null,
+//     // Event $event = null,
+//     // int $userID=0
 
-    // $donor2 = new Donor(
-    //     2, // userID
-    //     'mariam2', // username
-    //     'mariaam2', // firstName
-    //     'badawy2', // lastName
-    //     'mariambadawy2@gmail.com', // email
-    //     '123456', // password
-    //     ['Cairo', 'Dubai'], // location
-    //     '01001449338' // phoneNumber
-    // );
+//     $donor2 = new Donor(
+//         'mariam2', // username
+//         'mariaam2', // firstName
+//         'badawy2', // lastName
+//         'mariambadawy2@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338', // phoneNumber
+//         null,
+//         null,
+//          2 // userID
+//     );
 
-    // if (Donor::create($donor2)) {
-    //         echo "Donor 2 created and added to the database successfully.\n";
-    //     } else {
-    //         echo "Failed to create Donor 2.\n";
-    //     }
+//     if (Donor::create($donor2)) {
+//             echo "Donor 2 created and added to the database successfully.\n";
+//         } else {
+//             echo "Failed to create Donor 2.\n";
+//         }
+//     $adminID = 1;
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
 
-    // $campaign1 = new CampaignStrategy(
-    //     new DateTime('2023-1-15 10:00:00'),
-    //     'New York',
-    //     10,
-    //     1,
-    //     'Charity Run',
-    //     1000.0,
-    //     'Annual Charity Run',
-    //     'descriptionnnnnn',
-    //     500.0
-    // );
+//     $campaign2 = new CampaignStrategy(
+//         new DateTime('2023-1-11 10:00:00'),
+//         'Los Angeles',
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
+//     $campaigns = [$campaign1, $campaign2];
 
-    // $campaign2 = new CampaignStrategy(
-    //     new DateTime('2023-1-11 10:00:00'),
-    //     'Los Angeles',
-    //     15,
-    //     2,
-    //     'Food Drive',
-    //     2000.0,
-    //     'Winter Food Drive',
-    //     'descriptionnnnnn',
-    //     1200.0
-    // );
-    // $campaigns = [$campaign1, $campaign2];
+//     $donation1 = new Donation(1000.0, 1,new DateTime(),1);
+//     $donation2 = new Donation(2000.0, 1,new DateTime(), 2);
+//     $donation3 =new Donation(3000.0, 2,new DateTime(), 3);
 
-    // $donation1 = new Donation(1000.0, 1,new DateTime(),1);
-    // $donation2 = new Donation(2000.0, 1,new DateTime(), 2);
-    // $donation3 =new Donation(3000.0, 2,new DateTime(), 3);
+//     $donations = [
+//         1 => [$donation1, $donation2], 
+//         2 => [$donation3],             
+//     ];
 
-    // $donations = [
-    //     1 => [$donation1, $donation2], 
-    //     2 => [$donation3],             
-    // ];
+//     $donationManager = new DonationManager($adminID,1000.0, $donations, $campaigns);
 
-    // $donationManager = new DonationManager(1000.0, $donations, $campaigns);
+//     // Insert the donation manager into the database
+//     if (DonationManager::create($donationManager)) {
+//         echo "DonationManager created successfully!\n";
+//     } else {
+//         echo "Failed to create DonationManager.\n";
+//     }
 
-    // // Insert the donation manager into the database
-    // if (DonationManager::create($donationManager)) {
-    //     echo "DonationManager created successfully!\n";
-    // } else {
-    //     echo "Failed to create DonationManager.\n";
-    // }
+//     $userID = 1; // Example user ID of the Admin
+//     $retrievedDonationManager = DonationManager::retrieve($userID);
+//     if ($retrievedDonationManager) {
+//         echo "\nRetrieved Donation Manager:\n";
+//         echo "Goal Amount: " . $retrievedDonationManager->getGoalAmount() . "\n";
+//         echo "Total Donations: " . $retrievedDonationManager->getTotalDonations() . "\n";
+//         echo "Number of Campaigns: " . count($retrievedDonationManager->getCampaigns()) . "\n";
+//     } else {
+//         echo "Failed to retrieve Donation Manager.\n";
+//     }
 
-    // $donation = new Donation(100.0, 1, new DateTime('2023-10-15 10:00:00'),1);
+//         // Test UPDATE for DonationManager
+//         if ($retrievedDonationManager) {
+//             $retrievedDonationManager->setGoalAmount(15000.0);
+//             $retrievedDonationManager->setTotalDonations(7500.0);
+    
+//             if (DonationManager::update($retrievedDonationManager)) {
+//                 echo "\nDonation Manager updated successfully.\n";
+//             } else {
+//                 echo "\nFailed to update Donation Manager.\n";
+//             }
+//         }
+    
+//         // Test DELETE for DonationManager
+//         if (DonationManager::delete($adminID)) {
+//             echo "\nDonation Manager deleted successfully.\n";
+//         } else {
+//             echo "\nFailed to delete Donation Manager.\n";
+//         }
 
-    // // Insert the donation into the database
+//             // Verify deletion by trying to retrieve the DonationManager again
+//     $deletedDonationManager = DonationManager::retrieve($adminID);
+//     if (!$deletedDonationManager) {
+//         echo "Donation Manager deletion verified.\n";
+//     } else {
+//         echo "Donation Manager still exists.\n";
+//     }
+
+
+    //$donation = new Donation(100.0, 1, new DateTime('2023-10-15 10:00:00'),1);
+
+    // Insert the donation into the database
     // if (Donation::create($donation)) {
     //     echo "Donation created successfully!\n";
     // } else {
@@ -479,8 +538,8 @@ main();
     //     return;
     
     // }
-// }
-// main();
+//}
+//main();
 
 
 //.............Main to test DManager without db

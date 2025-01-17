@@ -9,10 +9,13 @@ class DonationManager implements IMaintainable {
     private float $totalDonations;
     private float $goalAmount;
     private array $campaigns;
+    private int $adminID;
 
-    public function __construct(float $goalAmount = 0.0, array $donations = [], array $campaigns = []) {
+    public function __construct(int $adminID, float $goalAmount = 0.0, array $donations = [], array $campaigns = []) {
+        $this->adminID = $adminID;
         $this->donationsByDonor = $donations;
         $this->totalDonations = 0.0;
+        $this->campaigns = $campaigns;
 
         foreach ($donations as $donorID => $donationList) {
             foreach ($donationList as $donation) {
@@ -32,7 +35,7 @@ class DonationManager implements IMaintainable {
                 'eventID' => $campaign->getCampaignID(),
                 'title' => $campaign->getTitle(),
                 'location' => $campaign->getLocation(),
-                'volunteersNeeded' => $campaign->getVolunteersNeeded(),
+                'volunteers_needed' => $campaign->getVolunteersNeeded(),
                 'description' => $campaign->getDescription(),
                 'time' => $campaign->getTime()->format('Y-m-d H:i:s'),
                 'target' => $campaign->getTarget(),
@@ -41,8 +44,9 @@ class DonationManager implements IMaintainable {
             ];
         }, $manager->campaigns);
 
-        $sql = "INSERT INTO donationmanager (goalAmount, totalDonations, campaigns) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO donationmanager (adminID, goalAmount, totalDonations, campaigns) VALUES (?, ?, ?, ?)";
         $params = [
+             $manager->adminID,
              $manager->goalAmount,
              $manager->totalDonations,
              json_encode($campaignsArray) 
@@ -55,46 +59,110 @@ class DonationManager implements IMaintainable {
         return true;
     }
 
-    public static function retrieve($managerID): ?DonationManager {
+    public static function retrieve($adminID): ?DonationManager {
         $dbConnection = DatabaseConnection::getInstance();
-
-        $sql = "SELECT * FROM donationmanager WHERE id = :managerID";
-        $params = [':managerID' => $managerID];
-
+    
+        $sql = "SELECT * FROM donationmanager WHERE adminID = ?";
+        $params = [$adminID];
+    
         $result = $dbConnection->query($sql, $params);
-        if ($result && !empty($result)) {
-            return new DonationManager(
-                $result['goalAmount'],
-                [], // Empty donationss
-                []  // Empty campaignss
-            );
+    
+        if (!$result || empty($result)) {
+            return null; // dManager not found
         }
+    
+        $row = $result[0];
+    
 
-        return null;
+        $campaignsArray = json_decode($row['campaigns'], true);
+
+        $campaigns = array_map(function ($campaignData) {
+            return new CampaignStrategy(
+                new DateTime($campaignData['time']),
+                $campaignData['location'],
+                $campaignData['volunteers_needed'],
+                $campaignData['eventID'],
+                $campaignData['name'],
+                $campaignData['target'],
+                $campaignData['title'],
+                $campaignData['description'],
+                $campaignData['moneyEarned']
+            );
+        }, $campaignsArray);
+    
+        return new DonationManager(
+            $row['adminID'],
+            $row['goalAmount'],
+            $row['totalDonations'],
+            $campaigns
+        );
     }
 
   
     public static function update($manager): bool {
         $dbConnection = DatabaseConnection::getInstance();
-
-        $sql = "UPDATE donationmanager SET goalAmount = :goalAmount, totalDonations = :totalDonations WHERE id = :managerID";
-        $params = [
-            ':goalAmount' => $manager->goalAmount,
-            ':totalDonations' => $manager->totalDonations,
-            ':managerID' => $manager->managerID
-        ];
-
-        return $dbConnection->execute($sql, $params);
+    
+    try {
+    
+        
+            $campaignsArray = array_map(function ($campaign) {
+                return [
+                    'time' => $campaign->getTime()->format('Y-m-d H:i:s'),
+                    'location' => $campaign->getLocation(),
+                    'volunteers_needed' => $campaign->getVolunteersNeeded(),
+                    'eventID' => $campaign->getCampaignID(),
+                    'name' => $campaign->getName(),
+                    'target' => $campaign->getTarget(),
+                    'title' => $campaign->getTitle(),
+                    'description' => $campaign->getDescription(),                    
+                    'moneyEarned' => $campaign->getMoneyEarned()
+                ];
+            }, $manager->campaigns);
+    
+            $sql = "UPDATE donationmanager SET 
+                        goalAmount = ?, 
+                        totalDonations = ?, 
+                        campaigns = ?
+                    WHERE adminID = ?";
+            $params = [
+                $manager->goalAmount,
+                $manager->totalDonations,
+                json_encode($campaignsArray),
+                $manager->adminID
+            ];
+    
+            echo "Donation Manager SQL Query: $sql\n";
+            echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
+    
+            if (!$dbConnection->execute($sql, $params)) {
+                throw new Exception("Failed to update donation manager record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating donation manager: " . $e->getMessage());
+            return false;
+        }
     }
-
  
-    public static function delete($managerID): bool {
+    public static function delete($adminID): bool {
         $dbConnection = DatabaseConnection::getInstance();
-
-        $sql = "DELETE FROM donationmanager WHERE id = :managerID";
-        $params = [':managerID' => $managerID];
-
-        return $dbConnection->execute($sql, $params);
+    
+        try {
+            $sql = "DELETE FROM donationmanager WHERE userID = ?";
+            $params = [$adminID];
+            // echo "Donation Manager SQL Query: $sql\n";
+            // echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
+    
+            if (!$dbConnection->execute($sql, $params)) {
+                throw new Exception("Failed to delete donation manager record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error deleting donation manager: " . $e->getMessage());
+            return false;
+        }
     }
 
 
@@ -113,6 +181,24 @@ class DonationManager implements IMaintainable {
 
     public function calculateTotalDonations(): float {
         return $this->totalDonations;
+    }
+
+    public function getGoalAmount(): float {
+        return $this->goalAmount;
+    }
+
+    public function setGoalAmount(float $goalAmount): void {
+        $this->goalAmount = $goalAmount;
+    }
+
+    public function getTotalDonations(): float {
+        return $this->totalDonations;
+    }
+    public function setTotalDonations(float $totalDonations): void {
+        $this->totalDonations = $totalDonations;
+    }
+    public function getCampaigns(): array {
+        return $this->campaigns;
     }
 
   

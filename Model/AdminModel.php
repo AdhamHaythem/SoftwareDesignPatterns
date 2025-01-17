@@ -7,7 +7,6 @@ class Admin extends UserModel {
     private DonationManager $donationManager;
 
     public function __construct(
-        int $userID,
         string $username,
         string $firstname,
         string $lastname,
@@ -15,10 +14,11 @@ class Admin extends UserModel {
         string $password,
         array $location,
         int $phoneNumber,
-        float $goalAmount = 0.0
-    ) {
-        parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donationManager = new DonationManager($goalAmount, [], []);
+        float $goalAmount = 0.0,
+        int $userID=0
+        ) {
+        parent::__construct($username, $firstname, $lastname, $email, $password, $location, $phoneNumber, $userID);
+        $this->donationManager = new DonationManager($userID,$goalAmount, [], []);
         DonationManager :: create($this->donationManager);
     }
 
