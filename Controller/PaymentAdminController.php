@@ -23,6 +23,12 @@ class PaymentController {
     public function listTransactions(): MyIterator {
         return $this->paymentAdmin->getTransactions();
     }
+    public function listVisaTransactions(): MyIterator {
+        return $this->paymentAdmin->getVisaTransactions();
+    }
+    public function listCashTransactions(): MyIterator {
+        return $this->paymentAdmin->getCashTransactions();
+    }
 
     // List transactions by donor ID
     public function listTransactionsByDonor(int $donorID): MyIterator {
@@ -69,6 +75,19 @@ if (isset($_POST['HandlePayment'])) {
 
 if (isset($_POST['ListTransactions'])) {
     $transactions = $PaymentAdminController->listTransactions();
+    // Handle transactions array in the caller
+}
+
+if (isset($_POST['ListSpecificTransactions'])) {
+    if (isset($_POST['Visa'])) {
+        $transactions = $PaymentAdminController->listVisaTransactions();
+    } else if (isset($_POST['Cash'])) {
+        $transactions = $PaymentAdminController->listCashTransactions();
+    }
+}
+
+if (isset($_POST['ListCashTransactions'])) {
+    $transactions = $PaymentAdminController->listCashTransactions();
     // Handle transactions array in the caller
 }
 

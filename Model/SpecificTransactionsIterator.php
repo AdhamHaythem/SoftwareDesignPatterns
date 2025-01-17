@@ -1,7 +1,6 @@
 
 <?php
 class SpecificTransactionsIterator extends MyIterator {
-    private $position = 0;
     private $transactions = new SplFixedArray(100);
     public function __construct(SplFixedArray $transactions) {
         $this->transactions = $transactions;
