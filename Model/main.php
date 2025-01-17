@@ -23,6 +23,129 @@ require_once 'CampaignStrategy.php';
 require_once 'student.php';
 
 
+
+//................Main to test volunteerList
+
+
+function main(){
+
+
+    $donor = new Donor(
+        "john_doe",       // username
+        "John",           // firstname
+        "Doe",            // lastname
+        "john.doe@example.com", // email
+        "password123",    // password
+        ["New York", "NY"], // location
+        1234567890,       // phoneNumber
+        null,             // paymentMethod
+        null,             // event
+        1                 // userID
+    );
+
+    
+    if (Donor::create($donor)) {
+        echo "Donor created successfully.\n";
+    } else {
+        echo "Failed to create donor.\n";
+        exit;
+    }
+
+
+    $retrievedDonor = Donor::retrieve($donor->getDonorID());
+    if ($retrievedDonor) {
+        echo "Donor retrieved successfully.\n";
+    } else {
+        echo "Failed to retrieve donor.\n";
+        exit;
+    }
+
+    
+    $campaign1 = new CampaignStrategy(
+        new DateTime('2023-1-15 10:00:00'),
+        ['berlin', 'Germany'],
+        10,
+        5,
+        'Charity Run',
+        1000.0,
+        'Annual Charity Run',
+        'descriptionnnnnn',
+        500.0
+    );
+ 
+    if (CampaignStrategy::create($campaign1)) {
+        echo "Event created successfully.\n";
+    } else {
+        echo "Failed to create event.\n";
+        exit;
+    }
+
+    $retrievedDonor->setEventMethod($campaign1);
+
+    try {
+        if ($retrievedDonor->joinEvent()) {
+            echo "Donor joined the event successfully.\n";
+        } else {
+            echo "Failed to join the event.\n";
+        }
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage() . "\n";
+    }
+
+    $volunteers = $campaign1->getVolunteersList();
+    if (in_array($retrievedDonor->getDonorID(), $volunteers)) {
+        echo "Donor ID {$retrievedDonor->getDonorID()} is in the volunteers list for event {$campaign1->getEventID()}.\n";
+    } else {
+        echo "Donor ID {$retrievedDonor->getDonorID()} is NOT in the volunteers list for event {$campaign1->getEventID()}.\n";
+    }
+
+
+
+   $campaign2 = new CampaignStrategy(
+        new DateTime('2023-1-11 10:00:00'),
+        ['New York', 'Los Angeles'],
+        15,
+        2,
+        'Food Drive',
+        2000.0,
+        'Winter Food Drive',
+        'descriptionnnnnn',
+        1200.0
+    );
+   
+    $volunteering = new VolunteeringEventStrategy(
+       'Food Drive',
+        new DateTime('2023-1-11 10:00:00'),
+        ['New York', 'Los Angeles'],
+        200,
+        3
+       
+    );
+
+    if (CampaignStrategy::create($campaign1)) {
+            echo "campaign1 created and added to the database successfully.\n";
+                } else {
+                    echo "Failed to create campaign1.\n";
+        }
+
+    if (CampaignStrategy::create($campaign2)) {
+            echo "campaign2 created and added to the database successfully.\n";
+            } else {
+            echo "Failed to create campaign2.\n";
+    }
+
+    if (VolunteeringEventStrategy::create($volunteering)) {
+        echo "volunteeringcreated and added to the database successfully.\n";
+        } else {
+        echo "Failed to create volunteering.\n";
+}
+
+}
+main();
+
+
+
+
 //................Main to test AdminModel with Dmanager
 // function main() {
 //     $config = require 'configurations.php';
@@ -431,61 +554,61 @@ require_once 'student.php';
 
 //.............Main to test campain&volunteeringEvents
 
-function main(){
+// function main(){
     
-    $campaign1 = new CampaignStrategy(
-        new DateTime('2023-1-15 10:00:00'),
-        ['berlin', 'Germany'],
-        10,
-        1,
-        'Charity Run',
-        1000.0,
-        'Annual Charity Run',
-        'descriptionnnnnn',
-        500.0
-    );
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         ['berlin', 'Germany'],
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
 
-   $campaign2 = new CampaignStrategy(
-        new DateTime('2023-1-11 10:00:00'),
-        ['New York', 'Los Angeles'],
-        15,
-        2,
-        'Food Drive',
-        2000.0,
-        'Winter Food Drive',
-        'descriptionnnnnn',
-        1200.0
-    );
+//    $campaign2 = new CampaignStrategy(
+//         new DateTime('2023-1-11 10:00:00'),
+//         ['New York', 'Los Angeles'],
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
    
-    $volunteering = new VolunteeringEventStrategy(
-       'Food Drive',
-        new DateTime('2023-1-11 10:00:00'),
-        ['New York', 'Los Angeles'],
-        200,
-        3
+//     $volunteering = new VolunteeringEventStrategy(
+//        'Food Drive',
+//         new DateTime('2023-1-11 10:00:00'),
+//         ['New York', 'Los Angeles'],
+//         200,
+//         3
        
-    );
+//     );
 
-    if (CampaignStrategy::create($campaign1)) {
-            echo "campaign1 created and added to the database successfully.\n";
-                } else {
-                    echo "Failed to create campaign1.\n";
-        }
+//     if (CampaignStrategy::create($campaign1)) {
+//             echo "campaign1 created and added to the database successfully.\n";
+//                 } else {
+//                     echo "Failed to create campaign1.\n";
+//         }
 
-    if (CampaignStrategy::create($campaign2)) {
-            echo "campaign2 created and added to the database successfully.\n";
-            } else {
-            echo "Failed to create campaign2.\n";
-    }
+//     if (CampaignStrategy::create($campaign2)) {
+//             echo "campaign2 created and added to the database successfully.\n";
+//             } else {
+//             echo "Failed to create campaign2.\n";
+//     }
 
-    if (VolunteeringEventStrategy::create($volunteering)) {
-        echo "volunteeringcreated and added to the database successfully.\n";
-        } else {
-        echo "Failed to create volunteering.\n";
-}
+//     if (VolunteeringEventStrategy::create($volunteering)) {
+//         echo "volunteeringcreated and added to the database successfully.\n";
+//         } else {
+//         echo "Failed to create volunteering.\n";
+// }
 
-}
-main();
+// }
+// main();
 
 
 
