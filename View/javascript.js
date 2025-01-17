@@ -165,6 +165,35 @@ function campaignDetails(campId){
     });
 };
 
+function fundProgress(campId){
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            fundProgress: '',
+            campainId: campId,
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function addfundProgress(campId){
+    $.ajax({
+        url: "../Controller/EventController.php",
+        type: 'POST',
+        data: {
+            addFunds: '',
+            amount: getElementById("amountRaised").text,
+            eventId: campId,
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
 function volunteerDetails(campId){
     $.ajax({
         url: "../Controller/EventController.php",
@@ -215,6 +244,7 @@ function eventList(itemId) {
         type: 'POST',
         data: {
             eventList: '',
+            donorId: itemId,
             },
         success: function(response) {
             $('.container').html(response);

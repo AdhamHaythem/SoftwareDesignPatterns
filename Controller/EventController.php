@@ -4,7 +4,7 @@
 require_once '../Model/IEvent.php';
 require_once '../Model/VolunteeringEventModel.php';
 require_once '../Model/CampaignStrategy.php';
-require_once '../View/EventView.php';
+// require_once '../View/EventView.php';
 
 class EventController {
 

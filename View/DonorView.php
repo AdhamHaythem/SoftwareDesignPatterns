@@ -34,7 +34,7 @@ class DonorView
                     <li><a href="#" onclick="donorProfile(1)">Donor Information</a></li>
                     <li><a href="#" onclick="donationHistory()">History</a></li>
                     <li><a href="#" onclick="totalDonations()">Total Donations</a></li>
-                    <li><a href="#" onclick="eventList()">Events</a></li>
+                    <li><a href="#" onclick="eventList(1)">Events</a></li>
                 </ul>
             </nav>
             <div class="container">

@@ -1,15 +1,15 @@
 <?php
 
-require_once '../Model/DonorModel.php';
-require_once '../Model/VolunteeringEventStrategy.php';
-require_once '../Model/CampaignStrategy.php';
-require_once '../Model/RegularDonation.php';
-require_once '../Model/Clothes.php';
-require_once '../Model/CashDonation.php';
-require_once '../Model/Food.php';
-require_once '../Model/MedicalSupplies.php';
-require_once '../Model/Cash.php';
-require_once '../Model/Visa.php';
+// require_once '../Model/DonorModel.php';
+// require_once '../Model/VolunteeringEventStrategy.php';
+// require_once '../Model/CampaignStrategy.php';
+// require_once '../Model/RegularDonation.php';
+// require_once '../Model/Clothes.php';
+// require_once '../Model/CashDonation.php';
+// require_once '../Model/Food.php';
+// require_once '../Model/MedicalSupplies.php';
+// require_once '../Model/Cash.php';
+// require_once '../Model/Visa.php';
 require_once '../View/DonorView.php';
 class DonorController{
 
