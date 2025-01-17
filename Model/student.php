@@ -30,8 +30,6 @@ class StudentModel extends UserModel implements IObserver {
             $userID);
             $this->studentID = $userID;
             $this->enrolledLessons = $enrolledLessons;
-            $this->lessonSubject = new LessonModel();
-            $this->lessonSubject->registerObserver($this);
     }
 
     public function enrollInLesson(LessonModel $lesson): void {
