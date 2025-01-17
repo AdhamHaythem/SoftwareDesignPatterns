@@ -45,7 +45,7 @@ class VolunteeringEventStrategy extends Event {
             $object->getEventID(),
             $object->getName(),
             $object->getTime()->format('Y-m-d H:i:s'),
-            $object->getLocation(),
+            json_encode($object->getLocation()),
             $object->getVolunteersNeeded(),
             json_encode($object->getVolunteersList())
         ];
@@ -77,11 +77,12 @@ class VolunteeringEventStrategy extends Event {
         }
     
         $row = $result[0];
+        $location = json_decode($row['location'], true);
     
         return new VolunteeringEventStrategy(
             $row['name'],
             new DateTime($row['time']),
-            $row['location'],
+            $location,
             $row['volunteers_needed'],
             $row['eventID']
         );
@@ -102,7 +103,7 @@ class VolunteeringEventStrategy extends Event {
             $eventParams = [
                 $volunteeringEvent->getName(),
                 $volunteeringEvent->getTime()->format('Y-m-d H:i:s'),
-                $volunteeringEvent->getLocation(),
+                json_encode($volunteeringEvent->getLocation()),
                 $volunteeringEvent->getVolunteersNeeded(),
                 json_encode($volunteeringEvent->getVolunteersList()),
                 $volunteeringEvent->getEventID()

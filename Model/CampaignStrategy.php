@@ -137,7 +137,7 @@ class CampaignStrategy extends Event {
             $campaign->getEventID(),
             $campaign->getName(),
             $campaign->getTime()->format('Y-m-d H:i:s'),
-            $campaign->getLocation(),
+            json_encode($campaign->getLocation()),
             $campaign->getVolunteersNeeded(),
             json_encode($campaign->getVolunteersList())
         
@@ -192,12 +192,13 @@ class CampaignStrategy extends Event {
         }
     
         $row = $result[0];
+        $location = json_decode($row['location'], true);
   
         $time = new DateTime($row['time']);
     
         return new CampaignStrategy(
             $time, // time
-            $row['location'], // location
+            $location, // location
             $row['volunteers_needed'], // volunteersNeeded
             $row['eventID'], // eventID
             $row['name'], // name
@@ -225,7 +226,7 @@ class CampaignStrategy extends Event {
             $eventParams = [
                 $campaign->getName(),
                 $campaign->getTime()->format('Y-m-d H:i:s'),
-                $campaign->getLocation(),
+                json_encode($campaign->getLocation()),
                 $campaign->getVolunteersNeeded(),
                 json_encode($campaign->getVolunteersList()),
                 $campaign->getEventID()
