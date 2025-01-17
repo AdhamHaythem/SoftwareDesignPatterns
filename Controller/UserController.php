@@ -7,6 +7,8 @@ require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
 require_once "../View/UserView.php";
 require_once "../Model/EmployeeFactory.php";
+require_once "../Model/hr.php";
+require_once "../Model/technical.php";
 
 //  require_once '../emailSetup/config.php';
  
@@ -54,7 +56,7 @@ class UserController{
         {
             technicalModel::create($employee);
         }
-        if($EmployeeType=="HR")
+        if($EmployeeType=="Instructor")
         {
             InstructorModel::create($employee);
         }
