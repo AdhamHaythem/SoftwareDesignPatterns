@@ -11,24 +11,24 @@ class EmployeeModel extends UserModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
         string $title,
         int $salary,
-        int $workingHours
+        int $workingHours,
+        int $userID=0
     ) {
         parent::__construct(
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
-            $phoneNumber
+            $phoneNumber,
+            $userID
         );
 
         $this->title = $title;

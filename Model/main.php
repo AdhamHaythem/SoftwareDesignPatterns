@@ -149,80 +149,80 @@ require_once 'CampaignStrategy.php';
 //.............Main to test DManager with db
 
 
-function main() {
-    $config = require 'configurations.php';
+// function main() {
+//     $config = require 'configurations.php';
 
-    $db = new DatabaseConnection($config);
-
-
-    $donor1 = new Donor(
-        1, // userID
-        'mariam', // username
-        'mariaam', // firstName
-        'badawy', // lastName
-        'mariambadawy@gmail.com', // email
-        '123456', // password
-        ['Cairo', 'Dubai'], // location
-        '01001449338' // phoneNumber
-    );
+//     $db = new DatabaseConnection($config);
 
 
-    // Add the donor to the database
-    if (Donor::create($donor1)) {
-        echo "Donor 1 created and added to the database successfully.\n";
-    } else {
-        echo "Failed to create Donor 1.\n";
-        return; // Exit if creation fails
-    }
-
-    // Retrieve the donor from the database
-    $retrievedDonor = Donor::retrieve(1);
-    if ($retrievedDonor) {
-        echo "\nRetrieved Donor 1:\n";
-        echo "Donor ID: " . $retrievedDonor->getDonorID() . "\n";
-        echo "Username: " . $retrievedDonor->getUsername() . "\n";
-        echo "First Name: " . $retrievedDonor->getFirstname() . "\n";
-        echo "Last Name: " . $retrievedDonor->getLastname() . "\n";
-        echo "Email: " . $retrievedDonor->getEmail() . "\n";
-        echo "Location: " . implode(", ", $retrievedDonor->getLocation()) . "\n";
-        echo "Phone Number: " . $retrievedDonor->getPhoneNumber() . "\n";
-    } else {
-        echo "Failed to retrieve Donor 1.\n";
-        return; // Exit if retrieval fails
-    }
-
-    // Update the donor's details
-    $retrievedDonor->setUsername("updatedUsername");
-    $retrievedDonor->setFirstname("updatedFirstName");
-    $retrievedDonor->setLastname("updatedLastName");
-    $retrievedDonor->setEmail("updatedEmail@gmail.com");
-    $retrievedDonor->setLocation(["New York", "London"]);
-    $retrievedDonor->setPhoneNumber("01111111111");
+//     $donor1 = new Donor(
+//         1, // userID
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338' // phoneNumber
+//     );
 
 
+//     // Add the donor to the database
+//     if (Donor::create($donor1)) {
+//         echo "Donor 1 created and added to the database successfully.\n";
+//     } else {
+//         echo "Failed to create Donor 1.\n";
+//         return; // Exit if creation fails
+//     }
+
+//     // Retrieve the donor from the database
+//     $retrievedDonor = Donor::retrieve(1);
+//     if ($retrievedDonor) {
+//         echo "\nRetrieved Donor 1:\n";
+//         echo "Donor ID: " . $retrievedDonor->getDonorID() . "\n";
+//         echo "Username: " . $retrievedDonor->getUsername() . "\n";
+//         echo "First Name: " . $retrievedDonor->getFirstname() . "\n";
+//         echo "Last Name: " . $retrievedDonor->getLastname() . "\n";
+//         echo "Email: " . $retrievedDonor->getEmail() . "\n";
+//         echo "Location: " . implode(", ", $retrievedDonor->getLocation()) . "\n";
+//         echo "Phone Number: " . $retrievedDonor->getPhoneNumber() . "\n";
+//     } else {
+//         echo "Failed to retrieve Donor 1.\n";
+//         return; // Exit if retrieval fails
+//     }
+
+//     // Update the donor's details
+//     $retrievedDonor->setUsername("updatedUsername");
+//     $retrievedDonor->setFirstname("updatedFirstName");
+//     $retrievedDonor->setLastname("updatedLastName");
+//     $retrievedDonor->setEmail("updatedEmail@gmail.com");
+//     $retrievedDonor->setLocation(["New York", "London"]);
+//     $retrievedDonor->setPhoneNumber("01111111111");
 
 
-    if (Donor::update($retrievedDonor)) {
-        echo "\nDonor 1 updated successfully.\n";
-    } else {
-        echo "\nFailed to update Donor 1.\n";
-        return; // Exit if update fails
-    }
 
-    // Retrieve the updated donor from the database
-    $updatedDonor = Donor::retrieve($retrievedDonor->getDonorID());
-    if ($updatedDonor) {
-        echo "\nUpdated Donor 1:\n";
-        echo "Donor ID: " . $updatedDonor->getDonorID() . "\n";
-        echo "Username: " . $updatedDonor->getUsername() . "\n";
-        echo "First Name: " . $updatedDonor->getFirstname() . "\n";
-        echo "Last Name: " . $updatedDonor->getLastname() . "\n";
-        echo "Email: " . $updatedDonor->getEmail() . "\n";
-        echo "Location: " . implode(", ", $updatedDonor->getLocation()) . "\n";
-        echo "Phone Number: " . $updatedDonor->getPhoneNumber() . "\n";
-    } else {
-        echo "Failed to retrieve updated Donor 1.\n";
-    }
+
+//     if (Donor::update($retrievedDonor)) {
+//         echo "\nDonor 1 updated successfully.\n";
+//     } else {
+//         echo "\nFailed to update Donor 1.\n";
+//         return; // Exit if update fails
+//     }
+
+//     // Retrieve the updated donor from the database
+//     $updatedDonor = Donor::retrieve($retrievedDonor->getDonorID());
+//     if ($updatedDonor) {
+//         echo "\nUpdated Donor 1:\n";
+//         echo "Donor ID: " . $updatedDonor->getDonorID() . "\n";
+//         echo "Username: " . $updatedDonor->getUsername() . "\n";
+//         echo "First Name: " . $updatedDonor->getFirstname() . "\n";
+//         echo "Last Name: " . $updatedDonor->getLastname() . "\n";
+//         echo "Email: " . $updatedDonor->getEmail() . "\n";
+//         echo "Location: " . implode(", ", $updatedDonor->getLocation()) . "\n";
+//         echo "Phone Number: " . $updatedDonor->getPhoneNumber() . "\n";
+//     } else {
+// //         echo "Failed to retrieve updated Donor 1.\n";
+//     }
 
     // $donor2 = new Donor(
     //     2, // userID
@@ -304,8 +304,8 @@ function main() {
     //     return;
     
     // }
-}
-main();
+// }
+// main();
 
 
 //.............Main to test DManager without db
@@ -515,39 +515,55 @@ main();
 // echo "Final Report:\n";
 // echo "Mean: " . $finalReport['mean'] . "\n";
 //Donation::delete(1);
+// function main(){
+// // $donation = Donation::retrieve(2);
 
-$donation = Donation::retrieve(2);
+// // if ($donation) {
+// //     echo "Before Update:\n";
+// //     echo "Amount: " . $donation->getAmount() . "\n";
+// //     echo "Donor ID: " . $donation->getDonorID() . "\n";
+// //     echo "Date: " . $donation->getDate()->format('Y-m-d') . "\n";
+// //     echo "Donation ID: " . $donation->getDonationID() . "\n";
 
-if ($donation) {
-    echo "Before Update:\n";
-    echo "Amount: " . $donation->getAmount() . "\n";
-    echo "Donor ID: " . $donation->getDonorID() . "\n";
-    echo "Date: " . $donation->getDate()->format('Y-m-d') . "\n";
-    echo "Donation ID: " . $donation->getDonationID() . "\n";
+// //     // Make changes to the donation object
+// //     $donation->setAmount(250.00); // Update amount    // Change donor ID
+// //     $donation->setDate(new DateTime('2025-02-01')); // Change date
 
-    // Make changes to the donation object
-    $donation->setAmount(250.00); // Update amount    // Change donor ID
-    $donation->setDate(new DateTime('2025-02-01')); // Change date
+// //     // Update the donation in the database
+// //     if (Donation::update($donation)) {
+// //         echo "Donation updated successfully.\n";
 
-    // Update the donation in the database
-    if (Donation::update($donation)) {
-        echo "Donation updated successfully.\n";
+// //         // Fetch the updated donation to confirm changes
+// //         $updatedDonation = Donation::retrieve(2);
+// //         echo "After Update:\n";
+// //         echo "Amount: " . $updatedDonation->getAmount() . "\n";
+// //         echo "Donor ID: " . $updatedDonation->getDonorID() . "\n";
+// //         echo "Date: " . $updatedDonation->getDate()->format('Y-m-d') . "\n";
+// //         echo "Donation ID: " . $updatedDonation->getDonationID() . "\n";
+// //     } else {
+// //         echo "Failed to update the donation.\n";
+// //     }
+// // } else {
+// //     echo "No donation found with the given ID.\n";
+// // }
 
-        // Fetch the updated donation to confirm changes
-        $updatedDonation = Donation::retrieve(2);
-        echo "After Update:\n";
-        echo "Amount: " . $updatedDonation->getAmount() . "\n";
-        echo "Donor ID: " . $updatedDonation->getDonorID() . "\n";
-        echo "Date: " . $updatedDonation->getDate()->format('Y-m-d') . "\n";
-        echo "Donation ID: " . $updatedDonation->getDonationID() . "\n";
-    } else {
-        echo "Failed to update the donation.\n";
-    }
-} else {
-    echo "No donation found with the given ID.\n";
-}
+// $donation = new Donation(
+//     300,                            // Amount of the donation
+//     1,                              // Donor ID (reference to donorID = 1)
+//     new DateTime('2025-01-20'),      // Date of the donation
+//     3
+// );
+
+// // Insert the new donation into the database
+// if (Donation::create($donation)) {
+//     echo "Donation with donorID 1 and donationID 3 created successfully.\n";
+// } else {
+//     echo "Failed to create the donation.\n";
+// }
 
 
+// }
+// main();
 
 
     
@@ -604,381 +620,153 @@ if ($donation) {
 
 // ............Main to test Report Generator for Instructor
 
-// function main() {
+function main() {
 
-//     $config = require 'configurations.php';
+    $config = require 'configurations.php';
 
-//     $db = new DatabaseConnection($config);
+    $db = new DatabaseConnection($config);
 
+    // Technical Object 1
+// $technical1 = new technicalModel(
+//     'tech_guru',           // username
+//     'John',                // firstname
+//     'Smith',               // lastname
+//     'johnsmith@example.com', // email
+//     'password123',         // password
+//     ['New York', 'USA'],   // location
+//     1234567890,            // phoneNumber
+//     8000,                  // salary
+//     40,                    // workingHours
+//     ['PHP', 'MySQL'],      // skills
+//     ['AWS Certification'], // certifications 
+// );
 
-
-//     $instructor = new InstructorModel(
-//         'john_doe',       // username
-//         'John',           // firstname
-//         'Doe',            // lastname
-//         1,                // userID (ensure this is unique)
-//         'john@example.com', // email
-//         'password123',    // password
-//         ['New York', 'USA'], // location (array)
-//         1234567890,       // phoneNumber
-//         'Instructor',     // title
-//         50000,            // salary
-//         40                // workingHours
-//     );
-    
-//     // Add the instructor to the database
-//     if (InstructorModel::create($instructor)) {
-//         echo "Instructor created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create instructor.\n";
-//     }
-
-//     $hr = new HRModel(
-//         'nog_doe',       
-//         'Nog',              
-//         'Doe',               
-//         254678,                   
-//         'nog@example.com',  
-//         'nog111',     
-//         ['San Nogcisco', 'Nogland'], 
-//         9876543210,          
-//         'HR',              
-//         600000,              
-//         35                   
-//     );
-    
-//     if (HRModel::create($hr)) {
-//         echo "HR created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create HR.\n";
-//     }
-//     $technical = new TechnicalModel(
-//         'noga_lcd',          
-//         'Noga',             
-//         'LCD',          
-//         33213,                   
-//         'noga@lcd.com',   
-//         'pass@789',        
-//         ['Mansoura', 'UK'],  
-//         5551234567,         
-//         'Technical',         
-//         750000,               
-//         80,
-//         ["Tea with Milk"],
-//         []                   
-//     );
-    
-//     if (TechnicalModel::create($technical)) {
-//         echo "Technical created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create technical.\n";
-//     }
-    
-//     $delivery = new DeliveryPersonnel(
-//         "DeliveryMan",
-//         "Delivery",
-//         "Man",
-//         "132801273",
-//         "deliv@gmail.com",
-//         "password",
-//         ['Dubai', 'UAE'],     
-//         1234568890,            
-//         "Delivery",
-//         123123123,
-//         33,
-//         "Tuk-tuk"
-//     );
-//     if (DeliveryPersonnel::create($delivery)) {
-//         echo "DeliveryPersonnel created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create DeliveryPersonnel.\n";
-//     }
-    
-//     $donor = new Donor(
-//         '12345688878',     
-//         'Motabare3',             
-//         'Motabare3',            
-//         "Tabaro3at",                     
-//         'motabare3@example.com',   
-//         '1234bnbb',    
-//         ['Dubai', 'UFC'],     
-//         1234567890,            
-//     );
-//     if (Donor::create($donor)) {
-//         echo "Donor created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Donor.\n";
-//     }
-
-//     $instructor1 = new InstructorModel(
-//         'MorganAhmedMorgan',       // username
-//         'Morgan',           // firstname
-//         'Morgan',            // lastname
-//         111112,                // userID (ensure this is unique)
-//         'morgan@example.com', // email
-//         'pass123',    // password
-//         ['Cairo', 'Egypt'], // location (array)
-//         12345123810,       // phoneNumber
-//         'Instructor',     // title
-//         5000000,            // salary
-//         40                // workingHours
-//     );
-//     if (InstructorModel::create($instructor1)) {
-//         echo "Instructor 1 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Instructor 1.\n";
-//     }
-    
-//     $instructor2 = new InstructorModel(
-//         'vini_jr',       // username
-//         'Vinicius',             // firstname
-//         'JR',            // lastname
-//         2890,                  // userID
-//         'vini@example.com', // email
-//         'vini2025',      // password
-//         ['Rio de Janeiro', 'Brazil'], // location
-//         99876543210,         // phoneNumber
-//         'Instructor',       // title
-//         5500000,              // salary
-//         89                 // workingHours
-//     );
-//     if (InstructorModel::create($instructor2)) {
-//         echo "Instructor 2 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Instructor 2.\n";
-//     }
-//     $instructor3 = new InstructorModel(
-//         'doctorbaseer',       // username
-//         'Doctor',             // firstname
-//         'Baseer',            // lastname
-//         28690,                  // userID
-//         'baseer@example.com', // email
-//         'baseer',      // password
-//         ['Imbaba', 'Egypt'], // location
-//         49876543210,         // phoneNumber
-//         'Instructor',       // title
-//         550,              // salary
-//         9                 // workingHours
-//     );
-//     if (InstructorModel::create($instructor3)) {
-//         echo "Instructor 3 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Instructor 3.\n";
-//     }
-//     $hr1 = new HRModel(
-//         'elnognog',       // username
-//         'ElNog',           // firstname
-//         'Nog',           // lastname
-//         254678,          // userID
-//         'nognognog@example.com', // email
-//         'nog111',        // password
-//         ['Nogchester', 'UK'], // location
-//         9576543210,      // phoneNumber
-//         'HR',            // title
-//         600000,          // salary
-//         39               // workingHours
-//     );
-//     if (HRModel::create($hr1)) {
-//         echo "HR 1 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create HR 1.\n";
-//     }
-    
-//     $hr2 = new HRModel(
-//         'hdaboor',      // username
-//         'Haytham',         // firstname
-//         'Dabour',         // lastname
-//         768432,          // userID
-//         'hdaboor@example.com', // email
-//         'hdaboooor',  // password
-//         ['Cool', 'Beautiful'], // location
-//         5554443333,      // phoneNumber
-//         'HR',            // title
-//         70000,           // salary
-//         40               // workingHours
-//     );
-//     if (HRModel::create($hr2)) {
-//         echo "HR 2 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create HR 2.\n";
-//     }
-
-//     $hr3 = new HRModel(
-//         'sayedelbadawy',      // username
-//         'Sayed',         // firstname
-//         'Elbadawy',         // lastname
-//         768432,          // userID
-//         'badawy@example.com', // email
-//         'badawyyy',  // password
-//         ['Tanta', 'Egypt'], // location
-//         5554441233,      // phoneNumber
-//         'HR',            // title
-//         710000,           // salary
-//         10               // workingHours
-//     );
-//     if (HRModel::create($hr3)) {
-//         echo "HR 3 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create HR 3.\n";
-//     }
-
-//     $technical1 = new TechnicalModel(
-//         'noga_diode',        // username
-//         'Noga',            // firstname
-//         'Diode',             // lastname
-//         33213,             // userID
-//         'noga@diode.com',    // email
-//         'pass@789',        // password
-//         ['Big Ben', 'UK'], // location
-//         5551234567,        // phoneNumber
-//         'Technical',       // title
-//         750000,            // salary
-//         80,                // workingHours
-//         ['Singing','C++','Embedded Systems'], // skills
-//         ['Certified']                 // certifications
-//     );
-//     if (TechnicalModel::create($technical1)) {
-//         echo "Technical 1 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Technical 1.\n";
-//     }
-    
-//     $technical2 = new TechnicalModel(
-//         'tech_guru',         // username
-//         'Mark',              // firstname
-//         'Taylor',            // lastname
-//         7453212,               // userID
-//         'mark@example.com',  // email
-//         'fixIt2025',         // password
-//         ['London', 'UK'],    // location
-//         1234567890,          // phoneNumber
-//         'Technical',         // title
-//         80000,               // salary
-//         40,                  // workingHours
-//         ['Java', 'OOP'], // skills
-//         ['Cisco Certified Network Demolisher']  // certifications
-//     );
-//     if (TechnicalModel::create($technical2)) {
-//         echo "Technical 2 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Technical 2.\n";
-//     }
-
-//     $technical3 = new TechnicalModel(
-//         'hamdahelal',         // username
-//         'Hamada',              // firstname
-//         'Helal',            // lastname
-//         745365652,               // userID
-//         'hamada@example.com',  // email
-//         'hamada111',         // password
-//         ['Alexandria', 'USA'],    // location
-//         123456780090,          // phoneNumber
-//         'Technical',         // title
-//         800000,               // salary
-//         20,                  // workingHours
-//         ['Tea with milk', 'Tea without Milk','Tea without Mint'], // skills
-//         ['IBM Certified']  // certifications
-//     );
-//     if (TechnicalModel::create($technical3)) {
-//         echo "Technical 3 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Technical 3.\n";
-//     }
-//     $technical4 = new TechnicalModel(
-//         'ramadan7aree2a',         // username
-//         'Ramadan',              // firstname
-//         '7aree2a',            // lastname
-//         745365652,               // userID
-//         'ramadan7aree2a@example.com',  // email
-//         'ramadanfire',         // password
-//         ['Shoubra', 'Egypt'],    // location
-//         112945780090,          // phoneNumber
-//         'Technical',         // title
-//         100,               // salary
-//         0,                  // workingHours
-//         ['Banana with milk', 'Last order'], // skills
-//         ['IBM Certified Closed', 'IELTS']  // certifications
-//     );
-//     if (TechnicalModel::create($technical4)) {
-//         echo "Technical 4 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create Technical 4.\n";
-//     }
-
-//     $delivery1 = new DeliveryPersonnel(
-//         'bond007',       // username
-//         'James',              // firstname
-//         'Bond',               // lastname
-//         1234596,               // userID
-//         'james@example.com',  // email
-//         'bond007',        // password
-//         ['Dubai', 'UAE'],     // location
-//         1234568890,           // phoneNumber
-//         'Delivery',           // title
-//         123123,               // salary
-//         33,                   // workingHours
-//         'Yacht'             // vehicleType
-//     );
-//     if (DeliveryPersonnel::create($delivery1)) {
-//         echo "DeliveryPersonnel 1 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create DeliveryPersonnel 1.\n";
-//     }
-    
-//     $delivery2 = new DeliveryPersonnel(
-//         'shedeedelsor3a',         // username
-//         'Shedeed',               // firstname
-//         'Elsor3a',              // lastname
-//         2233644,               // userID
-//         'shedeed@example.com',   // email
-//         'shedeed2025',       // password
-//         ['Qatar', 'Qatar'], // location
-//         98765434411,           // phoneNumber
-//         'Delivery',           // title
-//         45000,                // salary
-//         30,                   // workingHours
-//         'Beach Buggy'           // vehicleType
-//     );
-//     if (DeliveryPersonnel::create($delivery2)) {
-//         echo "DeliveryPersonnel 2 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create DeliveryPersonnel 2.\n";
-//     }
-
-//     $delivery3 = new DeliveryPersonnel(
-//         'summerwatermelon',         // username
-//         'Summer',               // firstname
-//         'Watermelon',              // lastname
-//         2299944,               // userID
-//         'watermelon@example.com',   // email
-//         'watermelon2025',       // password
-//         ['Fayoum', 'Egypt'], // location
-//         98765434411,           // phoneNumber
-//         'Delivery',           // title
-//         4000,                // salary
-//         39,                   // workingHours
-//         'Scooter'           // vehicleType
-//     );
-//     if (DeliveryPersonnel::create($delivery3)) {
-//         echo "DeliveryPersonnel 3 created and added to the database successfully.\n";
-//     } else {
-//         echo "Failed to create DeliveryPersonnel 3.\n";
-//     }
-    
-//     $Generator = new ReportGenerator();
-//     $Generator->getData('HR');
-//     $Generator->getData('Technical');
-//     $Generator->getData('Delivery');
-//     $Generator->getData('Donor');
-
-//     $result = $Generator->getData('Instructor');
-
-//     echo "Instructor Report:\n";
-//     $user = $Generator->filterData(1, $result);
-//     print(gettype($user));
+// if (technicalModel::create($technical1)) {
+//     echo "Technical 1 created successfully.\n";
+// } else {
+//     echo "Failed to create Technical 1.\n";
 // }
 
-// main();
+// // Technical Object 2
+// $technical2 = new technicalModel(
+//     'code_master',         // username
+//     'Jane',                // firstname
+//     'Doe',                 // lastname
+//     'janedoe@example.com', // email
+//     'securePass',          // password
+//     ['San Francisco', 'USA'], // location
+//     9876543210,            // phoneNumber
+//     10000,                 // salary
+//     45,                    // workingHours
+//     ['Python', 'Django'],  // skills
+//     ['Azure Certification'], // certifications
+// );
+
+// if (technicalModel::create($technical2)) {
+//     echo "Technical 2 created successfully.\n";
+// } else {
+//     echo "Failed to create Technical 2.\n";
+// }
+
+// // Technical Object 3
+// $technical3 = new technicalModel(
+//     'data_wizard',         // username
+//     'Alice',               // firstname
+//     'Johnson',             // lastname
+//     'alicej@example.com',  // email
+//     'dataRocks!',          // password
+//     ['Seattle', 'USA'],    // location
+//     4561237890,            // phoneNumber
+//     9000,                  // salary
+//     35,                    // workingHours
+//     ['Data Science', 'ML'], // skills
+//     ['GCP Certification'], // certifications
+// );
+
+// if (technicalModel::create($technical3)) {
+//     echo "Technical 3 created successfully.\n";
+// } else {
+//     echo "Failed to create Technical 3.\n";
+// }
+
+// // Technical Object 4
+// $technical4 = new technicalModel(
+//     'dev_ops',             // username
+//     'Bob',                 // firstname
+//     'Brown',               // lastname
+//     'bobbrown@example.com', // email
+//     'ops1234',             // password
+//     ['Austin', 'USA'],     // location
+//     3216549870,            // phoneNumber
+//     11000,                 // salary
+//     50,                    // workingHours
+//     ['DevOps', 'Kubernetes'], // skills
+//     ['Red Hat Certification'], // certifications
+// );
+
+// if (technicalModel::create($technical4)) {
+//     echo "Technical 4 created successfully.\n";
+// } else {
+//     echo "Failed to create Technical 4.\n";
+// }
+
+try {
+    // Step 1: Retrieve the technicalModel with userID = 2
+    $technical = technicalModel::retrieve(2);
+
+    if ($technical) {
+        echo "Before Update:\n";
+        echo "Username: " . $technical->getUsername() . "\n";
+        echo "First Name: " . $technical->getFirstname() . "\n";
+        echo "Last Name: " . $technical->getLastname() . "\n";
+        echo "Email: " . $technical->getEmail() . "\n";
+        echo "Location: " . json_encode($technical->getLocation()) . "\n";
+        echo "Skills: " . json_encode($technical->getSkills()) . "\n";
+        echo "Certifications: " . json_encode($technical->getCertifications()) . "\n";
+        echo "UserId: " . $technical->getUserID() . "\n";
+
+        // Step 2: Update some fields in the technicalModel
+        $technical->setUsername('updated_tech_master');
+        $technical->setFirstname('Updated Jane');
+        $technical->setLastname('Doe Updated');
+        $technical->setEmail('updatedjanedoe@example.com');
+        $technical->setLocation(['San Francisco', 'USA', 'Updated']);
+        $technical->setSkills(['Python', 'Django', 'Flask']);
+        $technical->setCertifications(['Updated Azure Certification', 'AWS Certification']);
+
+        // Step 3: Call the update method
+        if (technicalModel::update($technical)) {
+            echo "TechnicalModel with userID 2 updated successfully.\n";
+
+            // Step 4: Retrieve the technicalModel again to confirm the update
+            $updatedTechnical = technicalModel::retrieve(2);
+
+            if ($updatedTechnical) {
+                echo "After Update:\n";
+                echo "Username: " . $updatedTechnical->getUsername() . "\n";
+                echo "First Name: " . $updatedTechnical->getFirstname() . "\n";
+                echo "Last Name: " . $updatedTechnical->getLastname() . "\n";
+                echo "Email: " . $updatedTechnical->getEmail() . "\n";
+                echo "Location: " . json_encode($updatedTechnical->getLocation()) . "\n";
+                echo "Skills: " . json_encode($updatedTechnical->getSkills()) . "\n";
+                echo "Certifications: " . json_encode($updatedTechnical->getCertifications()) . "\n";
+            } else {
+                echo "Failed to retrieve the updated technicalModel.\n";
+            }
+        } else {
+            echo "Failed to update technicalModel with userID 2.\n";
+        }
+    } else {
+        echo "No technicalModel found with userID 2.\n";
+    }
+} catch (Exception $e) {
+    echo "An error occurred: " . $e->getMessage();
+}
+
+
+}
+
+main();
 
 //...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
 
@@ -1103,5 +891,4 @@ if ($donation) {
 // }
 
 // main();
-
 

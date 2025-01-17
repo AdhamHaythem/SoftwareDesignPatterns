@@ -9,29 +9,28 @@ class technicalModel extends EmployeeModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
-        string $title,
         int $salary,
         int $workingHours,
         array $skills,
-        array $certifications
+        array $certifications,
+        int $userID=0
     ) {
         parent::__construct(    
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
             $phoneNumber,
             "Technical",
             $salary,
-            $workingHours
+            $workingHours,
+            $userID
         );
 
         $this->skills = $skills;
@@ -109,78 +108,121 @@ class technicalModel extends EmployeeModel {
     
     
     public static function retrieve($userID): ?technicalModel {
-        $sql = "SELECT * FROM technical WHERE userID = :userID";
-        $params = [':userID' => $userID];
-        
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        // Query to retrieve technical details joined with user and employee
+        $sql = "SELECT * FROM technical t
+                JOIN employee e ON t.userID = e.userID
+                JOIN user u ON e.userID = u.userID
+                WHERE t.userID = ?";
+        $params = [$userID];
+    
+        // Execute the query
         $result = $dbConnection->query($sql, $params);
+    
+        echo "Query Result:\n";
+        print_r($result);
+    
         if ($result && !empty($result)) {
-            return new technicalModel(
-                $result['username'],
-                $result['firstname'],
-                $result['lastname'],
-                $result['userID'],
-                $result['email'],
-                $result['usernameID'],
-                $result['password'],
-                json_decode($result['location'], true),
-                $result['phoneNumber'],
-                $result['title'],
-                $result['employeeId'],
-                $result['salary'],
-                $result['workingHours'],
-                json_decode($result['skills'], true),
-                json_decode($result['certifications'], true)
-            );
+            $row = $result[0];
+    
+            // Validate required fields
+            if (
+                isset(
+                    $row['userID'], $row['username'], $row['firstName'], $row['lastName'], 
+                    $row['email'], $row['password'], $row['locationList'], $row['phoneNumber'],
+                    $row['title'], $row['salary'], $row['workingHours'], 
+                    $row['skills'], $row['certifications']
+                )
+            ) {
+                // Create a new technicalModel instance
+                $technical = new technicalModel(
+                    $row['username'],                               // username
+                    $row['firstName'],                              // firstname
+                    $row['lastName'],                               // lastname
+                    $row['email'],                                  // email
+                    $row['password'],                               // password
+                    json_decode($row['locationList'], true),        // location
+                    (int)$row['phoneNumber'],                       // phoneNumber
+                    (int)$row['salary'],                            // salary
+                    (int)$row['workingHours'],                      // workingHours
+                    json_decode($row['skills'], true) ?? [],        // skills
+                    json_decode($row['certifications'], true) ?? [],// certifications
+                    (int)$row['userID']                             // userID
+                );
+    
+                return $technical;
+            } else {
+                throw new Exception("Missing required fields in the query result.");
+            }
         }
+    
+        // Return null if no result is found
         return null;
     }
+    
 
 
     public static function update($tech): bool {
-    if (!$tech instanceof technicalModel) {
-            throw new InvalidArgumentException("Expected instance of tech");
-    }
-        $sql = "UPDATE technical SET 
-                    username = :username, 
-                    firstname = :firstname, 
-                    lastname = :lastname, 
-                    email = :email, 
-                    password = :password, 
-                    location = :location, 
-                    phoneNumber = :phoneNumber,
-                    title = :title,
-                    salary = :salary,
-                    workingHours = :workingHours,
-                    skills = :skills,
-                    certifications = :certifications
-                WHERE userID = :userID";
-
+        if (!$tech instanceof technicalModel) {
+            throw new InvalidArgumentException("Expected instance of technicalModel");
+        }
+    
+        // SQL query to update the technical table and relevant fields
+        $sql = "UPDATE technical t
+                JOIN employee e ON t.userID = e.userID
+                JOIN user u ON e.userID = u.userID
+                SET 
+                    u.username = ?, 
+                    u.firstName = ?, 
+                    u.lastName = ?, 
+                    u.email = ?, 
+                    u.password = ?, 
+                    u.locationList = ?, 
+                    u.phoneNumber = ?,
+                    e.title = ?, 
+                    e.salary = ?, 
+                    e.workingHours = ?, 
+                    t.skills = ?, 
+                    t.certifications = ?
+                WHERE t.userID = ?";
+    
+        // Bind parameters
         $params = [
-            $tech->getUsername(),
-            $tech->getFirstname(),
-            $tech->getLastname(),
-            $tech->getEmail(),
-            password_hash($tech->getPassword(), PASSWORD_DEFAULT),
-            json_encode($tech->getLocation()),
-            $tech->getPhoneNumber(),
-            $tech->getTitle(),
-            $tech->getSalary(),
-            $tech->getHoursWorked(),
-            json_encode($tech->skills),
-            json_encode($tech->certifications),
-            $tech->getUserID()
+            $tech->getUsername(),                               // username
+            $tech->getFirstname(),                              // firstname
+            $tech->getLastname(),                               // lastname
+            $tech->getEmail(),                                  // email
+            password_hash($tech->getPassword(), PASSWORD_DEFAULT), // password (hashed)
+            json_encode($tech->getLocation()),                 // location (JSON encoded)
+            $tech->getPhoneNumber(),                           // phoneNumber
+            $tech->getTitle(),                                 // title
+            $tech->getSalary(),                                // salary
+            $tech->getHoursWorked(),                           // workingHours
+            json_encode($tech->getSkills()),                   // skills (JSON encoded)
+            json_encode($tech->getCertifications()),           // certifications (JSON encoded)
+            $tech->getUserID()                                 // userID (where condition)
         ];
-
-        $dbConnection = UserModel::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
+    
+        // Get the database connection
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        // Execute the query
+        try {
+            return $dbConnection->execute($sql, $params);
+        } catch (Exception $e) {
+            // Log the error for debugging
+            error_log("Error updating technical record: " . $e->getMessage());
+            return false;
+        }
     }
+    
 
     public static function delete($userID): bool {
-        $sql = "DELETE FROM technical WHERE userID = :userID";
+        $sql = "DELETE FROM user WHERE userID = ?";
         $params = [$userID];
 
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         return $dbConnection->execute($sql, $params);
     }
 
@@ -219,6 +261,27 @@ class technicalModel extends EmployeeModel {
 
     public function getCertifications() {
         return $this->certifications;
+    }
+
+    public function setSkills(array $skills) {
+
+        $this->skills = $skills;
+
+    }
+
+    public function setCertifications(array $certifications) {
+        $this->certifications = $certifications;
+    }
+    public function addSkill(string $skill) {
+        if (!in_array($skill, $this->skills)) {
+            $this->skills[] = $skill;
+        }
+    }
+
+    public function addCertification(string $certification) {
+        if (!in_array($certification, $this->certifications)) {
+            $this->certifications[] = $certification;
+        }
     }
     
     

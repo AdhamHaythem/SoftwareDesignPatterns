@@ -20,21 +20,20 @@ class UserModel implements IMaintainable {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
-        int $phoneNumber
+        int $phoneNumber,
+        int $userID=0
     ) {
         $this->username = $username;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->userID = self::$counter;
+        $this->userID = $userID === 0 ? self::$counter++ : $userID;
         $this->email = $email;
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
-        self::$counter++;
     }
 
     // Set the database connection
@@ -96,11 +95,11 @@ class UserModel implements IMaintainable {
                 $result['username'],
                 $result['firstname'],
                 $result['lastname'],
-                $result['userID'],
                 $result['email'],
                 $result['password'],
                 [],
-                $result['phoneNumber']
+                $result['phoneNumber'],
+                $result['userID']
             );
         }
         return null;
