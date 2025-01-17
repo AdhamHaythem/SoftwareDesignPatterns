@@ -222,7 +222,7 @@ class InstructorModel extends EmployeeModel {
     // Add a lesson to the instructor's managed lessons
     public function createLesson(LessonModel $lesson): bool {
         $this->lessons[] = $lesson;
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $sql = "INSERT INTO lesson (lessonID,lessonName,lessonSubject,duration,instructorID,views)
                         VALUES (?, ?, ?, ?, ?, ?)";
 

@@ -232,14 +232,14 @@ class technicalModel extends EmployeeModel {
             $fileContent
         ];
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         return $dbConnection->execute($sql, $params);
     }
     
     public function getReports(): array {
         $sql = "SELECT reportId, reportName FROM technical_reports"; // Removed WHERE clause
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $reports = $dbConnection->query($sql);
     
         // Check if $reports is an array and return it directly, or return an empty array if null
@@ -284,7 +284,7 @@ class technicalModel extends EmployeeModel {
             $reportId,
         ];
         
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
         $result = $dbConnection->query($sql, $params);
         if ($result && !empty($result)) {
             return [

@@ -74,7 +74,7 @@ class Admin extends UserModel {
         $sql = "SELECT * FROM admin WHERE userID = :userID";
         $params = [$userID];
 
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();        
         $result = $dbConnection->query($sql, $params);
         if ($result && !empty($result)) {
             return new Admin(
@@ -97,8 +97,7 @@ class Admin extends UserModel {
             throw new InvalidArgumentException("Expected instance of Admin");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
-    
+        $dbConnection = DatabaseConnection::getInstance();    
         try {
             $userSql = "UPDATE user SET 
                             username = :username, 
@@ -144,8 +143,7 @@ class Admin extends UserModel {
         return $this->donationManager;
     }
     public static function delete($userID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-    
+        $dbConnection = DatabaseConnection::getInstance();    
         try {
             $adminSql = "DELETE FROM admin WHERE userID = :userID";
             $adminParams = [$userID];
@@ -164,12 +162,12 @@ class Admin extends UserModel {
     
 
     public function manageUsers(int $userID): void {
-        echo "Managing user with ID: $userID\n";
+        // echo "Managing user with ID: $userID\n";
         $user = $this->getUserByID($userID); 
         if ($user) {
             $user->update($user);
         } else {
-            echo "User with ID $userID not found.\n";
+            // echo "User with ID $userID not found.\n";
         }
     }
     
