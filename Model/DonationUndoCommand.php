@@ -44,17 +44,17 @@ class DonationUndoCommand implements ICommand {
     public function __construct() {}
 
     public function execute(): void {
-        echo "Executing DonationUndoCommand\n";
+       // echo "Executing DonationUndoCommand\n";
 
         if ($this->donation === null || $this->previousAmount === null) {
-            echo "Undo failed: No donation or previous amount set.\n";
+          //  echo "Undo failed: No donation or previous amount set.\n";
             return;
         }
 
         // Revert the donation amount to the previous state
         $this->donation->setAmount($this->previousAmount);
         Donation::update($this->donation);
-        echo "Undo successful: Donation reverted to \${$this->previousAmount}.\n";
+       // echo "Undo successful: Donation reverted to \${$this->previousAmount}.\n";
     }
 
     public function setDonation(Donation $donation): void {
