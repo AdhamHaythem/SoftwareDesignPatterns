@@ -89,14 +89,14 @@ class CampaignStrategy extends Event {
         $this->moneyEarned = $moneyEarned;
     }
     
-    public function addVolunteer($donorID): bool {
-        foreach ($this->totalEvents as $event) {
-            if ($event->getDonorID() == $donorID) {
-                return $event->addVolunteer($donorID);
-            }
-        }
-        return false;
-    }
+    // public function addVolunteer($donorID): bool {
+    //     foreach ($this->totalEvents as $event) {
+    //         if ($event->getDonorID() == $donorID) {
+    //             return $event->addVolunteer($donorID);
+    //         }
+    //     }
+    //     return false;
+    // }
 
     // public function assignToEvent(Donor $volunteer): bool {
     //     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){

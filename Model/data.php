@@ -143,7 +143,6 @@ $sql_donor = "CREATE TABLE IF NOT EXISTS donor (
     userID INT NOT NULL UNIQUE, 
     donationHistory TEXT,
     totalDonations DOUBLE,
-    goalAmount DOUBLE,
     FOREIGN KEY (userID) REFERENCES user(userID) ON DELETE CASCADE
 )";
 

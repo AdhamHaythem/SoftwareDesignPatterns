@@ -40,7 +40,7 @@ class Donor extends UserModel implements IObserver {
 
     ) {
         parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
-        $this->donorID = self::$counter++;
+        $this->donorID = self::$counter++;     //lazem yb2a hwa w el user same IDDDDDDDDDDD
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         if ($event !== null) {
@@ -346,16 +346,15 @@ class Donor extends UserModel implements IObserver {
                 throw new Exception("Failed to insert or update user record.");
             }
     
-            $donorSql = "INSERT INTO donor (donorID,userID, donationHistory, totalDonations, goalAmount)
-                         VALUES (?, ?, ?, ?,?)
-                         ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations), goalAmount = VALUES(goalAmount)";
+            $donorSql = "INSERT INTO donor (donorID,userID, donationHistory, totalDonations)
+                         VALUES (?, ?, ?, ?)
+                         ON DUPLICATE KEY UPDATE totalDonations = VALUES(totalDonations)";
     
             $donorParams = [
                 $donor->getUserID(),
                 $donor->getUserID(), // userID
                 json_encode($donor->getDonationHistory()), // donationHistory as JSON
-                $donor->getTotalDonationsStrategy(), // totalDonations
-                0// goalAmount
+                $donor->getTotalDonationsStrategy() // totalDonations
             ];
     
             if (!$dbConnection->execute($donorSql, $donorParams)) {
@@ -370,68 +369,135 @@ class Donor extends UserModel implements IObserver {
         }
     }
     
-    
-    
-    
-    
+
 
     public static function retrieve($donorID): ?Donor {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "SELECT * FROM donor WHERE userID = :donorID";
-        $params = [':donorID' => $donorID];
-
+        $dbConnection = DatabaseConnection::getInstance();
+        $sql = "SELECT * FROM donor d
+                JOIN user u ON d.userID = u.userID
+                WHERE d.donorID = ?";
+        $params = [$donorID];
+    
         $result = $dbConnection->query($sql, $params);
+
+        echo "Query Result:\n";
+        print_r($result);
+    
         if ($result && !empty($result)) {
-            return new Donor(
-                $result['userID'],
-                $result['username'],
-                $result['firstname'],
-                $result['lastname'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['location'], true),
-                $result['phoneNumber'],
-                null, 
-                null,    
-            );
+
+            $row = $result[0];
+
+            if (
+                isset($row['userID'], $row['username'], $row['firstName'], $row['lastName'], $row['email'], $row['password'], $row['locationList'], $row['phoneNumber'])
+            ) {
+                $donor = new Donor(
+                    (int)$row['userID'],
+                    $row['username'],
+                    $row['firstName'],
+                    $row['lastName'],
+                    $row['email'],
+                    $row['password'],
+                    json_decode($row['locationList'], true),
+                    (int)$row['phoneNumber'],
+                    null, // paymentMethod
+                    null  // event
+                );
+    
+                $donor->donorID = (int)$row['donorID'];
+                $donor->donationsHistory = json_decode($row['donationHistory'], true) ?? [];
+                $donor->totalDonations = (float)$row['totalDonations'];
+                
+    
+                return $donor;
+            } else {
+                throw new Exception("Missing required fields in the query result.");
+            }
         }
         return null;
     }
     
     public static function update($donor): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "UPDATE donor SET 
-                    username = :username, 
-                    firstname = :firstname, 
-                    lastname = :lastname, 
-                    email = :email, 
-                    password = :password, 
-                    location = :location, 
-                    phoneNumber = :phoneNumber, 
-                    totalDonations = :totalDonations 
-                WHERE userID = :userID";
+        $dbConnection = DatabaseConnection::getInstance();
 
-        $params = [
-            ':username' => $donor->getUsername(),
-            ':firstname' => $donor->getFirstname(),
-            ':lastname' => $donor->getLastname(),
-            ':email' => $donor->getEmail(),
-            ':password' => password_hash($donor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($donor->getLocation()), // Assuming location is an array
-            ':phoneNumber' => $donor->getPhoneNumber(),
-            ':totalDonations' => $donor->getTotalDonations(),
-            ':userID' => $donor->getDonorID()
-        ];
+        try {
+            $userSql = "UPDATE user SET 
+                        username = ?, 
+                        firstName = ?, 
+                        lastName = ?, 
+                        email = ?, 
+                        password = ?, 
+                        locationList = ?, 
+                        phoneNumber = ? 
+                    WHERE userID = ?";
 
-        return $dbConnection->execute($sql, $params);
+            $userParams = [
+                $donor->getUsername(),
+                $donor->getFirstname(),
+                $donor->getLastname(),
+                $donor->getEmail(),
+                password_hash($donor->getPassword(), PASSWORD_DEFAULT),
+                json_encode($donor->getLocation()),
+                $donor->getPhoneNumber(),
+                $donor->getDonorID()
+            ];
+
+            echo "User SQL Query: $userSql\n";
+            echo "User Parameters: " . print_r($userParams, true) . "\n";
+    
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to update user record.");
+            }
+
+            $donorSql = "UPDATE donor SET 
+                        donationHistory = ?, 
+                        totalDonations = ? 
+                     
+                    WHERE donorID = ?";
+
+            $donorParams = [
+                json_encode($donor->getDonationHistory()),
+                $donor->getTotalDonationsStrategy(),
+                $donor->getDonorID()
+            ];
+
+            echo "Donor SQL Query: $donorSql\n";
+            echo "Donor Parameters: " . print_r($donorParams, true) . "\n";
+
+            if (!$dbConnection->execute($donorSql, $donorParams)) {
+                throw new Exception("Failed to update donor record.");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating donor: " . $e->getMessage());
+            return false;
+        }
     }
 
     public static function delete($donorID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "DELETE FROM donor WHERE userID = :donorID";
-        $params = [':donorID' => $donorID];
+        $dbConnection = DatabaseConnection::getInstance();
 
-        return $dbConnection->execute($sql, $params);
+        try {
+            $donorSql = "DELETE FROM donor WHERE donorID = ?";
+            $donorParams = [$donorID];
+
+            if (!$dbConnection->execute($donorSql, $donorParams)) {
+                throw new Exception("Failed to delete donor record.");
+            }
+
+        
+            $userSql = "DELETE FROM user WHERE userID = ?";
+            $userParams = [$donorID];
+
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to delete user record.");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error deleting donor: " . $e->getMessage());
+            return false;
+        }
     }
 
 
