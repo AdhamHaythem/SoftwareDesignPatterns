@@ -15,7 +15,17 @@ class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
 
-        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
+        $donor = new Donor(
+         username: $username,
+         firstname:$firstname,
+         lastname: $lastname,
+         email:$email,
+         password:$password,
+         location:$location,
+         phoneNumber:$phoneNumber,
+         paymentMethod: new Cash(),
+         userID:$userId
+        );
         Donor::create($donor);
         header('Location: ../View/DonorView.php');
     }
