@@ -1,7 +1,7 @@
 <?php
 require_once "../Model/DonorModel.php";
 require_once "../Model/AdminModel.php";
-require_once "../Model/EmployeeModel.php";
+require_once "../Model/employee.php";
 require_once "../View/DonorView.php";
 require_once "../Model/userModel.php";
 require_once "../Model/cash.php";
