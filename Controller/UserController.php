@@ -1,11 +1,12 @@
 <?php
-// require_once "../Model/DonorModel.php";
-// require_once "../Model/AdminModel.php";
-// require_once "../Model/EmployeeModel.php";
-// require_once "../View/DonorView.php";
-// require_once "../Model/userModel.php";
-// require_once "../Model/cash.php";
-//  require_once "../View/UserView.php";
+require_once "../Model/DonorModel.php";
+require_once "../Model/AdminModel.php";
+require_once "../Model/EmployeeModel.php";
+require_once "../View/DonorView.php";
+require_once "../Model/userModel.php";
+require_once "../Model/cash.php";
+require_once "../View/UserView.php";
+require_once "../Model/EmployeeFactory.php";
 
 //  require_once '../emailSetup/config.php';
  
@@ -41,7 +42,23 @@ class UserController{
     {
         $factory = new EmployeeFactory();
         $employee = $factory->createEmployee($username,$firstname,$lastname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours,$vehicleType,$skills,$certifications,$EmployeeType);
-        EmployeeModel::create($employee);
+        if($EmployeeType=="HR")
+        {
+            hrModel::create($employee);
+        }
+        if($EmployeeType=="Delivery")
+        {
+            DeliveryPersonnel::create($employee);
+        }
+        if($EmployeeType=="Technical")
+        {
+            technicalModel::create($employee);
+        }
+        if($EmployeeType=="HR")
+        {
+            InstructorModel::create($employee);
+        }
+        
     }
 
     function sendLoginMail(Donor $donor){
@@ -102,6 +119,9 @@ class UserController{
 }
 
 $x = new UserController();
+
+$x->createEmployee("s","s","s",1,"s@gmail.com","122ertgh",(array)['cairo','e','eg'],1233,'t',1000,10,null,null,null,"HR");
+
 if(isset($_POST['displaysignUp']))
 {
     require_once "../View/UserView.php";
@@ -302,6 +322,7 @@ if(isset($_POST['updateDonor']))
         Donor::update($donor);
     }
 }
+
 
 if(isset($_POST['updateEmployee']))
 {
