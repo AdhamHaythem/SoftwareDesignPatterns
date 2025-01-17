@@ -122,7 +122,7 @@ class UserController{
 
 $x = new UserController();
 
-$x->createEmployee("s","s","s",1,"s@gmail.com","122ertgh",(array)['cairo','e','eg'],1233,'t',1000,10,null,null,null,"HR");
+// $x->createEmployee("s","s","s",1,"s@gmail.com","122ertgh",(array)['cairo','e','eg'],1233,'t',1000,10,null,null,null,"HR");
 
 if(isset($_POST['displaysignUp']))
 {
