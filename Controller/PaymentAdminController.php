@@ -20,12 +20,12 @@ class PaymentController {
     }
 
     // List all transactions
-    public function listTransactions(): array {
+    public function listTransactions(): MyIterator {
         return $this->paymentAdmin->getTransactions();
     }
 
     // List transactions by donor ID
-    public function listTransactionsByDonor(int $donorID): array {
+    public function listTransactionsByDonor(int $donorID): MyIterator {
         return $this->paymentAdmin->getTransactionsByDonor($donorID);
     }
 
