@@ -140,13 +140,13 @@ class Donor extends UserModel implements IObserver {
 
         $this->undoStack[] = $command;
         $this->redoStack = [];
-        echo "Command added to undo stack. Current undo stack size: " . count($this->undoStack) . "\n";
+       // echo "Command added to undo stack. Current undo stack size: " . count($this->undoStack) . "\n";
     }
 
     public function undo(): void {
         if (count($this->undoStack) > 0) {
             $command = array_pop($this->undoStack);
-            echo "Undoing last command...\n";
+         //   echo "Undoing last command...\n";
 
             if ($command instanceof DonationUndoCommand) {
                 $redoCommand = new DonationRedoCommand();
@@ -161,16 +161,16 @@ class Donor extends UserModel implements IObserver {
             }
 
             $command->execute();
-            echo "Undo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+         //   echo "Undo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
         } else {
-            echo "Nothing to undo.\n";
+         //   echo "Nothing to undo.\n";
         }
     }
 
     public function redo(): void {
         if (count($this->redoStack) > 0) {
             $command = array_pop($this->redoStack);
-            echo "Redoing last undone command...\n";
+        //    echo "Redoing last undone command...\n";
 
             if ($command instanceof DonationRedoCommand) {
                 $undoCommand = new DonationUndoCommand();
@@ -185,9 +185,9 @@ class Donor extends UserModel implements IObserver {
             }
 
             $command->execute();
-            echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
+      //      echo "Redo completed. Undo stack size: " . count($this->undoStack) . ", Redo stack size: " . count($this->redoStack) . "\n";
         } else {
-            echo "Nothing to redo.\n";
+       //     echo "Nothing to redo.\n";
         }
     }
 
@@ -200,9 +200,9 @@ class Donor extends UserModel implements IObserver {
         $index = array_search($event, $this->campaignsJoined, true);
         if ($index !== false) {
             array_splice($this->campaignsJoined, $index, 1);
-            echo "Event removed: {$event->getName()}\n";
+       //     echo "Event removed: {$event->getName()}\n";
         } else {
-            echo "Event not found in donor's joined events.\n";
+        //    echo "Event not found in donor's joined events.\n";
         }
     }
 
@@ -395,7 +395,7 @@ class Donor extends UserModel implements IObserver {
     
         $result = $dbConnection->query($sql, $params);
 
-        echo "Query Result:\n";
+      //  echo "Query Result:\n";
         print_r($result);
     
         if ($result && !empty($result)) {
@@ -456,8 +456,8 @@ class Donor extends UserModel implements IObserver {
                 $donor->getDonorID()
             ];
 
-            echo "User SQL Query: $userSql\n";
-            echo "User Parameters: " . print_r($userParams, true) . "\n";
+      //      echo "User SQL Query: $userSql\n";
+       //     echo "User Parameters: " . print_r($userParams, true) . "\n";
     
             if (!$dbConnection->execute($userSql, $userParams)) {
                 throw new Exception("Failed to update user record.");
@@ -475,8 +475,8 @@ class Donor extends UserModel implements IObserver {
                 $donor->getDonorID()
             ];
 
-            echo "Donor SQL Query: $donorSql\n";
-            echo "Donor Parameters: " . print_r($donorParams, true) . "\n";
+       //     echo "Donor SQL Query: $donorSql\n";
+        //    echo "Donor Parameters: " . print_r($donorParams, true) . "\n";
 
             if (!$dbConnection->execute($donorSql, $donorParams)) {
                 throw new Exception("Failed to update donor record.");
