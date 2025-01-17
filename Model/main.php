@@ -142,14 +142,40 @@ function main() {
 //     if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
 // }
 
+//Donation::delete(1);
+
+$donation = Donation::retrieve(2);
+
+if ($donation) {
+    echo "Before Update:\n";
+    echo "Amount: " . $donation->getAmount() . "\n";
+    echo "Donor ID: " . $donation->getDonorID() . "\n";
+    echo "Date: " . $donation->getDate()->format('Y-m-d') . "\n";
+    echo "Donation ID: " . $donation->getDonationID() . "\n";
+
+    // Make changes to the donation object
+    $donation->setAmount(250.00); // Update amount    // Change donor ID
+    $donation->setDate(new DateTime('2025-02-01')); // Change date
+
+    // Update the donation in the database
+    if (Donation::update($donation)) {
+        echo "Donation updated successfully.\n";
+
+        // Fetch the updated donation to confirm changes
+        $updatedDonation = Donation::retrieve(2);
+        echo "After Update:\n";
+        echo "Amount: " . $updatedDonation->getAmount() . "\n";
+        echo "Donor ID: " . $updatedDonation->getDonorID() . "\n";
+        echo "Date: " . $updatedDonation->getDate()->format('Y-m-d') . "\n";
+        echo "Donation ID: " . $updatedDonation->getDonationID() . "\n";
+    } else {
+        echo "Failed to update the donation.\n";
+    }
+} else {
+    echo "No donation found with the given ID.\n";
+}
 
 
-$Generator = new statisticsGenerator();
-$result = $Generator->getData('Donations'); // Only pass the required argument
-$finalReport = $Generator->finalizeReport(results: $result); // Skip userID, let it use its default value (0)
-
-echo "Final Report:\n";
-echo "Mean: " . $finalReport['mean'] . "\n";
 
 
     

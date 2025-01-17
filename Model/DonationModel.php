@@ -34,10 +34,8 @@ class Donation {
     }
 
 
-    public static function update(Donation $donation): bool {
-        echo "Donation updated: {$donation->getAmount()}\n";
-        return true;
-    }
+ 
+    
 
     public function getDonorID(): int { 
         return $this->donorID;
@@ -61,6 +59,10 @@ class Donation {
         $this->state->handle($this);
     }
 
+    public function setDate(DateTime $date): void {
+        $this->date = $date;
+    }
+    
 
 
     public function getDate(): DateTime {
@@ -105,43 +107,58 @@ class Donation {
 
     // Read
     public static function retrieve(int $donationID): ?Donation {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "SELECT * FROM donations WHERE donationID = :donationID";
-        $params = [':donationID' => $donationID];
-        $result = $dbConnection->query($sql, $params);
-
-        if ($result) {
+        $dbConnection = DatabaseConnection::getInstance();
+        $sql = "SELECT * FROM donation WHERE donationID = ?";
+        $params = [$donationID];
+        $results = $dbConnection->query($sql, $params);
+        if (!empty($results)) {
+            $result = $results[0];
             return new Donation(
-                $result['amount'],
-                $result['donationID'],
-                new DateTime($result['donation_date']),
-                $result['donorID']
-                
+                (float) $result['amount'],               // amount
+                (int) $result['donorID'],                // donorID
+                new DateTime($result['donation_date']),  // date
+                (int) $result['donationID']              // donationID
             );
         }
-        return null;
+        return null; // Return null if no result found
     }
+    
+    
 
     // Update
-    // public static function update(Donation $donation): bool {
-    //     $dbConnection = UserModel::getDatabaseConnection();
-    //     $sql = "UPDATE donations SET 
-    //                 amount = :amount,
-    //                 donorID = :donorID
-    //             WHERE donationID = :donationID";
-    //     $params = [
-    //         ':amount' => $donation->getAmount(),
-    //         ':donorID' => $donation->getDonorID(),
-    //         ':donationID' => $donation->getDonationID()
-    //     ];
-    //     return $dbConnection->execute($sql, $params);
-    // }
+    public static function update(Donation $donation): bool {
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        // SQL query to update the donation record
+        $sql = "UPDATE donation SET 
+                    amount = ?, 
+                    donorID = ?,
+                    donation_date = ?
+                WHERE donationID = ?";
+        
+        // Positional parameters in the correct order
+        $params = [
+            $donation->getAmount(),    // New amount
+            $donation->getDonorID(),   // Updated donorID
+            $donation->getDate()->format('Y-m-d H:i:s'), // Updated date
+            $donation->getDonationID() // The specific donation to update
+        ];
+    
+        try {
+            // Execute the query and return success/failure
+            return $dbConnection->execute($sql, $params);
+        } catch (Exception $e) {
+            // Log the error for debugging purposes
+            error_log("Error updating donation: " . $e->getMessage());
+            return false;
+        }
+    }
 
     // Delete
     public static function delete(int $donationID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-        $sql = "DELETE FROM donations WHERE donationID = :donationID";
-        $params = [':donationID' => $donationID];
+        $dbConnection = DatabaseConnection::getInstance();
+        $sql = "DELETE FROM donation WHERE donationID = ?";
+        $params = [$donationID];
         return $dbConnection->execute($sql, $params);
     }
 }
