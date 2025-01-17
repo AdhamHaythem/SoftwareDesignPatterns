@@ -339,9 +339,47 @@ class Donor extends UserModel implements IObserver {
 
     //StrategyMethods
     
-    public function joinEvent() {
+    // public function joinEvent() {
+    //     $this->eventStrategy->signUp($this->donorID);
+    // } 
+    public function joinEvent(): bool {
+        if ($this->eventStrategy === null) {
+            throw new Exception("Event strategy is not set.");
+        }
+    
         $this->eventStrategy->signUp($this->donorID);
-    } 
+
+        $dbConnection = DatabaseConnection::getInstance();
+ 
+        $eventID = $this->eventStrategy->getEventID();
+        $sql = "SELECT volunteersList FROM event WHERE eventID = ?";
+        $params = [$eventID];
+        $result = $dbConnection->query($sql, $params);
+    
+        if ($result && !empty($result)) {
+            $volunteers = json_decode($result[0]['volunteersList'], true) ?? [];
+    
+            
+            if (!in_array($this->donorID, $volunteers)) {
+                $volunteers[] = $this->donorID;
+    
+               
+                $updateSql = "UPDATE event SET volunteersList = ? WHERE eventID = ?";
+                $updateParams = [json_encode($volunteers), $eventID];
+    
+                if (!$dbConnection->execute($updateSql, $updateParams)) {
+                    throw new Exception("Failed to update volunteers list in the event table.");
+                }
+    
+                return true;
+            } else {
+                throw new Exception("Donor is already in the volunteers list.");
+            }
+        } else {
+            throw new Exception("Event not found.");
+        }
+    }
+
 
     public function getAllEventsStrategy(){
         $this->eventStrategy->getAllEvents();
