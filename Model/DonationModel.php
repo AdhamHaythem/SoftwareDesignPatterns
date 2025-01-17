@@ -14,7 +14,7 @@ class Donation {
     private DateTime $date;
     public function __construct(float $amount, int $donorID, DateTime $date, int $donationID = 0) {
         $this->amount = $amount;
-        $this->donationID = $donationID === 0 ? self::$counter++ : $donationID;
+        $this->donationID = $donationID === 0 ? Donation::useCounter() : $donationID;
         $this->donorID = $donorID;
         $this->date = $date;
         $this->state = new UnderReviewState();
@@ -22,16 +22,27 @@ class Donation {
     public function setAmount(float $amount): void {
         $this->previousAmount = $this->amount; 
         $this->amount = $amount;
-        echo "Setting previous amount to: {$this->previousAmount}\n";
-        echo "Donation updated: {$this->amount}\n";
     }
     public function amountPaid(float $amount): float {
-        echo "Amount before update: {$this->amount}\n";  
         $this->previousAmount = $this->amount;
         $this->amount += $amount;
-        echo "Amount after update: {$this->amount}\n";  
         return $this->amount;
     }
+
+    private static function useCounter(): int {
+        $ID = self::$counter;
+        self::$counter++;
+        $db_connection = DatabaseConnection::getInstance();
+        $sql = "UPDATE counters SET UserID = ? where CounterID = 1";
+        $params = [self::$counter];
+        $db_connection->execute($sql, $params);
+        return $ID;
+    }
+
+    public static function setCounter(int $counter): void {
+        self::$counter = $counter;
+    }
+
 
 
  
@@ -52,7 +63,6 @@ class Donation {
     //for handling Stateeeeeeeeee
     public function setState(iState $state): void {
         $this->state = $state;
-        echo "State changed to " . get_class($state) . "\n";
     }
 
     public function handleChange(): void {
