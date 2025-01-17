@@ -18,18 +18,17 @@ class LessonModel {
     private static int $counter =1;
 
     public function __construct(
-        int $lessonId,
         string $lessonName,
         string $lessonSubject,
         int $duration,
         InstructorModel $instructor,
+        int $lessonId = 0
     ) {
-        $this->lessonId = self::$counter;
+        $this->lessonId = $lessonId===0 ? self::$counter++ : $lessonId;
         $this->lessonName = $lessonName;
         $this->lessonSubject = $lessonSubject;
         $this->duration = $duration;
         $this->instructor = $instructor;
-        self::$counter++;
     }
 
     // Getters
@@ -59,6 +58,10 @@ class LessonModel {
 
     public function getViews(): int {
         return $this->views;
+    }
+
+    public function getInstructorDetails(): InstructorModel {
+        return $this->instructor;
     }
 
     public function setLessonName(string $lessonName): void {
@@ -106,5 +109,104 @@ class LessonModel {
     public function addStudentView(StudentModel $student): void {
         $this->studentView[] = $student;
     }
+        // Your LessonModel properties and constructor go here
+    
+        // CREATE
+        public static function create(LessonModel $lesson): bool {
+            $dbConnection = DatabaseConnection::getInstance();
+    
+            $sql = "INSERT INTO lesson (lessonID, lessonName, lessonSubject, duration, instructorID, views)
+                    VALUES (?,?, ?, ?, ?, ?)";
+            
+            $params = [
+                $lesson->lessonId,
+                $lesson->lessonName,
+                $lesson->lessonSubject,
+                $lesson->duration,
+                $lesson->instructor->getUserID(), // Only store the instructor ID
+                $lesson->views
+            ];
+    
+            try {
+                return $dbConnection->execute($sql, $params);
+            } catch (Exception $e) {
+                error_log("Error creating lesson: " . $e->getMessage());
+                return false;
+            }
+        }
+    
+        // RETRIEVE
+        public static function retrieve(int $lessonID): ?LessonModel {
+            $dbConnection = DatabaseConnection::getInstance();
+    
+            $sql = "SELECT * FROM lesson WHERE lessonID = ?";
+            $params = [$lessonID];
+            $result = $dbConnection->query($sql, $params);
+    
+            if ($result && !empty($result)) {
+                $row = $result[0];
+    
+                // Use the InstructorModel::retrieve method to get the instructor details
+                $instructor = InstructorModel::retrieve($row['instructorID']);
+    
+                if (!$instructor) {
+                    throw new Exception("Instructor not found for lesson.");
+                }
+    
+                return new LessonModel(
+                    $row['lessonName'],
+                    $row['lessonSubject'],
+                    (int) $row['duration'],
+                    $instructor,
+                    (int) $row['lessonID']
+                );
+            }
+    
+            return null;
+        }
+    
+        // UPDATE
+        public static function update(LessonModel $lesson): bool {
+            $dbConnection = DatabaseConnection::getInstance();
+    
+            $sql = "UPDATE lesson SET 
+                        lessonName = ?, 
+                        lessonSubject = ?, 
+                        duration = ?, 
+                        instructorID = ?, 
+                        views = ?
+                    WHERE lessonID = ?";
+    
+            $params = [
+                $lesson->lessonName,
+                $lesson->lessonSubject,
+                $lesson->duration,
+                $lesson->instructor->getUserID(), // Only update the instructor ID
+                $lesson->views,
+                $lesson->lessonId
+            ];
+    
+            try {
+                return $dbConnection->execute($sql, $params);
+            } catch (Exception $e) {
+                error_log("Error updating lesson: " . $e->getMessage());
+                return false;
+            }
+        }
+    
+        // DELETE
+        public static function delete(int $lessonID): bool {
+            $dbConnection = DatabaseConnection::getInstance();
+    
+            $sql = "DELETE FROM lesson WHERE lessonID = ?";
+            $params = [$lessonID];
+    
+            try {
+                return $dbConnection->execute($sql, $params);
+            } catch (Exception $e) {
+                error_log("Error deleting lesson: " . $e->getMessage());
+                return false;
+            }
+        }
 }
 ?>
