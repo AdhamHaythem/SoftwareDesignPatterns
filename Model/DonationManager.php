@@ -129,11 +129,7 @@ class DonationManager implements IMaintainable {
                 $manager->totalDonations,
                 json_encode($campaignsArray),
                 $manager->adminID
-            ];
-    
-            // echo "Donation Manager SQL Query: $sql\n";
-            // echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
-    
+            ];   
             if (!$dbConnection->execute($sql, $params)) {
                 throw new Exception("Failed to update donation manager record.");
             }
@@ -151,8 +147,6 @@ class DonationManager implements IMaintainable {
         try {
             $sql = "DELETE FROM donationmanager WHERE userID = ?";
             $params = [$adminID];
-            // echo "Donation Manager SQL Query: $sql\n";
-            // echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
     
             if (!$dbConnection->execute($sql, $params)) {
                 throw new Exception("Failed to delete donation manager record.");

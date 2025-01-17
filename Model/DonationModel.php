@@ -80,7 +80,6 @@ class Donation {
     }
 
     public function getPreviousAmount(): ?float {
-       // echo "Previous Amount: {$this->previousAmount}\n";
         return $this->previousAmount; 
     }
 

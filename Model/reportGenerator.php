@@ -118,18 +118,10 @@ class ReportGenerator extends ReportsGenerationTemplate {
         ";
         }
         
-            // Execute the query using the custom query function
             try {
-                $results = $this->db->query($sql); // No need for `fetch_assoc`
-                // if (!empty($results)) {
-                //     foreach ($results as $row) {
-                //         print_r($row); // Output each row of data
-                //     }
-                // } else {
-                //     echo "No $dataType found.";
-                // }
+                $results = $this->db->query($sql);
             } catch (Exception $e) {
-                echo "Query error: " . $e->getMessage();
+                error_log("Error retrieving $dataType data: " . $e->getMessage());
             }
             return $results;
     }

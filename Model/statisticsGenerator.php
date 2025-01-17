@@ -21,10 +21,10 @@ class statisticsGenerator extends ReportsGenerationTemplate {
                         print_r($row); // Output each row of data
                     }
                 } else {
-                    echo "No $dataType found.";
+                    throw new Exception("No $dataType data found.");
                 }
             } catch (Exception $e) {
-                echo "Query error: " . $e->getMessage();
+                throw new Exception("Error retrieving $dataType data: " . $e->getMessage());
             }
             return $results;
     }

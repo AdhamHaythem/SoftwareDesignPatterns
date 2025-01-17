@@ -80,9 +80,6 @@ class Admin extends UserModel {
     
         $result = $dbConnection->query($sql, $params);
     
-        echo "Query Result:\n";
-        print_r($result);
-    
         if ($result && !empty($result)) {
             $row = $result[0];
 
@@ -151,11 +148,7 @@ class Admin extends UserModel {
                 json_encode($admin->getLocation()), // Encode locationList as JSON
                 $admin->getPhoneNumber(),
                 $admin->getUserID()
-            ];
-    
-            echo "User SQL Query: $userSql\n";
-            echo "User Parameters: " . print_r($userParams, true) . "\n";
-    
+            ];   
             if (!$dbConnection->execute($userSql, $userParams)) {
                 throw new Exception("Failed to update user record.");
             }
@@ -169,10 +162,6 @@ class Admin extends UserModel {
                 json_encode($admin->getDonationManager()), 
                 $admin->getUserID()
             ];
-    
-            echo "Admin SQL Query: $adminSql\n";
-            echo "Admin Parameters: " . print_r($adminParams, true) . "\n";
-    
             if (!$dbConnection->execute($adminSql, $adminParams)) {
                 throw new Exception("Failed to update admin record.");
             }
@@ -218,12 +207,11 @@ class Admin extends UserModel {
     }
 
     public function manageUsers(int $userID): void {
-        // echo "Managing user with ID: $userID\n";
         $user = $this->getUserByID($userID); 
         if ($user) {
             $user->update($user);
         } else {
-            // echo "User with ID $userID not found.\n";
+            throw new Exception("User not found.");
         }
     }
     
@@ -235,11 +223,6 @@ class Admin extends UserModel {
         $totalDonations = $this->donationManager->calculateTotalDonations();
         return "Report generated. Total Donations: $totalDonations";
     }
-
-    public function sendNotification(int $userID): void {
-        echo "Notification sent to user with ID: $userID\n";
-    }
-
     public function viewDonationStatistics(): string {
         $statistics = [];
         foreach ($this->donationManager->generateDonationReport() as $donation) {
