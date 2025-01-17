@@ -175,8 +175,8 @@ abstract class Event implements IMaintainable, ISubject {
             $eventSql = "DELETE FROM event WHERE eventID = ?";
             $eventParams = [$eventID];
     
-            echo "Event SQL Query: $eventSql\n";
-            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+            // echo "Event SQL Query: $eventSql\n";
+            // echo "Event Parameters: " . print_r($eventParams, true) . "\n";
     
             if (!$dbConnection->execute($eventSql, $eventParams)) {
                 throw new Exception("Failed to delete event record.");
@@ -214,8 +214,8 @@ abstract class Event implements IMaintainable, ISubject {
                 $event->getEventID()
             ];
     
-            echo "Event SQL Query: $eventSql\n";
-            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+            // echo "Event SQL Query: $eventSql\n";
+            // echo "Event Parameters: " . print_r($eventParams, true) . "\n";
     
             if (!$dbConnection->execute($eventSql, $eventParams)) {
                 throw new Exception("Failed to update event record.");
@@ -235,7 +235,7 @@ abstract class Event implements IMaintainable, ISubject {
             $params = [$eventID];
             $result = $dbConnection->query($sql, $params);
     
-            echo "Query Result:\n";
+            // echo "Query Result:\n";
             print_r($result);
         
             if ($result && !empty($result)) {

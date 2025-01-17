@@ -15,13 +15,13 @@ try {
     // Create the travel_plans table
     createTravelPlanTable($db);
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    // echo "Error: " . $e->getMessage();
 }
 
 if ($db->conn->connect_error) {
     die("Connection failed: " . $db->conn->connect_error);
 } else {
-    echo "Connected to the database successfully.<br>";
+    // echo "Connected to the database successfully.<br>";
 }
 
 function createTravelPlanTable($db) {
@@ -38,11 +38,11 @@ function createTravelPlanTable($db) {
         FOREIGN KEY (`eventID`) REFERENCES `event`(`eventID`) ON DELETE CASCADE ON UPDATE CASCADE
     )";
 
-    if ($db->execute($sql_travel_plans) === TRUE) {
-        echo "Table 'travel_plans' created successfully.<br>";
-    } else {
-        echo "Error creating table 'travel_plans': " . $db->getError() . "<br>";
-    }
+    // if ($db->execute($sql_travel_plans) === TRUE) {
+    //     echo "Table 'travel_plans' created successfully.<br>";
+    // } else {
+    //     echo "Error creating table 'travel_plans': " . $db->getError() . "<br>";
+    // }
 }
 
 // Close the connection

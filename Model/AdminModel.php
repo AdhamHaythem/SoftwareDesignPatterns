@@ -162,12 +162,12 @@ class Admin extends UserModel {
     
 
     public function manageUsers(int $userID): void {
-        echo "Managing user with ID: $userID\n";
+        // echo "Managing user with ID: $userID\n";
         $user = $this->getUserByID($userID); 
         if ($user) {
             $user->update($user);
         } else {
-            echo "User with ID $userID not found.\n";
+            // echo "User with ID $userID not found.\n";
         }
     }
     
