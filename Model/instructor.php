@@ -17,7 +17,7 @@ class InstructorModel extends EmployeeModel {
         int $salary,
         int $workingHours,
         array $lessons = [],
-        int $userID
+        int $userID=0
     ) {
         // Call parent constructor to initialize User properties
         parent::__construct(

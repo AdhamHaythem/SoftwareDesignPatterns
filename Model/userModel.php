@@ -46,91 +46,115 @@ class UserModel implements IMaintainable {
 
 
     // Create a new user in the database
-    public static function create($object): bool {
-        echo("ANA HENAAAAA");
-        if (!$object instanceof UserModel) {
+    public static function create($user): bool {
+        if (!$user instanceof UserModel) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
     
-        $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                        username = VALUES(username),
-                        firstName = VALUES(firstName),
-                        lastName = VALUES(lastName),
-                        email = VALUES(email),
-                        password = VALUES(password),
-                        locationList = VALUES(locationList),
-                        phoneNumber = VALUES(phoneNumber),
-                        isActive = VALUES(isActive)";
-        
-        $params = [
-            $object->userID,
-            $object->username,
-            $object->firstname,
-            $object->lastname,
-            $object->email,
-            password_hash($object->password, PASSWORD_DEFAULT),
-            json_encode($object->location),
-            $object->phoneNumber,
-            1
-        ];
+        $dbConnection = DatabaseConnection::getInstance();
     
-        if (!self::$dbConnection->execute($userSql, $params)) {
-            error_log("Failed to execute query: " . self::$dbConnection->getLastError());
-            echo("Failedddddddd henaaaaaaaaaaaaa");
+        try {
+            // Insert or update into `user` table
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            username = VALUES(username),
+                            firstName = VALUES(firstName),
+                            lastName = VALUES(lastName),
+                            email = VALUES(email),
+                            password = VALUES(password),
+                            locationList = VALUES(locationList),
+                            phoneNumber = VALUES(phoneNumber),
+                            isActive = VALUES(isActive)";
+    
+            $userParams = [
+                $user->getUserID(),
+                $user->getUsername(),
+                $user->getFirstname(),
+                $user->getLastname(),
+                $user->getEmail(),
+                password_hash($user->getPassword(), PASSWORD_DEFAULT), // Hash password
+                json_encode($user->getLocation()), // Serialize location as JSON
+                $user->getPhoneNumber(),
+                1 // isActive (true)
+            ];
+    
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert or update into `user` table.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error creating user: " . $e->getMessage());
             return false;
         }
-        return true;
     }
     
-
-    public static function retrieve($key): ?UserModel {
-        $sql = "SELECT * FROM user WHERE userID = :userID";
-        $params = [':userID' => $key];
-        
-        $result = self::$dbConnection->query($sql, $params);
+    public static function retrieve($userID): ?UserModel {
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        // Query to retrieve user details
+        $sql = "SELECT * FROM user WHERE userID = ?";
+        $params = [$userID];
+    
+        $result = $dbConnection->query($sql, $params);
+    
         if ($result && !empty($result)) {
+            $row = $result[0]; // Assuming only one record is fetched
+    
+            // Create a new UserModel instance
             return new UserModel(
-                $result['username'],
-                $result['firstname'],
-                $result['lastname'],
-                $result['email'],
-                $result['password'],
-                [],
-                $result['phoneNumber'],
-                $result['userID']
+                $row['username'],                              // username
+                $row['firstName'],                             // firstname
+                $row['lastName'],                              // lastname
+                $row['email'],                                 // email
+                $row['password'],                              // password
+                json_decode($row['locationList'], true) ?? [], // location (JSON decoded)
+                $row['phoneNumber'],                           // phoneNumber
+                $row['userID']                                 // userID
             );
         }
-        return null;
+    
+        return null; // Return null if no result is found
     }
-
-    public static function update($object): bool {
-        if (!$object instanceof UserModel) {
+    
+    public static function update($user): bool {
+        if (!$user instanceof UserModel) {
             throw new InvalidArgumentException("Expected instance of UserModel");
         }
     
-        $sql = "UPDATE user SET 
-                    username = :username, 
-                    firstname = :firstname, 
-                    lastname = :lastname, 
-                    email = :email, 
-                    password = :password, 
-                    phoneNumber = :phoneNumber 
-                WHERE userID = :userID";
-
-        $params = [
-            ':username' => $object->username,
-            ':firstname' => $object->firstname,
-            ':lastname' => $object->lastname,
-            ':email' => $object->email,
-            ':password' => password_hash($object->password, PASSWORD_DEFAULT),
-            ':phoneNumber' => $object->phoneNumber,
-            ':userID' => $object->userID
-        ];
+        $dbConnection = DatabaseConnection::getInstance();
     
-        return self::$dbConnection->execute($sql, $params);
+        try {
+            // Update user details
+            $userSql = "UPDATE user SET 
+                            username = ?, 
+                            firstName = ?, 
+                            lastName = ?, 
+                            email = ?, 
+                            password = ?, 
+                            locationList = ?, 
+                            phoneNumber = ?
+                        WHERE userID = ?";
+    
+            $userParams = [
+                $user->getUsername(),
+                $user->getFirstname(),
+                $user->getLastname(),
+                $user->getEmail(),
+                password_hash($user->getPassword(), PASSWORD_DEFAULT), // Hash password
+                json_encode($user->getLocation()), // Serialize location as JSON
+                $user->getPhoneNumber(),
+                $user->getUserID()
+            ];
+    
+            return $dbConnection->execute($userSql, $userParams);
+        } catch (Exception $e) {
+            error_log("Error updating user: " . $e->getMessage());
+            return false;
+        }
     }
+    
 
     public static function delete($userID): bool {
         $sql = "DELETE FROM user WHERE userID = ?";

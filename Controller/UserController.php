@@ -17,12 +17,14 @@ class UserController{
 
         $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
         Donor::create($donor);
+        header('Location: ../View/DonorView.php');
     }
 
     function createAdmin($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber)
     {
         $admin = new Admin($userId,$username , $firstname,$lastname ,$email,$password,$location,$phoneNumber);
         Admin::create($admin);
+        header('Location: ../View/AdminView.php');
     }
 
     function createEmployee($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours,$vehicleType,$skills,$certifications,$EmployeeType)
@@ -33,27 +35,15 @@ class UserController{
     }
 
     function sendLoginMail(Donor $donor){
-        $email = new \SendGrid\Mail\Mail(); 
-        $email->setFrom(From);
-        $email->setSubject("Account Login");
-        $email->addTo($donor->getEmail());
-        $email->addContent("text/plain", "You Have just logged in");
-        $email->addContent(
-            "text/html", "<strong>You Have just logged in</strong>"
-        );
+        $donorEmail= $donor->getEmail();
         $sendgrid = new \SendGrid(SENDGRID_API_KEY);
-        try {
-            $response = $sendgrid->send($email);
-            // print $response->statusCode() . "\n";
-            // print_r($response->headers());
-            // print $response->body() . "\n";
-        } catch (Exception $e) {
-            echo 'Caught exception: '. $e->getMessage() ."\n";
-        }
+        $facade= new EmailServiceFacade($sendgrid);
+        $facade->sendLoginMail($donorEmail);
 }
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
+        header('Location: ../View/DonorView.php');
         $view = new DonorView();
         $view->displayDonorProfile($donor);
         $this->sendLoginMail($donor);
@@ -62,23 +52,29 @@ class UserController{
     function retrieveuser($userId)
     {
         $admin = Admin::retrieve($userId);
+        header('Location: ../View/AdminView.php');
         $view = new AdminView();
         $view->displayUsers($admin);
     }
 
-    function deleteDonor($donorId)
-    {
-        Donor::delete($donorId);
-    }
+    // function deleteDonor($donorId)
+    // {
+    //     Donor::delete($donorId);
+    // }
 
-    function deleteAdmin($userId)
-    {
-        Admin::delete($userId);
-    }
+    // function deleteAdmin($userId)
+    // {
+    //     Admin::delete($userId);
+    // }
 
-    function deleteEmployee($userId)
+    // function deleteEmployee($userId)
+    // {
+    //     EmployeeModel::delete($userId);
+    // }
+
+    function deleteUser($userId)
     {
-        EmployeeModel::delete($userId);
+        UserModel::delete($userId);
     }
 
     function getFullName($userId)
@@ -173,29 +169,37 @@ if(isset($_POST['retrieveAdmin']))
     }
 }
 
-if(isset($_POST['deleteDonor']))
-{
-    if(!empty($_POST['donorId']))
-    {
-        $x->deleteDonor($_POST['donorId']);
-    }
-}
-
-if(isset($_POST['deleteAdmin']))
+if(isset($_POST['deleteUser']))
 {
     if(!empty($_POST['userId']))
     {
-        $x->deleteAdmin($_POST['userId']);
+        $x->deleteUser($_POST['donorId']);
     }
 }
 
-if(isset($_POST['deleteEmployee']))
-{
-    if(!empty($_POST['userId']))
-    {
-        $x->deleteEmployee($_POST['userId']);
-    }
-}
+// if(isset($_POST['deleteDonor']))
+// {
+//     if(!empty($_POST['donorId']))
+//     {
+//         $x->deleteDonor($_POST['donorId']);
+//     }
+// }
+
+// if(isset($_POST['deleteAdmin']))
+// {
+//     if(!empty($_POST['userId']))
+//     {
+//         $x->deleteAdmin($_POST['userId']);
+//     }
+// }
+
+// if(isset($_POST['deleteEmployee']))
+// {
+//     if(!empty($_POST['userId']))
+//     {
+//         $x->deleteEmployee($_POST['userId']);
+//     }
+// }
 
 if(isset($_POST['fullName']))
 {
@@ -321,8 +325,6 @@ if(isset($_POST['updateEmployee']))
     }
     }
 
-
-
     if(isset($_POST['technical'])){
         $technical = technicalModel::retrieve($_POST["userId"]);
         if(!empty($_POST['userId']))
@@ -355,9 +357,6 @@ if(isset($_POST['updateEmployee']))
             technicalModel::update($technical);
         }
         }
-
-
-
         
     if(isset($_POST['delivery'])){
         $delivery = DeliveryPersonnel::retrieve($_POST["userId"]);

@@ -23,6 +23,7 @@ class VolunteerView
                 <ul>
                     <li><a href="#" onclick="volunteerDetails(1)">Volunteer Details</a></li>
                     <li><a href="#" onclick="volunteerDetails(1)">All Volunteers</a></li>
+                    <li><a href="#" onclick="volunteerDetails(1)">Join Volunteer</a></li>
                 </ul>
             </nav>
             <div class="container">
@@ -79,6 +80,28 @@ class VolunteerView
             </div>
         </div>';
     }
+
+    public function displayJoinvolunteer($volunteers)
+    {
+        echo '<div class="container">
+            <div class="content-container">
+                <section>
+                    <div class="all-volunteers">
+                        <h2>Join Volunteers</h2>
+                        <ul>';
+        foreach ($volunteers as $volunteer) {
+            echo '<li>
+                <strong>Volunteer Name:</strong> ' . $volunteer->name . '<br>
+                <button onclick="volunteerDetails(' . intval($volunteer->id) . ')">View Details</button>
+                <button onclick="joinVolunteer(1,1)">Join Volunteer</button>
+            </li>';
+        }
+        echo '</ul>
+                    </div>
+                </section>
+            </div>
+        </div>';
+    }
 }
 
 // Example Usage
@@ -99,5 +122,6 @@ $volunteerView = new VolunteerView();
 $volunteerView->VolunteerViewDetails("");
 $volunteerView->displayVolunteerDetails($volunteer);
 $volunteerView->displayAllVolunteers($volunteers);
+$volunteerView->displayJoinvolunteer($volunteers);
 
 ?>

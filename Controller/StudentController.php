@@ -11,6 +11,7 @@ class StudentController
         $student = StudentModel::retrieve($studentId);
         $lesson = $instructor->retrieveLesson($lessonId);
         $student->enrollInLesson($lesson);
+        $lesson->registerObserver($student);
     }
 
     function getlessonList($studentId)

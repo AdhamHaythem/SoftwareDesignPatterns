@@ -968,7 +968,33 @@ main();
 //     ['Calculus', 'Algebra'], // lessons
 //     100         // userID
 // );
+// $instructor1 = new InstructorModel(
+//     'math_master',   // username
+//     'Alan',          // firstname
+//     'Turing',        // lastname
+//     'alan.turing@example.com', // email
+//     'securepass1',   // password
+//     ['London', 'UK'], // location
+//     987654321,       // phoneNumber
+//     75000,           // salary
+//     40,              // workingHours
+//     ['Calculus', 'Algebra'], // lessons
+//     100         // userID
+// );
 
+// $instructor2 = new InstructorModel(
+//     'science_genius', // username
+//     'Marie',          // firstname
+//     'Curie',          // lastname
+//     'marie.curie@example.com', // email
+//     'securepass2',    // password
+//     ['Paris', 'France'], // location
+//     123456789,        // phoneNumber
+//     80000,            // salary
+//     35,               // workingHours
+//     ['Physics', 'Chemistry'], // lessons
+//     200               // userID
+// );
 // $instructor2 = new InstructorModel(
 //     'science_genius', // username
 //     'Marie',          // firstname
@@ -996,7 +1022,33 @@ main();
 //     ['History of Science', 'Philosophy'], // lessons
 //     300              // userID
 // );
+// $instructor3 = new InstructorModel(
+//     'history_pro',    // username
+//     'Isaac',          // firstname
+//     'Newton',         // lastname
+//     'isaac.newton@example.com', // email
+//     'securepass3',    // password
+//     ['Cambridge', 'UK'], // location
+//     456789123,        // phoneNumber
+//     90000,            // salary
+//     30,               // workingHours
+//     ['History of Science', 'Philosophy'], // lessons
+//     300              // userID
+// );
 
+// $instructor4 = new InstructorModel(
+//     'bio_teacher',    // username
+//     'Charles',        // firstname
+//     'Darwin',         // lastname
+//     'charles.darwin@example.com', // email
+//     'securepass4',    // password
+//     ['Kent', 'UK'],   // location
+//     789123456,        // phoneNumber
+//     85000,            // salary
+//     32,               // workingHours
+//     ['Biology', 'Evolution'], // lessons
+//     400             // userID
+// );
 // $instructor4 = new InstructorModel(
 //     'bio_teacher',    // username
 //     'Charles',        // firstname
