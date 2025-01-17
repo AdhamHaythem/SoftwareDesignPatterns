@@ -270,4 +270,15 @@ if (isset($_POST['deleteVolunteeringEvent'])) {
     }
     exit;
 }
+
+
+
+if(isset($_POST['fundprogress']))
+{
+    $view = new CampaignView();
+    $camp = CampaignStrategy::retrieve($_POST['campaignId']);
+    $view->displayFundProgress($camp);
+}
+
+
 ?>
