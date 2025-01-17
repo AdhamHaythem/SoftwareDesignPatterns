@@ -14,7 +14,7 @@ class CampaignStrategy extends Event {
 
     public function __construct(
         DateTime $time, 
-        string $location,
+        array $location,
         int $volunteersNeeded,
         int $eventID,
         string $name,

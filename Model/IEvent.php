@@ -8,7 +8,7 @@ abstract class Event implements IMaintainable, ISubject {
     private DateTime $time;
 
     private static int $counter =1 ;
-    private string $location;
+    private array $location= [];
     private int $volunteersNeeded;
     private array $volunteersList = [];
     private static ?DatabaseConnection $dbConnection = null;
@@ -17,7 +17,7 @@ abstract class Event implements IMaintainable, ISubject {
 
     public function __construct(
         DateTime $time,
-        string $location,
+        array $location,
         int $volunteersNeeded,
         int $eventID,
         string $name
@@ -53,11 +53,11 @@ abstract class Event implements IMaintainable, ISubject {
         $this->time = $time;
     }
 
-    public function getLocation(): string {
+    public function getLocation(): array {
         return $this->location;
     }
 
-    public function setLocation(string $location): void {
+    public function setLocation(array $location): void {
         $this->location = $location;
     }
 
@@ -153,7 +153,7 @@ abstract class Event implements IMaintainable, ISubject {
                 $object->getEventID(),
                 $object->getName(),
                 $object->getTime()->format('Y-m-d H:i:s'),
-                $object->getLocation(),
+                json_encode($object->getLocation()),
                 $object->getVolunteersNeeded(),
                 json_encode($object->getVolunteersList()),
             ];
@@ -208,7 +208,7 @@ abstract class Event implements IMaintainable, ISubject {
             $eventParams = [
                 $event->getName(),
                 $event->getTime()->format('Y-m-d H:i:s'),
-                $event->getLocation(),
+                json_encode($event->getLocation()),
                 $event->getVolunteersNeeded(),
                 json_encode($event->getVolunteersList()),
                 $event->getEventID()
@@ -244,9 +244,14 @@ abstract class Event implements IMaintainable, ISubject {
                 if (
                     isset($row['eventID'], $row['name'], $row['time'], $row['location'], $row['volunteers_needed'], $row['volunteersList'])
                 ) {
+
+
+                    $location = json_decode($row['location'], true);
+                    $volunteersList = json_decode($row['volunteersList'], true) ?? [];
+
                     $event = new Event(
                         new DateTime($row['time']), // time
-                        $row['location'], // location
+                        $location,// location
                         (int)$row['volunteers_needed'], // volunteersNeeded
                         (int)$row['eventID'], // eventID
                         $row['name'] // name

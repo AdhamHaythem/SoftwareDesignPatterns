@@ -19,7 +19,7 @@ class Admin extends UserModel {
         ) {
         parent::__construct($username, $firstname, $lastname, $email, $password, $location, $phoneNumber, $userID);
         $this->donationManager = new DonationManager($userID,$goalAmount, [], []);
-        DonationManager :: create($this->donationManager);
+       // DonationManager :: create($this->donationManager);
     }
 
     // CRUD Methods
@@ -71,97 +71,151 @@ class Admin extends UserModel {
         }
     }
     public static function retrieve($userID): ?Admin {
-        $sql = "SELECT * FROM admin WHERE userID = :userID";
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        $sql = "SELECT * FROM admin a
+                JOIN user u ON a.userID = u.userID
+                WHERE a.userID = ?";
         $params = [$userID];
-
-        $dbConnection = UserModel::getDatabaseConnection();
+    
         $result = $dbConnection->query($sql, $params);
+    
+        echo "Query Result:\n";
+        print_r($result);
+    
         if ($result && !empty($result)) {
-            return new Admin(
-                $result['userID'],
-                $result['username'],
-                $result['firstName'],
-                $result['lastName'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['locationList'], true), 
-                $result['phoneNumber'],
-                json_decode($result['donation_manager'], true)
-            );
+            $row = $result[0];
+
+            $location = json_decode($row['locationList'], true);
+    
+            if (
+                isset($row['userID'], $row['username'], $row['firstName'], $row['lastName'], $row['email'], $row['password'], $location, $row['phoneNumber'], $row['donation_manager'])
+            ) {
+
+                // string $username,
+                // string $firstname,
+                // string $lastname,
+                // string $email,
+                // string $password,
+                // array $location,
+                // int $phoneNumber,
+                // float $goalAmount = 0.0,
+                // int $userID=0
+                $goalAmount = (float)$row['goalAmount'];
+                $admin = new Admin(
+                    $row['username'],
+                    $row['firstName'],
+                    $row['lastName'],
+                    $row['email'],
+                    $row['password'],
+                    $location,
+                    $row['phoneNumber'],
+                    $goalAmount,
+                    $row['userID']
+                );
+    
+                return $admin;
+            } else {
+                throw new Exception("Missing required fields in the query result.");
+            }
         }
-        return null;
+    
+        return null; // Return null if no record is found
     }
 
-    public static function update($adminObject): bool {
-        if (!$adminObject instanceof Admin) {
+    public static function update($admin): bool {
+        if (!$admin instanceof Admin) {
             throw new InvalidArgumentException("Expected instance of Admin");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
+            // Update the user table
             $userSql = "UPDATE user SET 
-                            username = :username, 
-                            firstName = :firstName, 
-                            lastName = :lastName, 
-                            email = :email, 
-                            password = :password, 
-                            locationList = :locationList, 
-                            phoneNumber = :phoneNumber 
-                        WHERE userID = :userID";
+                        username = ?, 
+                        firstName = ?, 
+                        lastName = ?, 
+                        email = ?, 
+                        password = ?, 
+                        locationList = ?, 
+                        phoneNumber = ? 
+                    WHERE userID = ?";
     
             $userParams = [
-                $adminObject->getUsername(),
-                $adminObject->getFirstname(),
-                $adminObject->getLastname(),
-                $adminObject->getEmail(),
-                password_hash($adminObject->getPassword(), PASSWORD_DEFAULT),
-                json_encode($adminObject->getLocation()), // Serialize locationList as JSON
-                $adminObject->getPhoneNumber(),
-                $adminObject->getUserID()
+                $admin->getUsername(),
+                $admin->getFirstname(),
+                $admin->getLastname(),
+                $admin->getEmail(),
+                password_hash($admin->getPassword(), PASSWORD_DEFAULT), // Hash the password
+                json_encode($admin->getLocation()), // Encode locationList as JSON
+                $admin->getPhoneNumber(),
+                $admin->getUserID()
             ];
     
-            $userUpdated = $dbConnection->execute($userSql, $userParams);
+            echo "User SQL Query: $userSql\n";
+            echo "User Parameters: " . print_r($userParams, true) . "\n";
+    
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to update user record.");
+            }
+    
+           
             $adminSql = "UPDATE admin SET 
-                            donation_manager = :donation_manager
-                         WHERE userID = :userID";
+                        donation_manager = ? 
+                    WHERE userID = ?";
     
             $adminParams = [
-                json_encode($adminObject->getDonationManager()), // Serialize donation_manager as JSON
-                $adminObject->getUserID()
+                json_encode($admin->getDonationManager()), 
+                $admin->getUserID()
             ];
     
-            $adminUpdated = $dbConnection->execute($adminSql, $adminParams);
+            echo "Admin SQL Query: $adminSql\n";
+            echo "Admin Parameters: " . print_r($adminParams, true) . "\n";
     
-            return $userUpdated && $adminUpdated;
+            if (!$dbConnection->execute($adminSql, $adminParams)) {
+                throw new Exception("Failed to update admin record.");
+            }
+    
+            return true;
         } catch (Exception $e) {
             error_log("Error updating admin: " . $e->getMessage());
             return false;
         }
     }
-    
-    public function getDonationManager(): DonationManager{
-        return $this->donationManager;
-    }
+ 
     public static function delete($userID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $adminSql = "DELETE FROM admin WHERE userID = :userID";
+            $adminSql = "DELETE FROM admin WHERE userID = ?";
             $adminParams = [$userID];
-            $adminDeleted = $dbConnection->execute($adminSql, $adminParams);
     
-            $userSql = "DELETE FROM user WHERE userID = :userID";
+            if (!$dbConnection->execute($adminSql, $adminParams)) {
+                throw new Exception("Failed to delete admin record.");
+            }
+    
+            $userSql = "DELETE FROM user WHERE userID = ?";
             $userParams = [$userID];
-            $userDeleted = $dbConnection->execute($userSql, $userParams);
     
-            return $adminDeleted && $userDeleted;
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to delete user record.");
+            }
+    
+            return true;
         } catch (Exception $e) {
             error_log("Error deleting admin: " . $e->getMessage());
             return false;
         }
     }
-    
+
+    public function getDonationManager(): DonationManager{
+        return $this->donationManager;
+    }
+
+    public function setDonationManager(DonationManager $donationManager): void {
+        $this->donationManager = $donationManager;
+    }
 
     public function manageUsers(int $userID): void {
         echo "Managing user with ID: $userID\n";

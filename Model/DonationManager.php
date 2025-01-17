@@ -175,6 +175,15 @@ class DonationManager implements IMaintainable {
         return true;
     }
 
+
+    public function getAdminID(): int {
+        return $this->adminID;
+    }
+
+    public function setAdminID(int $adminID): void {
+        $this->adminID = $adminID;
+    }
+
     public function getDonationsByDonor(int $donorID): array {
         return $this->donationsByDonor[$donorID] ?? [];
     }
