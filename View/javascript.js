@@ -171,7 +171,7 @@ function fundProgress(campId){
         type: 'POST',
         data: {
             fundProgress: '',
-            campainId: campId,
+            campaignId: campId,
         },
         success: function(response) {
             $('.container').html(response);
