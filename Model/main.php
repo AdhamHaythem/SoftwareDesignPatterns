@@ -27,151 +27,151 @@ require_once 'student.php';
 //................Main to test volunteerList
 
 
-function main(){
+// function main(){
 
 
-    $donor = new Donor(
-        "john_doe",       // username
-        "John",           // firstname
-        "Doe",            // lastname
-        "john.doeRRRR@example.com", // email
-        "password123",    // password
-        ["New York", "NY"], // location
-        1234567890,       // phoneNumber
-        null,             // paymentMethod
-        null,             // event
-        1                 // userID
-    );
+//     $donor = new Donor(
+//         "john_doe",       // username
+//         "John",           // firstname
+//         "Doe",            // lastname
+//         "john.doeRRRR@example.com", // email
+//         "password123",    // password
+//         ["New York", "NY"], // location
+//         1234567890,       // phoneNumber
+//         null,             // paymentMethod
+//         null,             // event
+//         1                 // userID
+//     );
 
-    $donor2 = new Donor(
-        "KEE",       // username
-        "John",           // firstname
-        "Doe",            // lastname
-        "john.doeEEEE@example.com", // email
-        "password123",    // password
-        ["New York", "NY"], // location
-        1234567890,       // phoneNumber
-        null,             // paymentMethod
-        null,             // event
-        2                 // userID
-    );
+//     $donor2 = new Donor(
+//         "KEE",       // username
+//         "John",           // firstname
+//         "Doe",            // lastname
+//         "john.doeEEEE@example.com", // email
+//         "password123",    // password
+//         ["New York", "NY"], // location
+//         1234567890,       // phoneNumber
+//         null,             // paymentMethod
+//         null,             // event
+//         2                 // userID
+//     );
 
 
     
-    if (Donor::create($donor)) {
-        echo "Donor created successfully.\n";
-    } else {
-        echo "Failed to create donor.\n";
-        exit;
-    }
+//     if (Donor::create($donor)) {
+//         echo "Donor created successfully.\n";
+//     } else {
+//         echo "Failed to create donor.\n";
+//         exit;
+//     }
 
       
-    if (Donor::create($donor2)) {
-        echo "Donor2 created successfully.\n";
-    } else {
-        echo "Failed to create donor.\n";
-        exit;
-    }
+//     if (Donor::create($donor2)) {
+//         echo "Donor2 created successfully.\n";
+//     } else {
+//         echo "Failed to create donor.\n";
+//         exit;
+//     }
 
 
-    $retrievedDonor = Donor::retrieve($donor->getDonorID());
-    if ($retrievedDonor) {
-        echo "Donor retrieved successfully.\n";
-    } else {
-        echo "Failed to retrieve donor.\n";
-        exit;
-    }
+//     $retrievedDonor = Donor::retrieve($donor->getDonorID());
+//     if ($retrievedDonor) {
+//         echo "Donor retrieved successfully.\n";
+//     } else {
+//         echo "Failed to retrieve donor.\n";
+//         exit;
+//     }
 
-    $retrievedDonor = Donor::retrieve($donor2->getDonorID());
-    if ($retrievedDonor) {
-        echo "Donor2 retrieved successfully.\n";
-    } else {
-        echo "Failed to retrieve donor.\n";
-        exit;
-    }
+//     $retrievedDonor = Donor::retrieve($donor2->getDonorID());
+//     if ($retrievedDonor) {
+//         echo "Donor2 retrieved successfully.\n";
+//     } else {
+//         echo "Failed to retrieve donor.\n";
+//         exit;
+//     }
 
     
-    $campaign1 = new CampaignStrategy(
-        new DateTime('2023-1-15 10:00:00'),
-        ['berlin', 'Germany'],
-        10,
-        8,
-        'TESTTTTTTTTT RunNNNNNNNNN',
-        1000.0,
-        'Annual Charity Run',
-        'descriptionnnnnn',
-        500.0
-    );
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         ['berlin', 'Germany'],
+//         10,
+//         8,
+//         'TESTTTTTTTTT RunNNNNNNNNN',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
  
-    if (CampaignStrategy::create($campaign1)) {
-        echo "Event created successfully.\n";
-    } else {
-        echo "Failed to create event.\n";
-        exit;
-    }
+//     if (CampaignStrategy::create($campaign1)) {
+//         echo "Event created successfully.\n";
+//     } else {
+//         echo "Failed to create event.\n";
+//         exit;
+//     }
 
-    $retrievedDonor->setEventMethod($campaign1);
+//     $retrievedDonor->setEventMethod($campaign1);
 
-    try {
-        if ($retrievedDonor->joinEvent()) {
-            echo "Donor joined the event successfully.\n";
-        } else {
-            echo "Failed to join the event.\n";
-        }
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage() . "\n";
-    }
+//     try {
+//         if ($retrievedDonor->joinEvent()) {
+//             echo "Donor joined the event successfully.\n";
+//         } else {
+//             echo "Failed to join the event.\n";
+//         }
+//     } catch (Exception $e) {
+//         echo "Error: " . $e->getMessage() . "\n";
+//     }
 
-    $volunteers = $campaign1->getVolunteersList();
-    if (in_array($retrievedDonor->getDonorID(), $volunteers)) {
-        echo "Donor ID {$retrievedDonor->getDonorID()} is in the volunteers list for event {$campaign1->getEventID()}.\n";
-    } else {
-        echo "Donor ID {$retrievedDonor->getDonorID()} is NOT in the volunteers list for event {$campaign1->getEventID()}.\n";
-    }
+//     $volunteers = $campaign1->getVolunteersList();
+//     if (in_array($retrievedDonor->getDonorID(), $volunteers)) {
+//         echo "Donor ID {$retrievedDonor->getDonorID()} is in the volunteers list for event {$campaign1->getEventID()}.\n";
+//     } else {
+//         echo "Donor ID {$retrievedDonor->getDonorID()} is NOT in the volunteers list for event {$campaign1->getEventID()}.\n";
+//     }
 
 
 
-   $campaign2 = new CampaignStrategy(
-        new DateTime('2023-1-11 10:00:00'),
-        ['New York', 'Los Angeles'],
-        15,
-        2,
-        'Food Drive',
-        2000.0,
-        'Winter Food Drive',
-        'descriptionnnnnn',
-        1200.0
-    );
+//    $campaign2 = new CampaignStrategy(
+//         new DateTime('2023-1-11 10:00:00'),
+//         ['New York', 'Los Angeles'],
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
    
-    $volunteering = new VolunteeringEventStrategy(
-       'Food Drive',
-        new DateTime('2023-1-11 10:00:00'),
-        ['New York', 'Los Angeles'],
-        200,
-        3
+//     $volunteering = new VolunteeringEventStrategy(
+//        'Food Drive',
+//         new DateTime('2023-1-11 10:00:00'),
+//         ['New York', 'Los Angeles'],
+//         200,
+//         3
        
-    );
+//     );
 
-    if (CampaignStrategy::create($campaign1)) {
-            echo "campaign1 created and added to the database successfully.\n";
-                } else {
-                    echo "Failed to create campaign1.\n";
-        }
+//     if (CampaignStrategy::create($campaign1)) {
+//             echo "campaign1 created and added to the database successfully.\n";
+//                 } else {
+//                     echo "Failed to create campaign1.\n";
+//         }
 
-    if (CampaignStrategy::create($campaign2)) {
-            echo "campaign2 created and added to the database successfully.\n";
-            } else {
-            echo "Failed to create campaign2.\n";
-    }
+//     if (CampaignStrategy::create($campaign2)) {
+//             echo "campaign2 created and added to the database successfully.\n";
+//             } else {
+//             echo "Failed to create campaign2.\n";
+//     }
 
-    if (VolunteeringEventStrategy::create($volunteering)) {
-        echo "volunteeringcreated and added to the database successfully.\n";
-        } else {
-        echo "Failed to create volunteering.\n";
-}
+//     if (VolunteeringEventStrategy::create($volunteering)) {
+//         echo "volunteeringcreated and added to the database successfully.\n";
+//         } else {
+//         echo "Failed to create volunteering.\n";
+// }
 
-}
-main();
+// }
+// main();
 
 
 
@@ -2087,3 +2087,259 @@ main();
 
 // main();
 // main();
+
+// function main() {
+//     $dbConnection = DatabaseConnection::getInstance();
+
+//     echo "==== Testing Donation CRUD Operations ====\n";
+
+//     // Create a new donation
+//     echo "Creating a new donation...\n";
+//     $donorID = 1; // Example donorID
+//     $amount = 100.0;
+//     $date = new DateTime();
+//     $donation = new Donation($amount, $donorID, $date);
+    
+//     if (Donation::create($donation)) {
+//         echo "Donation created successfully!\n";
+//     } else {
+//         echo "Failed to create donation.\n";
+//         return;
+//     }
+
+//     // Retrieve the donation by donationID
+//     $donationID = $donation->getDonationID();
+//     echo "Retrieving donation with ID: $donationID...\n";
+//     $retrievedDonation = Donation::retrieve($donationID);
+
+//     if ($retrievedDonation) {
+//         echo "Donation retrieved successfully:\n";
+//         print_r($retrievedDonation);
+//     } else {
+//         echo "Failed to retrieve donation.\n";
+//         return;
+//     }
+
+//     // Update the donation
+//     echo "Updating donation...\n";
+//     $retrievedDonation->setAmount(150.0); // Update the amount
+//     if (Donation::update($retrievedDonation)) {
+//         echo "Donation updated successfully!\n";
+//     } else {
+//         echo "Failed to update donation.\n";
+//         return;
+//     }
+
+//     // Retrieve the updated donation
+//     echo "Retrieving updated donation with ID: $donationID...\n";
+//     $updatedDonation = Donation::retrieve($donationID);
+
+//     if ($updatedDonation) {
+//         echo "Updated donation retrieved successfully:\n";
+//         print_r($updatedDonation);
+//     } else {
+//         echo "Failed to retrieve updated donation.\n";
+//         return;
+//     }
+
+//     // Delete the donation
+//     echo "Deleting donation with ID: $donationID...\n";
+//     if (Donation::delete($donationID)) {
+//         echo "Donation deleted successfully!\n";
+//     } else {
+//         echo "Failed to delete donation.\n";
+//         return;
+//     }
+
+//     // Verify deletion
+//     echo "Verifying deletion of donation with ID: $donationID...\n";
+//     $deletedDonation = Donation::retrieve($donationID);
+
+//     if (!$deletedDonation) {
+//         echo "Donation was successfully deleted.\n";
+//     } else {
+//         echo "Donation still exists in the database:\n";
+//         print_r($deletedDonation);
+//     }
+// }
+
+// // Execute the main function
+// main();
+// Test function for creating and retrieving a donor
+// function testDonorCreateAndRetrieve() {
+//     // Step 1: Create a Donor instance
+//     $username = "john_doe";
+//     $firstname = "John";
+//     $lastname = "Doe";
+//     $email = "john.doe@example.com";
+//     $password = "password123";
+//     $location = ["New York", "USA"];
+//     $phoneNumber = 1234567890;
+
+//     // Create a Donor instance
+//     $donor = new Donor(
+//         $username,
+//         $firstname,
+//         $lastname,
+//         $email,
+//         $password,
+//         $location,
+//         $phoneNumber
+//     );
+
+//     // Step 2: Save the Donor to the database
+//     echo "Creating Donor...\n";
+//     if (Donor::create($donor)) {
+//         echo "Donor created successfully.\n";
+//     } else {
+//         echo "Failed to create donor.\n";
+//         return;
+//     }
+
+//     // Step 3: Retrieve the Donor from the database
+//     echo "Retrieving Donor...\n";
+//     $retrievedDonor = Donor::retrieve($donor->getDonorID());
+//     if ($retrievedDonor) {
+//         echo "Donor retrieved successfully.\n";
+//         print_r($retrievedDonor);
+//     } else {
+//         echo "Failed to retrieve donor.\n";
+//         return;
+//     }
+
+//     // Step 4: Compare the original and retrieved Donor
+//     echo "Comparing original and retrieved donor...\n";
+//     if (
+//         $donor->getUsername() === $retrievedDonor->getUsername() &&
+//         $donor->getFirstname() === $retrievedDonor->getFirstname() &&
+//         $donor->getLastname() === $retrievedDonor->getLastname() &&
+//         $donor->getEmail() === $retrievedDonor->getEmail() &&
+//         $donor->getPhoneNumber() === $retrievedDonor->getPhoneNumber() &&
+//         $donor->getLocation() === $retrievedDonor->getLocation()
+//     ) {
+//         echo "Test passed: Original and retrieved donor match.\n";
+//     } else {
+//         echo "Test failed: Original and retrieved donor do not match.\n";
+//     }
+// }
+
+// // Run the test
+// testDonorCreateAndRetrieve();
+
+function main () {
+
+    // Donor 1
+$donor1 = new Donor(                   // userID
+    'Motabare3',              // username
+    'Motabare3',              // firstname
+    'Tabaro3at',              // lastname
+    'motabare3@example.com',  // email
+    '1234bnbb',               // password
+    ['Dubai', 'UFC'],         // location
+    1234567890                // phoneNumber
+);
+if (Donor::create($donor1)) {
+    echo "Donor 1 created and added to the database successfully.\n";
+} else {
+    echo "Failed to create Donor 1.\n";
+}
+
+// Donor 2
+$donor2 = new Donor(               // userID
+    'KindHeart',              // username
+    'Kind',                   // firstname
+    'Heart',                  // lastname
+    'kindheart@example.com',  // email
+    'mypassword',             // password
+    ['Abu Dhabi', 'UAE'],     // location
+    9876543210                // phoneNumber
+);
+if (Donor::create($donor2)) {
+    echo "Donor 2 created and added to the database successfully.\n";
+} else {
+    echo "Failed to create Donor 2.\n";
+}
+
+// Donor 3
+$donor3 = new Donor(                 // userID
+    'HelpfulHero',            // username
+    'Helpful',                // firstname
+    'Hero',                   // lastname
+    'helpfulhero@example.com',// email
+    'secure123',              // password
+    ['Sharjah', 'UAE'],       // location
+    8765432109                // phoneNumber
+);
+if (Donor::create($donor3)) {
+    echo "Donor 3 created and added to the database successfully.\n";
+} else {
+    echo "Failed to create Donor 3.\n";
+}
+
+// Donor 4
+$donor4 = new Donor(                  // userID
+    'CharityChamp',           // username
+    'Charity',                // firstname
+    'Champ',                  // lastname
+    'charitychamp@example.com', // email
+    'charitypass',            // password
+    ['Cairo', 'Egypt'],       // location
+    7654321098                // phoneNumber
+);
+if (Donor::create($donor4)) {
+    echo "Donor 4 created and added to the database successfully.\n";
+} else {
+    echo "Failed to create Donor 4.\n";
+}
+
+
+// Donations for Donor 1 (donorID = $donor1->getUserID())
+$donations1 = [
+    new Donation(100.00, $donor1->getUserID(), new DateTime('2025-01-16 10:00:00')),
+    new Donation(150.00, $donor1->getUserID(), new DateTime('2025-01-17 11:00:00')),
+    new Donation(200.00, $donor1->getUserID(), new DateTime('2025-01-18 12:00:00')),
+    new Donation(250.00, $donor1->getUserID(), new DateTime('2025-01-19 13:00:00'))
+];
+
+// Donations for Donor 2 (donorID = $donor2->getUserID())
+$donations2 = [
+    new Donation(120.00, $donor2->getUserID(), new DateTime('2025-01-16 14:00:00')),
+    new Donation(130.00, $donor2->getUserID(), new DateTime('2025-01-17 15:00:00')),
+    new Donation(140.00, $donor2->getUserID(), new DateTime('2025-01-18 16:00:00')),
+    new Donation(150.00, $donor2->getUserID(), new DateTime('2025-01-19 17:00:00'))
+];
+
+// Donations for Donor 3 (donorID = $donor3->getUserID())
+$donations3 = [
+    new Donation(180.00, $donor3->getUserID(), new DateTime('2025-01-16 18:00:00')),
+    new Donation(190.00, $donor3->getUserID(), new DateTime('2025-01-17 19:00:00')),
+    new Donation(200.00, $donor3->getUserID(), new DateTime('2025-01-18 20:00:00')),
+    new Donation(210.00, $donor3->getUserID(), new DateTime('2025-01-19 21:00:00'))
+];
+
+// Donations for Donor 4 (donorID = $donor4->getUserID())
+$donations4 = [
+    new Donation(50.00, $donor4->getUserID(), new DateTime('2025-01-16 22:00:00')),
+    new Donation(60.00, $donor4->getUserID(), new DateTime('2025-01-17 23:00:00')),
+    new Donation(70.00, $donor4->getUserID(), new DateTime('2025-01-18 08:00:00')),
+    new Donation(80.00, $donor4->getUserID(), new DateTime('2025-01-19 09:00:00'))
+];
+
+// Create Donations in Database
+foreach ($donations1 as $donation) {
+    if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
+}
+foreach ($donations2 as $donation) {
+    if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
+}
+foreach ($donations3 as $donation) {
+    if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
+}
+foreach ($donations4 as $donation) {
+    if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
+}
+}
+
+main();
+?>
+
