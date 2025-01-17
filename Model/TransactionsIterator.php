@@ -1,7 +1,6 @@
 
 <?php
 class TransactionsIterator extends MyIterator {
-    private $position = 0;
     private array $transactions;
     public function __construct(array $transactions) {
         $this->transactions = $transactions;

@@ -14,7 +14,7 @@ class AdminController {
         $reports = $admin->generateReports();
         $results= [];
         $finalizedReports= $proxy->finalizeReport($id,$results);
-        $view->displayReports($reports);
+        // $view->displayReports($reports);
         return $reports;
     }
 
