@@ -34,7 +34,7 @@ function main(){
         "john_doe",       // username
         "John",           // firstname
         "Doe",            // lastname
-        "john.doe@example.com", // email
+        "john.doeRRRR@example.com", // email
         "password123",    // password
         ["New York", "NY"], // location
         1234567890,       // phoneNumber
@@ -43,9 +43,31 @@ function main(){
         1                 // userID
     );
 
+    $donor2 = new Donor(
+        "KEE",       // username
+        "John",           // firstname
+        "Doe",            // lastname
+        "john.doeEEEE@example.com", // email
+        "password123",    // password
+        ["New York", "NY"], // location
+        1234567890,       // phoneNumber
+        null,             // paymentMethod
+        null,             // event
+        2                 // userID
+    );
+
+
     
     if (Donor::create($donor)) {
         echo "Donor created successfully.\n";
+    } else {
+        echo "Failed to create donor.\n";
+        exit;
+    }
+
+      
+    if (Donor::create($donor2)) {
+        echo "Donor2 created successfully.\n";
     } else {
         echo "Failed to create donor.\n";
         exit;
@@ -60,13 +82,21 @@ function main(){
         exit;
     }
 
+    $retrievedDonor = Donor::retrieve($donor2->getDonorID());
+    if ($retrievedDonor) {
+        echo "Donor2 retrieved successfully.\n";
+    } else {
+        echo "Failed to retrieve donor.\n";
+        exit;
+    }
+
     
     $campaign1 = new CampaignStrategy(
         new DateTime('2023-1-15 10:00:00'),
         ['berlin', 'Germany'],
         10,
-        5,
-        'Charity Run',
+        8,
+        'TESTTTTTTTTT RunNNNNNNNNN',
         1000.0,
         'Annual Charity Run',
         'descriptionnnnnn',
