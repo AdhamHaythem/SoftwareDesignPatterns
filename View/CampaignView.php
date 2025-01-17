@@ -1,4 +1,5 @@
 <?php
+require_once "../Model/CampaignStrategy.php";
 class CampaignView
 {
     public function CampaignViewDetails($StdObj)
@@ -20,7 +21,7 @@ class CampaignView
             <nav>
                 <label class="logo">Campaign Manager</label>
                 <ul>
-                    <li><a href="#" onclick="campaignDetails(1)">Campaign Details</a></li>
+                    <li><a href="#" onclick="campaignDetails(2)">Campaign Details</a></li>
                     <li><a href="#" onclick="fundProgress(1)">Fund Progress</a></li>
                     <li><a href="#" onclick="campaignDetails(1)">All Campaigns</a></li>
                 </ul>
@@ -38,7 +39,7 @@ class CampaignView
         </html>';
     }
 
-    public function displayCampaignDetails($campaign)
+    public function displayCampaignDetails(CampaignStrategy $campaign)
     {
         echo '<div class="container">
             <div class="content-container">
@@ -46,11 +47,11 @@ class CampaignView
                     <div class="campaign-details">
                         <h2>Campaign Details</h2>
                         <ul>
-                            <li><strong>Campaign ID:</strong> ' . $campaign->id . '</li>
-                            <li><strong>Campaign Name:</strong> ' . $campaign->name . '</li>
-                            <li><strong>Money Earned:</strong> $' . number_format($campaign->moneyEarned, 2) . '</li>
-                            <li><strong>Start Date:</strong> ' . $campaign->startDate . '</li>
-                            <li><strong>Donation:</strong> $' . number_format($campaign->donation, 2) . '</li>
+                            <li><strong>Campaign ID:</strong> ' . $campaign->getCampaignID() . '</li>
+                            <li><strong>Campaign Name:</strong> ' . $campaign->getTitle() . '</li>
+                            <li><strong>Money Earned:</strong> $' . number_format($campaign->getMoneyEarned(), 2) . '</li>
+                            <li><strong>Start Date:</strong> ' . date('d/m/Y H:i:s', $campaign->getTime()->getTimestamp()) . '</li>
+                            <li><strong>Location:</strong> $' . $campaign->getLocation(). '</li>
                         </ul>
                     </div>
                 </section>
@@ -127,6 +128,6 @@ $events = [
 
 $campaignManagerView = new CampaignView();
 $campaignManagerView->CampaignViewDetails("");
-$campaignManagerView->displayCampaignDetails($campaign);
+// $campaignManagerView->displayCampaignDetails($campaign);
 $campaignManagerView->displayFundProgress($campaign);
 $campaignManagerView->displayAllCampaigns($campaigns);
