@@ -710,58 +710,217 @@ function main() {
 //     echo "Failed to create Technical 4.\n";
 // }
 
-try {
-    // Step 1: Retrieve the technicalModel with userID = 2
-    $technical = technicalModel::retrieve(2);
+// try {
+//     // Step 1: Retrieve the technicalModel with userID = 2
+//     $technical = technicalModel::retrieve(2);
 
-    if ($technical) {
-        echo "Before Update:\n";
-        echo "Username: " . $technical->getUsername() . "\n";
-        echo "First Name: " . $technical->getFirstname() . "\n";
-        echo "Last Name: " . $technical->getLastname() . "\n";
-        echo "Email: " . $technical->getEmail() . "\n";
-        echo "Location: " . json_encode($technical->getLocation()) . "\n";
-        echo "Skills: " . json_encode($technical->getSkills()) . "\n";
-        echo "Certifications: " . json_encode($technical->getCertifications()) . "\n";
-        echo "UserId: " . $technical->getUserID() . "\n";
+//     if ($technical) {
+//         echo "Before Update:\n";
+//         echo "Username: " . $technical->getUsername() . "\n";
+//         echo "First Name: " . $technical->getFirstname() . "\n";
+//         echo "Last Name: " . $technical->getLastname() . "\n";
+//         echo "Email: " . $technical->getEmail() . "\n";
+//         echo "Location: " . json_encode($technical->getLocation()) . "\n";
+//         echo "Skills: " . json_encode($technical->getSkills()) . "\n";
+//         echo "Certifications: " . json_encode($technical->getCertifications()) . "\n";
+//         echo "UserId: " . $technical->getUserID() . "\n";
 
-        // Step 2: Update some fields in the technicalModel
-        $technical->setUsername('updated_tech_master');
-        $technical->setFirstname('Updated Jane');
-        $technical->setLastname('Doe Updated');
-        $technical->setEmail('updatedjanedoe@example.com');
-        $technical->setLocation(['San Francisco', 'USA', 'Updated']);
-        $technical->setSkills(['Python', 'Django', 'Flask']);
-        $technical->setCertifications(['Updated Azure Certification', 'AWS Certification']);
+//         // Step 2: Update some fields in the technicalModel
+//         $technical->setUsername('updated_tech_master');
+//         $technical->setFirstname('Updated Jane');
+//         $technical->setLastname('Doe Updated');
+//         $technical->setEmail('updatedjanedoe@example.com');
+//         $technical->setLocation(['San Francisco', 'USA', 'Updated']);
+//         $technical->setSkills(['Python', 'Django', 'Flask']);
+//         $technical->setCertifications(['Updated Azure Certification', 'AWS Certification']);
 
-        // Step 3: Call the update method
-        if (technicalModel::update($technical)) {
-            echo "TechnicalModel with userID 2 updated successfully.\n";
+//         // Step 3: Call the update method
+//         if (technicalModel::update($technical)) {
+//             echo "TechnicalModel with userID 2 updated successfully.\n";
 
-            // Step 4: Retrieve the technicalModel again to confirm the update
-            $updatedTechnical = technicalModel::retrieve(2);
+//             // Step 4: Retrieve the technicalModel again to confirm the update
+//             $updatedTechnical = technicalModel::retrieve(2);
 
-            if ($updatedTechnical) {
-                echo "After Update:\n";
-                echo "Username: " . $updatedTechnical->getUsername() . "\n";
-                echo "First Name: " . $updatedTechnical->getFirstname() . "\n";
-                echo "Last Name: " . $updatedTechnical->getLastname() . "\n";
-                echo "Email: " . $updatedTechnical->getEmail() . "\n";
-                echo "Location: " . json_encode($updatedTechnical->getLocation()) . "\n";
-                echo "Skills: " . json_encode($updatedTechnical->getSkills()) . "\n";
-                echo "Certifications: " . json_encode($updatedTechnical->getCertifications()) . "\n";
-            } else {
-                echo "Failed to retrieve the updated technicalModel.\n";
-            }
-        } else {
-            echo "Failed to update technicalModel with userID 2.\n";
-        }
-    } else {
-        echo "No technicalModel found with userID 2.\n";
-    }
-} catch (Exception $e) {
-    echo "An error occurred: " . $e->getMessage();
-}
+//             if ($updatedTechnical) {
+//                 echo "After Update:\n";
+//                 echo "Username: " . $updatedTechnical->getUsername() . "\n";
+//                 echo "First Name: " . $updatedTechnical->getFirstname() . "\n";
+//                 echo "Last Name: " . $updatedTechnical->getLastname() . "\n";
+//                 echo "Email: " . $updatedTechnical->getEmail() . "\n";
+//                 echo "Location: " . json_encode($updatedTechnical->getLocation()) . "\n";
+//                 echo "Skills: " . json_encode($updatedTechnical->getSkills()) . "\n";
+//                 echo "Certifications: " . json_encode($updatedTechnical->getCertifications()) . "\n";
+//             } else {
+//                 echo "Failed to retrieve the updated technicalModel.\n";
+//             }
+//         } else {
+//             echo "Failed to update technicalModel with userID 2.\n";
+//         }
+//     } else {
+//         echo "No technicalModel found with userID 2.\n";
+//     }
+// } catch (Exception $e) {
+//     echo "An error occurred: " . $e->getMessage();
+// }
+
+// Dummy Employees to be managed by HR
+// $employee1 = [
+//     'username' => 'john_employee',
+//     'firstname' => 'John',
+//     'lastname' => 'Doe',
+//     'email' => 'john.employee@example.com',
+//     'password' => password_hash('password123', PASSWORD_DEFAULT),
+//     'location' => ['New York', 'USA'],
+//     'phoneNumber' => 1234567890,
+//     'title' => 'Developer',
+//     'salary' => 6000,
+//     'workingHours' => 40,
+// ];
+
+// $employee2 = [
+//     'username' => 'jane_employee',
+//     'firstname' => 'Jane',
+//     'lastname' => 'Smith',
+//     'email' => 'jane.employee@example.com',
+//     'password' => password_hash('password123', PASSWORD_DEFAULT),
+//     'location' => ['Los Angeles', 'USA'],
+//     'phoneNumber' => 9876543210,
+//     'title' => 'Designer',
+//     'salary' => 5500,
+//     'workingHours' => 35,
+// ];
+// $managedEmployees = [$employee1, $employee2];
+
+// // Create HR instances
+// $hr1 = new HRModel(
+//     'hr_guru',
+//     'Sarah',
+//     'Johnson',
+//     'sarah.hr@example.com',
+//     'passwordHR',
+//     ['San Francisco', 'USA'],
+//     7894561230,
+//     8000, // Salary
+//     40,   // Working hours
+//     $managedEmployees, // Managed employees
+// );
+
+// $hr2 = new HRModel(
+//     'hr_master',
+//     'David',
+//     'Williams',
+//     'david.hr@example.com',
+//     'passwordHR',
+//     ['Chicago', 'USA'],
+//     4561237890,
+//     9000, // Salary
+//     45,   // Working hours
+//     [$employee2], // Managed employees
+// );
+
+// // Insert employees into the database
+// $employeesToInsert = [$employee1, $employee2];
+
+// foreach ($employeesToInsert as $employeeData) {
+//     $employee = new EmployeeModel(
+//         $employeeData['username'],
+//         $employeeData['firstname'],
+//         $employeeData['lastname'],
+//         $employeeData['email'],
+//         $employeeData['password'],
+//         $employeeData['location'],
+//         $employeeData['phoneNumber'],
+//         $employeeData['title'],
+//         $employeeData['salary'],
+//         $employeeData['workingHours'],
+//     );
+// }
+
+// Insert HR into the database
+// $hrInstances = [$hr1, $hr2];
+// foreach ($hrInstances as $hr) {
+//     if (HRModel::create($hr)) {
+//         echo "HR with userID {$hr->getUserID()} created successfully.\n";
+//     } else {
+//         echo "Failed to create HR with userID {$hr->getUserID()}.\n";
+//     }
+// }
+
+// // Retrieve HR with userID = 1
+
+// Test retrieving HR with userID = 7
+// $hr = HRModel::retrieve(1);
+
+// if ($hr) {
+//     echo "HR Retrieved Successfully:\n";
+//     echo "User ID: " . $hr->getUserID() . "\n";
+//     echo "Username: " . $hr->getUsername() . "\n";
+//     echo "First Name: " . $hr->getFirstname() . "\n";
+//     echo "Last Name: " . $hr->getLastname() . "\n";
+//     echo "Email: " . $hr->getEmail() . "\n";
+//     echo "Salary: " . $hr->getSalary() . "\n";
+//     echo "Working Hours: " . $hr->getHoursWorked() . "\n";
+//     echo "Managed Employees: " . implode(', ', $hr->getManagedEmployees()) . "\n";
+//     echo "Location: " . implode(', ', $hr->getLocation()) . "\n";
+// } else {
+//     echo "No HR found with the given User ID.\n";
+// }
+
+
+// $newHR = new hrModel(
+//     'hr_manager',             // username
+//     'John',                   // firstname
+//     'Doe',                    // lastname
+//     'johndoe@example.com',    // email
+//     'securepassword123',      // password
+//     ['New York', 'USA'],      // location
+//     9876543210,               // phoneNumber
+//     90000,                    // salary
+//     40,                       // workingHours
+//     [101, 102, 103],          // managedEmployees (dummy employee IDs)
+//     10                        // userID
+// );
+
+// // Insert the HR data into the database
+// if (HRModel::create($newHR)) {
+//     echo "HR record created successfully:\n";
+//     print_r($newHR);
+
+//     // Retrieve the HR data
+//     $retrievedHR = HRModel::retrieve($newHR->getUserID());
+
+//     if ($retrievedHR) {
+//         echo "\nRetrieved HR data:\n";
+//         print_r($retrievedHR);
+
+//         // Update the HR data
+//         $retrievedHR->setFirstname('Jane');
+//         $retrievedHR->setLastname('Smith');
+//         $retrievedHR->setSalary(95000);
+//         $retrievedHR->addEmployees([104, 105]);
+
+//         if (HRModel::update($retrievedHR)) {
+//             echo "\nHR record updated successfully:\n";
+//             $updatedHR = HRModel::retrieve($retrievedHR->getUserID());
+//             print_r($updatedHR);
+
+//             // Clean up: delete the test HR data
+//             if (UserModel::delete($retrievedHR->getUserID())) {
+//                 echo "\nHR record deleted successfully.\n";
+//             } else {
+//                 echo "\nFailed to delete HR record.\n";
+//             }
+//         } else {
+//             echo "\nFailed to update HR record.\n";
+//         }
+//     } else {
+//         echo "\nFailed to retrieve HR record.\n";
+//     }
+// } else {
+//     echo "Failed to create HR record.\n";
+// }
+
+
 
 
 }

@@ -10,28 +10,29 @@ class hrModel extends EmployeeModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
-        string $title,
         int $salary,
-        int $workingHours
+        int $workingHours,
+        array $managedEmployees = [],
+        $userID=0
     ) {
         parent::__construct(    
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
             $phoneNumber,
             "HR",
             $salary,
-            $workingHours
+            $workingHours,
+            $userID
         );
+        $this->managedEmployees = $managedEmployees;
     }
 
     // CRUD Methods
@@ -106,130 +107,123 @@ class hrModel extends EmployeeModel {
     
 
     public static function retrieve($userID): ?hrModel {
-        $sql = "SELECT u.userID, u.username, u.firstName, u.lastName, u.email, u.password, u.locationList, u.phoneNumber, u.isActive, 
-                       e.title, e.salary, e.workingHours,
-                       h.managedEmployees
+        $sql = "SELECT * 
                 FROM user u
-                LEFT JOIN employee e ON u.userID = e.userID
-                LEFT JOIN hr h ON u.userID = h.userID
-                WHERE u.userID = :userID";
+                JOIN employee e ON u.userID = e.userID
+                JOIN hr h ON u.userID = h.userID
+                WHERE u.userID = ?";
         
-        $params = [':userID' => $userID];
-        $dbConnection = UserModel::getDatabaseConnection();
+        $params = [$userID];
+        $dbConnection = DatabaseConnection::getInstance();
         $result = $dbConnection->query($sql, $params);
-        
+    
         if ($result && !empty($result)) {
+            $row = $result[0];
+    
             return new hrModel(
-                $result['username'],
-                $result['firstName'],
-                $result['lastName'],
-                $result['userID'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['locationList'], true),
-                $result['phoneNumber'],
-                $result['title'],
-                $result['salary'],
-                $result['workingHours'],
-                $result['managedEmployees'],          
+                $row['username'],
+                $row['firstName'],
+                $row['lastName'],
+                $row['email'],
+                $row['password'],
+                json_decode($row['locationList'], true),
+                (int) $row['phoneNumber'],
+                (int) $row['salary'],
+                (int) $row['workingHours'],
+                json_decode($row['managedEmployees'], true),
+                (int) $row['userID']
             );
         }
-        
+    
         return null;
     }
+    
     public static function update($hr): bool {
         if (!$hr instanceof hrModel) {
-            throw new InvalidArgumentException("Expected instance of HR");
+            throw new InvalidArgumentException("Expected instance of hrModel");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
+            // Update the `user` table
             $userSql = "UPDATE user SET 
-                            username = :username, 
-                            firstName = :firstName, 
-                            lastName = :lastName, 
-                            email = :email, 
-                            password = :password, 
-                            locationList = :locationList, 
-                            phoneNumber = :phoneNumber, 
-                            isActive = :isActive
-                        WHERE userID = :userID";
-    
+                            username = ?, 
+                            firstName = ?, 
+                            lastName = ?, 
+                            email = ?, 
+                            password = ?, 
+                            locationList = ?, 
+                            phoneNumber = ?, 
+                            isActive = ?
+                        WHERE userID = ?";
+            
             $userParams = [
-                $hr->getUserID(),
                 $hr->getUsername(),
                 $hr->getFirstname(),
                 $hr->getLastname(),
                 $hr->getEmail(),
-                password_hash($hr->getPassword(), PASSWORD_DEFAULT), // Hash password
+                password_hash($hr->getPassword(), PASSWORD_DEFAULT),
                 json_encode($hr->getLocation()),
                 $hr->getPhoneNumber(),
-                1 
+                1, // isActive
+                $hr->getUserID()
             ];
     
             $userUpdated = $dbConnection->execute($userSql, $userParams);
     
-           
-            if ($userUpdated && $hr->getTitle() && $hr->getSalary()) {
-                $employeeSql = "UPDATE employee SET 
-                                    title = :title, 
-                                    salary = :salary, 
-                                    workingHours = :workingHours
-                                WHERE userID = :userID";
+            // Update the `employee` table
+            $employeeSql = "UPDATE employee SET 
+                                title = ?, 
+                                salary = ?, 
+                                workingHours = ?
+                            WHERE userID = ?";
+            
+            $employeeParams = [
+                $hr->getTitle(),
+                $hr->getSalary(),
+                $hr->getHoursWorked(),
+                $hr->getUserID()
+            ];
     
-                $employeeParams = [
-                    $hr->getUserID(),
-                    $hr->getTitle(),
-                    $hr->getSalary(),
-                    $hr->getHoursWorked()
-                ];
+            $employeeUpdated = $dbConnection->execute($employeeSql, $employeeParams);
     
-                $employeeUpdated = $dbConnection->execute($employeeSql, $employeeParams);
-            }
-            if ($userUpdated) {
-                $hrSql = "UPDATE hr SET 
-                            managedEmployees = :managedEmployees
-                        WHERE userID = :userID";
+            // Update the `hr` table
+            $hrSql = "UPDATE hr SET 
+                          managedEmployees = ?
+                      WHERE userID = ?";
+            
+            $hrParams = [
+                json_encode($hr->getManagedEmployees()),
+                $hr->getUserID()
+            ];
     
-                $hrParams = [
-                    $hr->getUserID(),
-                    $hr->getManagedEmployees(),
-                ];
-    
-                $hrUpdated = $dbConnection->execute($hrSql, $hrParams);
-    
-                return $hrUpdated;
-            }
-    
-            return false;
+            $hrUpdated = $dbConnection->execute($hrSql, $hrParams);
+            return $userUpdated && $employeeUpdated && $hrUpdated;
         } catch (Exception $e) {
             error_log("Error updating HR: " . $e->getMessage());
             return false;
         }
     }
-    
-    public static function delete($userID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-    
-        try {
-           
-            $hrSql = "DELETE FROM hr WHERE userID = :userID";
-            $hrParams = [$userID];
-            $hrDeleted = $dbConnection->execute($hrSql, $hrParams);
 
-            $employeeSql = "DELETE FROM employee WHERE userID = :userID";
-            $employeeDeleted = $dbConnection->execute($employeeSql, $hrParams);
-    
-            $userSql = "DELETE FROM user WHERE userID = :userID";
-            $userDeleted = $dbConnection->execute($userSql, $hrParams);
-    
-            return $hrDeleted && $employeeDeleted && $userDeleted;
-        } catch (Exception $e) {
-            error_log("Error deleting HR: " . $e->getMessage());
-            return false;
+
+    public function addEmployees(array $employeeIDs) {
+
+        foreach ($employeeIDs as $employeeID) {
+
+            if (!in_array($employeeID, $this->managedEmployees)) {
+
+                $this->managedEmployees[] = $employeeID;
+
+            }
+
         }
+
     }
+
+    
+    
+    
     
 
     public function addEmployee(EmployeeModel $employee) {

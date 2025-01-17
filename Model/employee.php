@@ -56,6 +56,12 @@ class EmployeeModel extends UserModel {
         return $this->salary;
     }
 
+    public function setSalary($salary) {
+
+        $this->salary = $salary;
+
+    }
+
     public static function create($employee): bool {
         if (!$employee instanceof EmployeeModel) {
             throw new InvalidArgumentException("Expected instance of Employee");

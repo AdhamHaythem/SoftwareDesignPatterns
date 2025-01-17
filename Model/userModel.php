@@ -132,15 +132,12 @@ class UserModel implements IMaintainable {
         return self::$dbConnection->execute($sql, $params);
     }
 
-    public static function delete($key): bool {
-        // Update SQL query to use positional placeholders
+    public static function delete($userID): bool {
         $sql = "DELETE FROM user WHERE userID = ?";
-    
-        // Bind parameters in the correct order
-        $params = [$key];
-    
-        // Execute the query using the DatabaseConnection
-        return self::$dbConnection->execute($sql, $params);
+        $params = [$userID];
+
+        $dbConnection = DatabaseConnection::getInstance();
+        return $dbConnection->execute($sql, $params);
     }
     
 
