@@ -176,8 +176,8 @@ if (isset($_POST['retrieveVolunteeringEvent'])) {
     if (!empty($_POST['eventId'])) {
         $event = $eventController->retrieveVolunteeringEvent((int)$_POST['eventId']);
         if ($event) {
-            $eventView = new EventView();
-            $eventView->displayEventReport($event);
+            $eventView = new VolunteerView();
+            $eventView->displayVolunteerDetails($event);
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Event not found']);

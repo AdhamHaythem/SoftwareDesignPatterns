@@ -208,7 +208,6 @@ function eventReport(reportId) {
     });
 };
 
-
 function eventList(itemId) {
     $.ajax({
         url: "../Controller/DonorController.php",
@@ -289,6 +288,92 @@ function AllLessonsEnstructor(itemId) {
         data: {
             instructorId: itemId,
             getLessons: '',
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function donationButton(itemId) {
+    
+    const donationTypes = ["food", "clothes", "medical", "cash"];
+    const donationData = {};
+
+    // Loop through each donation type
+    donationTypes.forEach((type) => {
+        const element = document.getElementById(type); // Get the checkbox element
+        donationData[type] = element && element.checked ? element.value : ""; // Send value if checked, empty string otherwise
+    });
+
+    $.ajax({
+        url: '../Controller/DonorController.php',
+        type: 'POST',
+        data: {
+            donorId: itemId,
+            addDonation: '',
+            ...donationData, // Spread the donation data dynamically
+            amount: getElementById('amount').text,
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function undo(itemId) {
+    $.ajax({
+        url: '../Controller/DonorController.php',
+        type: 'POST',
+        data: {
+            changeDonation: '',
+            undo: '',
+            donorId: itemId, 
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function redo(itemId) {
+    $.ajax({
+        url: '../Controller/DonorController.php',
+        type: 'POST',
+        data: {
+            changeDonation: '',
+            redo: '',
+            donorId: itemId, 
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function joinCampaign(itemId,eventId) {
+    $.ajax({
+        url: '../Controller/EventController.php',
+        type: 'POST',
+        data: {
+            addVolunteerForCampaign: '',
+            donorId: itemId,
+            eventId: eventId, 
+        },
+        success: function(response) {
+            $('.container').html(response);
+        },
+    });
+};
+
+function joinVolunteer(itemId,eventId) {
+    $.ajax({
+        url: '../Controller/EventController.php',
+        type: 'POST',
+        data: {
+            addVolunteerForVolunteeringEvent: '',
+            donorId: itemId,
+            eventId: eventId, 
         },
         success: function(response) {
             $('.container').html(response);
