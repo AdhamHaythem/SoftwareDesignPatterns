@@ -64,125 +64,126 @@ class EmployeeModel extends UserModel {
 
     public static function create($employee): bool {
         if (!$employee instanceof EmployeeModel) {
-            throw new InvalidArgumentException("Expected instance of Employee");
+            throw new InvalidArgumentException("Expected instance of EmployeeModel");
         }
-        $dbConnection = UserModel::getDatabaseConnection();
+    
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $userSql = "INSERT IGNORE INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+            // Insert into `user` table
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
             $userParams = [
-                 $employee->getUserID(),
-                 $employee->getUsername(),
-                 $employee->getFirstname(),
-                 $employee->getLastname(),
-                 $employee->getEmail(),
-                 password_hash($employee->getPassword(), PASSWORD_DEFAULT), // Hash password
-                 json_encode($employee->getLocation()),
-                 $employee->getPhoneNumber(),
-                 1 // Assuming new employees are active by default
+                $employee->getUserID(),
+                $employee->getUsername(),
+                $employee->getFirstname(),
+                $employee->getLastname(),
+                $employee->getEmail(),
+                password_hash($employee->getPassword(), PASSWORD_DEFAULT), // Hash password
+                json_encode($employee->getLocation()), // Serialize location as JSON
+                $employee->getPhoneNumber(),
+                1 // isActive (true)
             ];
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert into `user` table.");
+            }
     
-            $userInserted = $dbConnection->execute($userSql, $userParams);
-    
+            // Insert into `employee` table
             $employeeSql = "INSERT INTO employee (userID, title, salary, workingHours)
-                            VALUES (?, ?, ?, ?)
-                            ON DUPLICATE KEY UPDATE 
-                            title = VALUES(title), 
-                            salary = VALUES(salary), 
-                            workingHours = VALUES(workingHours)";
-    
+                            VALUES (?, ?, ?, ?)";
             $employeeParams = [
                 $employee->getUserID(),
                 $employee->getTitle(),
                 $employee->getSalary(),
                 $employee->getHoursWorked()
             ];
+            if (!$dbConnection->execute($employeeSql, $employeeParams)) {
+                throw new Exception("Failed to insert into `employee` table.");
+            }
     
-            $employeeInserted = $dbConnection->execute($employeeSql, $employeeParams);
-
-            return $userInserted && $employeeInserted;
+            // If both insertions succeed
+            return true;
         } catch (Exception $e) {
             error_log("Error creating employee: " . $e->getMessage());
             return false;
         }
     }
     
-
     public static function retrieve($userID): ?EmployeeModel {
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
-        $sql = "SELECT u.userID, u.username, u.firstName, u.lastName, u.email, u.password, u.locationList, u.phoneNumber, u.isActive, 
-                       e.title, e.salary, e.workingHours
-                FROM user u
-                JOIN employee e ON u.userID = e.userID
-                WHERE u.userID = :userID";
-    
+        // Query to retrieve employee details joined with user
+        $sql = "SELECT * FROM employee e
+                JOIN user u ON e.userID = u.userID
+                WHERE u.userID = ?";
         $params = [$userID];
+    
         $result = $dbConnection->query($sql, $params);
     
         if ($result && !empty($result)) {
+            $row = $result[0]; // Fetch the first result
+    
+            // Create a new EmployeeModel instance
             return new EmployeeModel(
-                $result['username'],
-                $result['firstName'],
-                $result['lastName'],
-                $result['userID'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['locationList'], true),
-                $result['phoneNumber'],
-                $result['title'],
-                $result['salary'],
-                $result['workingHours']
+                $row['username'],                             // username
+                $row['firstName'],                            // firstName
+                $row['lastName'],                             // lastName
+                $row['email'],                                // email
+                $row['password'],                             // password
+                json_decode($row['locationList'], true),      // location (JSON)
+                $row['phoneNumber'],                          // phoneNumber
+                $row['title'],                                // title
+                $row['salary'],                               // salary
+                $row['workingHours'],                         // workingHours
+                $row['userID']                                // userID
             );
         }
     
-        return null; 
+        return null; // Return null if no result is found
     }
+    
     public static function update($employee): bool {
         if (!$employee instanceof EmployeeModel) {
             throw new InvalidArgumentException("Expected instance of EmployeeModel");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
+            // Update `user` table
             $userSql = "UPDATE user SET 
-                            username = :username, 
-                            firstName = :firstName, 
-                            lastName = :lastName, 
-                            email = :email, 
-                            password = :password, 
-                            locationList = :locationList, 
-                            phoneNumber = :phoneNumber
-                        WHERE userID = :userID";
-    
+                            username = ?, 
+                            firstName = ?, 
+                            lastName = ?, 
+                            email = ?, 
+                            password = ?, 
+                            locationList = ?, 
+                            phoneNumber = ?
+                        WHERE userID = ?";
             $userParams = [
                 $employee->getUsername(),
                 $employee->getFirstname(),
                 $employee->getLastname(),
                 $employee->getEmail(),
-                password_hash($employee->getPassword(), PASSWORD_DEFAULT),
-                json_encode($employee->getLocation()),
+                password_hash($employee->getPassword(), PASSWORD_DEFAULT), // Hash password
+                json_encode($employee->getLocation()), // Serialize location as JSON
                 $employee->getPhoneNumber(),
                 $employee->getUserID()
             ];
-    
             $userUpdated = $dbConnection->execute($userSql, $userParams);
-            $employeeSql = "UPDATE employee SET 
-                                title = :title, 
-                                salary = :salary, 
-                                workingHours = :workingHours
-                            WHERE userID = :userID";
     
+            // Update `employee` table
+            $employeeSql = "UPDATE employee SET 
+                                title = ?, 
+                                salary = ?, 
+                                workingHours = ?
+                            WHERE userID = ?";
             $employeeParams = [
                 $employee->getTitle(),
                 $employee->getSalary(),
                 $employee->getHoursWorked(),
                 $employee->getUserID()
             ];
-    
             $employeeUpdated = $dbConnection->execute($employeeSql, $employeeParams);
     
             return $userUpdated && $employeeUpdated;
@@ -191,6 +192,7 @@ class EmployeeModel extends UserModel {
             return false;
         }
     }
+    
     
 }
 ?>

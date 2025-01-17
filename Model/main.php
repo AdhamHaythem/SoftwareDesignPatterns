@@ -1020,88 +1020,88 @@ function main() {
 
 
 // Include necessary files or autoloaders
-$personnel1 = new DeliveryPersonnel(
-    'delivery_guy1',
-    'John',
-    'Doe',
-    'example@example.com',
-    'securepassword',
-    ['New York', 'USA'],
-    1234567890,
-    4000,
-    40,
-    'Motorbike',
-    99
-);
+// $personnel1 = new DeliveryPersonnel(
+//     'delivery_guy1',
+//     'John',
+//     'Doe',
+//     'example@example.com',
+//     'securepassword',
+//     ['New York', 'USA'],
+//     1234567890,
+//     4000,
+//     40,
+//     'Motorbike',
+//     99
+// );
 
-$personnel2 = new DeliveryPersonnel(
-    'delivery_guy2',
-    'Jane',
-    'Smith',
-    'john.doe@example.com',
-    'securepassword123',
-    ['San Francisco', 'USA'],
-    9876543210,
-    4500,
-    35,
-    'Bicycle',
-    100
-);
+// $personnel2 = new DeliveryPersonnel(
+//     'delivery_guy2',
+//     'Jane',
+//     'Smith',
+//     'john.doe@example.com',
+//     'securepassword123',
+//     ['San Francisco', 'USA'],
+//     9876543210,
+//     4500,
+//     35,
+//     'Bicycle',
+//     100
+// );
 
-echo "Creating delivery personnel...\n";
-if (DeliveryPersonnel::create($personnel1)) {
-    echo "Delivery Personnel 1 created successfully.\n";
-} else {
-    echo "Failed to create Delivery Personnel 1.\n";
-}
+// echo "Creating delivery personnel...\n";
+// if (DeliveryPersonnel::create($personnel1)) {
+//     echo "Delivery Personnel 1 created successfully.\n";
+// } else {
+//     echo "Failed to create Delivery Personnel 1.\n";
+// }
 
-if (DeliveryPersonnel::create($personnel2)) {
-    echo "Delivery Personnel 2 created successfully.\n";
-} else {
-    echo "Failed to create Delivery Personnel 2.\n";
-}
+// if (DeliveryPersonnel::create($personnel2)) {
+//     echo "Delivery Personnel 2 created successfully.\n";
+// } else {
+//     echo "Failed to create Delivery Personnel 2.\n";
+// }
 
-// Step 2: Retrieve and Print
-echo "Retrieving Delivery Personnel 1...\n";
-$retrievedPersonnel = DeliveryPersonnel::retrieve(99);
-if ($retrievedPersonnel) {
-    echo "Retrieved Delivery Personnel 1:\n";
-    print_r($retrievedPersonnel);
-} else {
-    echo "Failed to retrieve Delivery Personnel 1.\n";
-}
+// // Step 2: Retrieve and Print
+// echo "Retrieving Delivery Personnel 1...\n";
+// $retrievedPersonnel = DeliveryPersonnel::retrieve(99);
+// if ($retrievedPersonnel) {
+//     echo "Retrieved Delivery Personnel 1:\n";
+//     print_r($retrievedPersonnel);
+// } else {
+//     echo "Failed to retrieve Delivery Personnel 1.\n";
+// }
 
-// Step 3: Update Data
-if ($retrievedPersonnel) {
-    echo "Updating Delivery Personnel 1...\n";
-    $retrievedPersonnel->setFirstname('Updated John');
-    $retrievedPersonnel->setLastname('Updated Doe');
-    $retrievedPersonnel->setVehicleType('Truck');
-    $retrievedPersonnel->setDeliveriesCompleted(50);
+// // Step 3: Update Data
+// if ($retrievedPersonnel) {
+//     echo "Updating Delivery Personnel 1...\n";
+//     $retrievedPersonnel->setFirstname('Updated John');
+//     $retrievedPersonnel->setLastname('Updated Doe');
+//     $retrievedPersonnel->setVehicleType('Truck');
+//     $retrievedPersonnel->setDeliveriesCompleted(50);
 
-    if (DeliveryPersonnel::update($retrievedPersonnel)) {
-        echo "Delivery Personnel 1 updated successfully.\n";
+//     if (DeliveryPersonnel::update($retrievedPersonnel)) {
+//         echo "Delivery Personnel 1 updated successfully.\n";
 
-        // Verify the update
-        echo "Verifying update for Delivery Personnel 1...\n";
-        $updatedPersonnel = DeliveryPersonnel::retrieve(1);
-        if ($updatedPersonnel) {
-            echo "Updated Delivery Personnel 1:\n";
-            print_r($updatedPersonnel);
-        } else {
-            echo "Failed to retrieve updated Delivery Personnel 1.\n";
-        }
-    } else {
-        echo "Failed to update Delivery Personnel 1.\n";
-    }
+//         // Verify the update
+//         echo "Verifying update for Delivery Personnel 1...\n";
+//         $updatedPersonnel = DeliveryPersonnel::retrieve(1);
+//         if ($updatedPersonnel) {
+//             echo "Updated Delivery Personnel 1:\n";
+//             print_r($updatedPersonnel);
+//         } else {
+//             echo "Failed to retrieve updated Delivery Personnel 1.\n";
+//         }
+//     } else {
+//         echo "Failed to update Delivery Personnel 1.\n";
+//     }
 
-    echo "Deleting Delivery Personnel...\n";
-if (DeliveryPersonnel::delete(100)) {
-    echo "Delivery Personnel deleted successfully.\n";
-} else {
-    echo "Failed to delete Delivery Personnel.\n";
-}
-}
+//     echo "Deleting Delivery Personnel...\n";
+// if (DeliveryPersonnel::delete(100)) {
+//     echo "Delivery Personnel deleted successfully.\n";
+// } else {
+//     echo "Failed to delete Delivery Personnel.\n";
+// }
+// }
 
 
 // Step 5: Clean up (optional, for testing purposes only)
