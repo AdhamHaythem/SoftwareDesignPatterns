@@ -107,10 +107,6 @@ class CampaignStrategy extends Event {
     //     return false;
     // }
 
-    public function updateTarget(int $newTarget): bool {
-        $this->target = $newTarget;
-        return $this->updateCampaignInDB(); 
-    }
 
     public function getDetails(): array {
         return [
@@ -125,25 +121,8 @@ class CampaignStrategy extends Event {
 
     public function addFunds(float $amount): bool {
         $this->moneyEarned += $amount;
-        return $this->updateCampaignInDB();
+        return true;
     }
-
-    private function updateCampaignInDB(): bool {
-        $sql = "UPDATE campaignstrategy SET 
-                    targetAmount = :targetAmount, 
-                    raisedAmount = :raisedAmount
-                WHERE campaignID = :campaignID";
-        
-        $params = [
-            ':targetAmount' => $this->target,
-            ':raisedAmount' => $this->moneyEarned,
-            ':campaignID' => $this->campaignID
-        ];
-
-        $dbConnection= Event::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
-    }
-
 
     public static function create($campaign): bool {
         $dbConnection = DatabaseConnection::getInstance();
@@ -172,12 +151,13 @@ class CampaignStrategy extends Event {
         
         $params = [
              $campaign->getCampaignID(),
+             $campaign->getTarget(),
              $campaign->getTitle(),
             //  $campaign->getLocation(),
             //  $campaign->getVolunteersNeeded(),
              $campaign->getdescription(),
             //  $campaign->getTime()->format('Y-m-d H:i:s'),
-             $campaign->getTarget(),
+            
              $campaign->getMoneyEarned()
         ];
         if (!$dbConnection->execute($sql, $params)) {
@@ -187,62 +167,127 @@ class CampaignStrategy extends Event {
         return true;
     }
 
-    public static function retrieve($campaignID): ?CampaignStrategy {
+    // public static function retrieve($donorID): ?Donor {
+    //     $dbConnection = DatabaseConnection::getInstance();
+    //     $sql = "SELECT * FROM donor d
+    //             JOIN user u ON d.userID = u.userID
+    //             WHERE d.donorID = ?";
+    //     $params = [$donorID];
+    
+    //     $result = $dbConnection->query($sql, $params);
+
+    //     echo "Query Result:\n";
+    //     print_r($result);
+
+    public static function retrieve($eventID): ?CampaignStrategy {
         $dbConnection = DatabaseConnection::getInstance();
-        $sql = "SELECT * FROM campaignstrategy WHERE campaignID = :campaignID";
-        $params = [':campaignID' => $campaignID];
+    
+        $sql = "SELECT * FROM campaignstrategy c JOIN event e ON c.eventID = c.eventID WHERE c.eventID = ?";
+        $params = [$eventID];
     
         $result = $dbConnection->query($sql, $params);
     
-        if (!$result) {
+        if (!$result || empty($result)) {
             return null; // Campaign not found
         }
     
-        $time = new DateTime($result['time']);
-      
+        $row = $result[0];
+  
+        $time = new DateTime($row['time']);
     
         return new CampaignStrategy(
-            $time,
-            $result['location'],
-            $result['volunteersNeeded'],
-            $result['eventID'],
-            $result['name'],
-            $result['target'],
-            $result['title'],
-            $result['description'],
-            $result['moneyEarned']
+            $time, // time
+            $row['location'], // location
+            $row['volunteers_needed'], // volunteersNeeded
+            $row['eventID'], // eventID
+            $row['name'], // name
+            $row['target'], // target
+            $row['title'], // title
+            $row['description'], // description
+            $row['moneyEarned'] // moneyEarned
         );
     }
 
 
-   ///update 8alaaaaaaaaaattt w feh redundancyyyyyyyyyy
-
     public static function update($campaign): bool {
-        $sql = "UPDATE campaignstrategy SET 
-                    campaignName = :campaignName, 
-                    description = :description, 
-                    targetAmount = :targetAmount, 
-                    raisedAmount = :raisedAmount
-                WHERE campaignID = :campaignID";
-        
-        $params = [
-            ':campaignName' => $campaign->title,
-            ':targetAmount' => $campaign->target,
-            ':raisedAmount' => $campaign->moneyEarned,
-            ':campaignID' => $campaign->campaignID
-        ];
-
-        return DatabaseConnection::getInstance() ->execute($sql, $params);
-    }
-
-
-    public static function delete($campaignID): bool {
-        $sql = "DELETE FROM campaignstrategy WHERE campaignID = :campaignID";
-        $params = [':campaignID' => $campaignID];
         $dbConnection = DatabaseConnection::getInstance();
-        return $dbConnection->execute($sql, $params);
+    
+        try {
+            // Update the event table first
+            $eventSql = "UPDATE event SET 
+                            name = ?, 
+                            time = ?, 
+                            location = ?, 
+                            volunteers_needed = ?, 
+                            volunteersList = ?
+                        WHERE eventID = ?";
+    
+            $eventParams = [
+                $campaign->getName(),
+                $campaign->getTime()->format('Y-m-d H:i:s'),
+                $campaign->getLocation(),
+                $campaign->getVolunteersNeeded(),
+                json_encode($campaign->getVolunteersList()),
+                $campaign->getEventID()
+            ];
+    
+            // echo "Event SQL Query: $eventSql\n";
+            // echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+    
+            if (!$dbConnection->execute($eventSql, $eventParams)) {
+                throw new Exception("Failed to update event record.");
+            }
+    
+            // Update the campaignstrategy table
+            $campaignSql = "UPDATE campaignstrategy SET 
+                                target = ?, 
+                                title = ?, 
+                                description = ?, 
+                                moneyEarned = ?
+                            WHERE eventID = ?";
+    
+            $campaignParams = [
+                $campaign->getTarget(),
+                $campaign->getTitle(),
+                $campaign->getDescription(),
+                $campaign->getMoneyEarned(),
+                $campaign->getEventID()
+            ];
+    
+            echo "Campaign SQL Query: $campaignSql\n";
+            echo "Campaign Parameters: " . print_r($campaignParams, true) . "\n";
+    
+            if (!$dbConnection->execute($campaignSql, $campaignParams)) {
+                throw new Exception("Failed to update campaign record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating campaign: " . $e->getMessage());
+            return false;
+        }
     }
 
+public static function delete($eventID): bool {
+    $dbConnection = DatabaseConnection::getInstance();
+
+    try {
+        $sql = "DELETE FROM event WHERE eventID = ?";
+        $params = [$eventID];
+
+        // echo "Campaign SQL Query: $sql\n";
+        // echo "Campaign Parameters: " . print_r($params, true) . "\n";
+
+        if (!$dbConnection->execute($sql, $params)) {
+            throw new Exception("Failed to delete campaign record.");
+        }
+
+        return true;
+    } catch (Exception $e) {
+        error_log("Error deleting campaign: " . $e->getMessage());
+        return false;
+    }
+}
   
 
     // for strategiesssssssssssssssss
