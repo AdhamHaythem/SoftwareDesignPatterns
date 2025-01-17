@@ -58,35 +58,27 @@ class CampaignView
         </div>';
     }
 
-    // public function displayFundProgress($campaign)
-    // {
-    //     echo '<div class="container">
-    //         <div class="content-container">
-    //             <section>
-    //                 <div class="campaign-progress">
-    //                     <h2>Fund Progress for ' . $campaign->name . '</h2>
-    //                     <p><strong>Amount Raised:</strong> $' . number_format($campaign->moneyEarned, 2) . '</p>
-    //                 </div>
-    //             </section>
-    //         </div>
-    //     </div>';
-    // }
     public function displayFundProgress($campaign)
-{
-    echo '<div class="container">
-        <div class="content-container">
-            <section>
-                <div class="campaign-progress">
-                    <h2>Fund Progress for ' . htmlspecialchars($campaign->name) . '</h2>
-                    <p><strong>Amount Raised:</strong> 
-                        <input type="text" id="amountRaised" value="' . htmlspecialchars(number_format($campaign->moneyEarned, 2)) . '" />
-                    </p>
-                <button type="submit" class="submit-button" onClick="addfundProgress(1)" >Submit Fund</button>
-                </div>
-            </section>
-        </div>
-    </div>';
-}
+    {
+        echo '<div class="container">
+            <div class="content-container">
+                <section>
+                    <div class="campaign-progress" style="max-width: 600px; margin: auto; text-align: center; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <h2 style="font-family: Arial, sans-serif; color: #333;">Fund Progress for ' . htmlspecialchars($campaign->name) . '</h2>
+                        <p style="margin-bottom: 15px; font-family: Arial, sans-serif; color: #555;">
+                            <strong>Amount Raised:</strong> 
+                            <input type="text" id="amountRaised" value="' . htmlspecialchars(number_format($campaign->moneyEarned, 2)) . '" 
+                            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; margin-top: 5px;" />
+                        </p>
+                        <button type="submit" class="submit-button" 
+                            style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;"
+                            onClick="addfundProgress(1)">Submit Fund</button>
+                    </div>
+                </section>
+            </div>
+        </div>';
+    }
+    
 
 
     public function displayAllCampaigns($campaigns)

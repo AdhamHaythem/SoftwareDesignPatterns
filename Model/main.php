@@ -1548,48 +1548,76 @@ require_once 'student.php';
 //     [],
 //     999 // userID
 // );
+// function main(){
+//     // Create an instructor
+// // $instructor = new InstructorModel(
+// //     "instructor_username",
+// //     "Instructor",
+// //     "Lastname",
+// //     "instructor@example.com",
+// //     "securepassword",
+// //     ["City", "Country"],
+// //     1234567890,
+// //     50000,
+// //     40,
+// //     [],
+// //     999 // userID
+// // );
 
-// // Ensure the instructor exists in the database
-// InstructorModel::create($instructor);
+// // // Ensure the instructor exists in the database
+// // InstructorModel::create($instructor);
 
-// // Create a lesson
-// $lesson = new LessonModel(
-//     "PHP Basics",
-//     "Programming",
-//     120,
-//     $instructor // Pass the instructor object
+// // // Create a lesson
+// // $lesson = new LessonModel(
+// //     "PHP Basics",
+// //     "Programming",
+// //     120,
+// //     $instructor // Pass the instructor object
+// // );
+
+// // if (LessonModel::create($lesson)) {
+// //     echo "Lesson created successfully.\n";
+// // } else {
+// //     echo "Failed to create lesson.\n";
+// // }
+
+// // // Retrieve the lesson
+// // $retrievedLesson = LessonModel::retrieve(1);
+// // if ($retrievedLesson) {
+// //     echo "Lesson retrieved: " . $retrievedLesson->getLessonName() . "\n";
+// //     echo "Instructor: " . $retrievedLesson->getInstructor()->getFirstname() . "\n";
+// // } else {
+// //     echo "Failed to retrieve lesson.\n";
+// // }
+
+// // // Update the lesson
+// // $retrievedLesson ->setLessonName("Advanced PHP");
+// // if (LessonModel::update($retrievedLesson)) {
+// //     echo "Lesson updated successfully.\n";
+// // } else {
+// //     echo "Failed to update lesson.\n";
+// // }
+
+// // // Delete the lesson
+// // if (LessonModel::delete($retrievedLesson->getLessonId())) {
+// //     echo "Lesson deleted successfully.\n";
+// // } else {
+// //     echo "Failed to delete lesson.\n";
+// // }
+
+// $instructor1 = new InstructorModel(
+//     "instructor1",
+//     "Alice",
+//     "Johnson",
+//     "alice.johnson@example.com",
+//     "securepassword1",
+//     ["City1", "Country1"],
+//     9876543210,
+//     5000,
+//     40,
+//     [],
+//     66
 // );
-
-// if (LessonModel::create($lesson)) {
-//     echo "Lesson created successfully.\n";
-// } else {
-//     echo "Failed to create lesson.\n";
-// }
-
-// // Retrieve the lesson
-// $retrievedLesson = LessonModel::retrieve(1);
-// if ($retrievedLesson) {
-//     echo "Lesson retrieved: " . $retrievedLesson->getLessonName() . "\n";
-//     echo "Instructor: " . $retrievedLesson->getInstructor()->getFirstname() . "\n";
-// } else {
-//     echo "Failed to retrieve lesson.\n";
-// }
-
-// // Update the lesson
-// $retrievedLesson ->setLessonName("Advanced PHP");
-// if (LessonModel::update($retrievedLesson)) {
-//     echo "Lesson updated successfully.\n";
-// } else {
-//     echo "Failed to update lesson.\n";
-// }
-
-// // Delete the lesson
-// if (LessonModel::delete($retrievedLesson->getLessonId())) {
-//     echo "Lesson deleted successfully.\n";
-// } else {
-//     echo "Failed to delete lesson.\n";
-// }
-
 // $instructor1 = new InstructorModel(
 //     "instructor1",
 //     "Alice",
@@ -1617,11 +1645,34 @@ require_once 'student.php';
 //     [],
 //     77
 // );
+// $instructor2 = new InstructorModel(
+//     "instructor2",
+//     "Bob",
+//     "Smith",
+//     "bob.smith@example.com",
+//     "securepassword2",
+//     ["City2", "Country2"],
+//     8765432109,
+//     6000,
+//     35,
+//     [],
+//     77
+// );
 
 // // Create Instructors in the Database
 // InstructorModel::create($instructor1);
 // InstructorModel::create($instructor2);
+// // Create Instructors in the Database
+// InstructorModel::create($instructor1);
+// InstructorModel::create($instructor2);
 
+// $lesson1 = new LessonModel(
+//     "Math 101",
+//     "Mathematics",
+//     60,
+//     $instructor1, // Pass InstructorModel object
+//     111
+// );
 // $lesson1 = new LessonModel(
 //     "Math 101",
 //     "Mathematics",
@@ -1637,7 +1688,17 @@ require_once 'student.php';
 //     $instructor2, // Pass InstructorModel object
 //     222
 // );
+// $lesson2 = new LessonModel(
+//     "Science Basics",
+//     "Science",
+//     45,
+//     $instructor2, // Pass InstructorModel object
+//     222
+// );
 
+// // Create Lessons in the Database
+// LessonModel::create($lesson1);
+// LessonModel::create($lesson2);
 // // Create Lessons in the Database
 // LessonModel::create($lesson1);
 // LessonModel::create($lesson2);
@@ -1654,10 +1715,27 @@ require_once 'student.php';
 //     [],
 //     1000
 // );
+// $student = new StudentModel(
+//     "student1",
+//     "John",
+//     "Doe",
+//     "john.doe@example.com",
+//     "studentpassword",
+//     ["City", "Country"],
+//     1234567890,
+//     [$lesson1, $lesson2],
+//     [],
+//     1000
+// );
 
 // // Create Student in the Database
 // StudentModel::create($student);
+// // Create Student in the Database
+// StudentModel::create($student);
 
+// echo "Retrieving Student...\n";
+// $retrievedStudent = StudentModel::retrieve(1000); // Retrieve by userID
+// print_r($retrievedStudent);
 // echo "Retrieving Student...\n";
 // $retrievedStudent = StudentModel::retrieve(1000); // Retrieve by userID
 // print_r($retrievedStudent);
@@ -1666,11 +1744,20 @@ require_once 'student.php';
 // // Update enrolled lessons
 // $retrievedStudent->setLessons([$lesson1]); // Remove one lesson
 // StudentModel::update($retrievedStudent);
+// echo "Updating Student...\n";
+// // Update enrolled lessons
+// $retrievedStudent->setLessons([$lesson1]); // Remove one lesson
+// StudentModel::update($retrievedStudent);
 
 // // Retrieve again to verify
 // $updatedStudent = StudentModel::retrieve(1000);
 // print_r($updatedStudent);
+// // Retrieve again to verify
+// $updatedStudent = StudentModel::retrieve(1000);
+// print_r($updatedStudent);
 
+// echo "Deleting Student...\n";
+// StudentModel::delete(1000);
 // echo "Deleting Student...\n";
 // StudentModel::delete(1000);
 
@@ -1680,5 +1767,7 @@ require_once 'student.php';
 
 
 // }
+// }
 
+// main();
 // main();

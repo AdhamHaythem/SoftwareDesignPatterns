@@ -6,7 +6,12 @@ class LessonController
     function createLesson($lessonId,$lessonName,$lessonSubject,$duration,$instructorId)
     {
         $instructor = InstructorModel::retrieve($instructorId);
-        $lesson = new LessonModel($lessonId,$lessonName,$lessonSubject,$duration,$instructor);
+        $lesson = new LessonModel(
+        $lessonName,
+        $lessonSubject,
+        $duration,
+        $instructor
+    );
         $instructor->createLesson($lesson);
 
     }

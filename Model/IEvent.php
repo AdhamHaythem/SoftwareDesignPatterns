@@ -25,15 +25,28 @@ abstract class Event implements IMaintainable, ISubject {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
-        $this->eventID = $eventID === 0 ? self::$counter++ : $eventID;
+        $this->eventID = $eventID === 0 ? Event::useCounter() : $eventID;
         $this->name = $name;
-        //self::$counter++;
     }
 
     abstract public function signUp(int $donorID): bool;
     abstract public function getAllEvents(): array;
     abstract public function checkEventStatus(): string;
     abstract public function generateEventReport(): string;
+
+    private static function useCounter(): int {
+        $ID = self::$counter;
+        self::$counter++;
+        $db_connection = DatabaseConnection::getInstance();
+        $sql = "UPDATE counters SET EventID = ? where CounterID = 1";
+        $params = [self::$counter];
+        $db_connection->execute($sql, $params);
+        return $ID;
+    }
+
+    public static function setCounter(int $counter): void {
+        self::$counter = $counter;
+    }
 
 
     public function setTime(DateTime $time): void {

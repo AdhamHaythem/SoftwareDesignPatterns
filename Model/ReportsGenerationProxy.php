@@ -11,7 +11,7 @@ class ReportsGenerationProxy {
     }
         final public function finalizeReport(int $userID,array $results): array {
         if($this->isAccessible){
-            return $this->instance->finalizeReport($userID,$results);
+            return $this->instance->finalizeReport($results,$userID);
         }
         else{
             return [];
