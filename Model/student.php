@@ -30,8 +30,6 @@ class StudentModel extends UserModel implements IObserver {
             $userID);
             $this->studentID = $userID;
             $this->enrolledLessons = $enrolledLessons;
-            $this->lessonSubject = new LessonModel();
-            $this->lessonSubject->registerObserver($this);
     }
 
     public function enrollInLesson(LessonModel $lesson): void {
@@ -79,8 +77,10 @@ class StudentModel extends UserModel implements IObserver {
         return "In Progress";
     }
 
-    public function UpdateStatus(string $status): void {
-        echo "Student {$this->studentID} has been notified about the lesson update: $status\n";
+     // Observer status update
+
+    public function UpdateStatus(string $status): string {
+        return $status;
     }
 
     public function getStudentID(): int {

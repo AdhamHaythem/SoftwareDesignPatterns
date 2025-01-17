@@ -10,10 +10,10 @@ abstract class Event implements IMaintainable, ISubject {
     private static int $counter =1 ;
     private string $location;
     private int $volunteersNeeded;
-    private int $eventID;
     private array $volunteersList = [];
     private static ?DatabaseConnection $dbConnection = null;
     private string $status;
+    private int $eventID=0;
 
     public function __construct(
         DateTime $time,
@@ -25,9 +25,9 @@ abstract class Event implements IMaintainable, ISubject {
         $this->time = $time;
         $this->location = $location;
         $this->volunteersNeeded = $volunteersNeeded;
-        $this->eventID = self::$counter;
+        $this->eventID = $eventID === 0 ? self::$counter++ : $eventID;
         $this->name = $name;
-        self::$counter++;
+        //self::$counter++;
     }
 
     abstract public function signUp(int $donorID): bool;
@@ -156,68 +156,96 @@ abstract class Event implements IMaintainable, ISubject {
 
 
     public static function delete($eventID): bool {
-        $dbConnection = Event::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $Eventsql = "DELETE FROM events WHERE eventID = :eventID";
-            $Eventparams = [$eventID];
+            $eventSql = "DELETE FROM event WHERE eventID = ?";
+            $eventParams = [$eventID];
     
-            return $dbConnection->execute($Eventsql, $Eventparams);
+            echo "Event SQL Query: $eventSql\n";
+            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+    
+            if (!$dbConnection->execute($eventSql, $eventParams)) {
+                throw new Exception("Failed to delete event record.");
+            }
+
+            return true;
         } catch (Exception $e) {
             error_log("Error deleting event: " . $e->getMessage());
             return false;
         }
     }
 
- public static function update($object): bool {
-        if (!$object instanceof Event) {
+    public static function update($event): bool {
+        if (!$event instanceof Event) {
             throw new InvalidArgumentException("Expected instance of Event");
         }
     
-        $dbConnection = Event::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $Eventsql = "UPDATE events SET 
-                            name = :name, 
-                            time = :time, 
-                            location = :location, 
-                            volunteers_needed = :volunteers_needed, 
-                            volunteersList = :volunteersList
-                        WHERE eventID = :eventID";
+            $eventSql = "UPDATE events SET 
+                            name = ?, 
+                            time = ?, 
+                            location = ?, 
+                            volunteers_needed = ?, 
+                            volunteersList = ?
+                        WHERE eventID = ?";
     
-            $Eventparams = [
-                $object->getEventID(),
-                $object->getName(),
-                $object->getTime()->format('Y-m-d H:i:s'),
-                $object->getLocation(),
-                $object->getVolunteersNeeded(),
-                json_encode($object->getVolunteersList())
+            $eventParams = [
+                $event->getName(),
+                $event->getTime()->format('Y-m-d H:i:s'),
+                $event->getLocation(),
+                $event->getVolunteersNeeded(),
+                json_encode($event->getVolunteersList()),
+                $event->getEventID()
             ];
     
-            return $dbConnection->execute($Eventsql, $Eventparams);
+            echo "Event SQL Query: $eventSql\n";
+            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+    
+            if (!$dbConnection->execute($eventSql, $eventParams)) {
+                throw new Exception("Failed to update event record.");
+            }
+    
+            return true;
         } catch (Exception $e) {
             error_log("Error updating event: " . $e->getMessage());
             return false;
         }
     }
     public static function retrieve($eventID): ?Event {
-        $dbConnection = Event::getDatabaseConnection();
-    
+        $dbConnection = DatabaseConnection::getInstance();
+        
         try {
-            $Eventsql = "SELECT * FROM events WHERE eventID = :eventID";
-            $Eventparams = [$eventID];
-            $result = $dbConnection->query($Eventsql, $Eventparams);
+            $sql = "SELECT * FROM events WHERE eventID = ?";
+            $params = [$eventID];
+            $result = $dbConnection->query($sql, $params);
     
-            if ($result) {
-                return new VolunteeringEventStrategy(
-                    $result['name'],    
-                    new DateTime($result['time']),       
-                    $result['location'],                     
-                    $result['volunteers_needed'],             
-                    $result['eventID']  
-                );
+            echo "Query Result:\n";
+            print_r($result);
+        
+            if ($result && !empty($result)) {
+                $row = $result[0];
+    
+                if (
+                    isset($row['eventID'], $row['name'], $row['time'], $row['location'], $row['volunteers_needed'], $row['volunteersList'])
+                ) {
+                    $event = new Event(
+                        new DateTime($row['time']), // time
+                        $row['location'], // location
+                        (int)$row['volunteers_needed'], // volunteersNeeded
+                        (int)$row['eventID'], // eventID
+                        $row['name'] // name
+                    );
+                    $event->setVolunteersList(json_decode($row['volunteersList'], true) ?? []);
+    
+                    return $event;
+                } else {
+                    throw new Exception("Missing required fields in the query result.");
+                }
             }
-            return null; 
+            return null;
         } catch (Exception $e) {
             error_log("Error retrieving event: " . $e->getMessage());
             return null;

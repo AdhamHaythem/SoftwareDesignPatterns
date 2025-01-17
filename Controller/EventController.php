@@ -162,8 +162,8 @@ if (isset($_POST['retrieveCampaign'])) {
     if (!empty($_POST['eventId'])) {
         $event = $eventController->retrieveCampaign((int)$_POST['eventId']);
         if ($event) {
-            $eventView = new EventView();
-            $eventView->displayEventReport($event);
+            $eventView = new CampaignView();
+            $eventView->displayCampaignDetails($event);
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Event not found']);

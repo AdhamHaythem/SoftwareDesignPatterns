@@ -15,7 +15,17 @@ class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
 
-        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
+        $donor = new Donor(
+         username: $username,
+         firstname:$firstname,
+         lastname: $lastname,
+         email:$email,
+         password:$password,
+         location:$location,
+         phoneNumber:$phoneNumber,
+         paymentMethod: new Cash(),
+         userID:$userId
+        );
         Donor::create($donor);
         header('Location: ../View/DonorView.php');
     }
@@ -35,23 +45,10 @@ class UserController{
     }
 
     function sendLoginMail(Donor $donor){
-        $email = new \SendGrid\Mail\Mail(); 
-        $email->setFrom(From);
-        $email->setSubject("Account Login");
-        $email->addTo($donor->getEmail());
-        $email->addContent("text/plain", "You Have just logged in");
-        $email->addContent(
-            "text/html", "<strong>You Have just logged in</strong>"
-        );
+        $donorEmail= $donor->getEmail();
         $sendgrid = new \SendGrid(SENDGRID_API_KEY);
-        try {
-            $response = $sendgrid->send($email);
-            // print $response->statusCode() . "\n";
-            // print_r($response->headers());
-            // print $response->body() . "\n";
-        } catch (Exception $e) {
-            echo 'Caught exception: '. $e->getMessage() ."\n";
-        }
+        $facade= new EmailServiceFacade($sendgrid);
+        $facade->sendLoginMail($donorEmail);
 }
     function retrieveDonor($donorId)
     {

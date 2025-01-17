@@ -26,7 +26,7 @@ if ($db->conn->connect_error) {
 
 function createTables($db){
     $sql_user = "CREATE TABLE IF NOT EXISTS `user` (
-        `userID` INT NOT NULL PRIMARY KEY,
+        `userID` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `username` VARCHAR(50) NOT NULL UNIQUE,
         `firstName` VARCHAR(50) NOT NULL,
         `lastName` VARCHAR(50) NOT NULL,
@@ -221,7 +221,7 @@ if ($db->execute($sql_student) === TRUE) {
 
 
 $sql_event = "CREATE TABLE IF NOT EXISTS event (
-    `eventID` INT NOT NULL PRIMARY KEY, 
+    `eventID` INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
     `name` VARCHAR(255) NOT NULL,                  
     `time` DATETIME NOT NULL,                         
     `location` VARCHAR(255) NOT NULL,                  

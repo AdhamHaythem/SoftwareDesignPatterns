@@ -27,7 +27,6 @@ class Donor extends UserModel implements IObserver {
     private ?Event $event = null;
 
     public function __construct(
-        int $userID,
         string $username,
         string $firstname,
         string $lastname,
@@ -36,10 +35,11 @@ class Donor extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         IPaymentStrategy $paymentMethod = null,
-        Event $event = null
+        Event $event = null,
+        int $userID=0
 
     ) {
-        parent::__construct($username, $firstname, $lastname, $userID, $email, $password, $location, $phoneNumber);
+        parent::__construct($username, $firstname, $lastname, $email, $password, $location, $phoneNumber,$userID);
         $this->donorID = self::$counter++;     //lazem yb2a hwa w el user same IDDDDDDDDDDD
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
@@ -391,7 +391,6 @@ class Donor extends UserModel implements IObserver {
                 isset($row['userID'], $row['username'], $row['firstName'], $row['lastName'], $row['email'], $row['password'], $row['locationList'], $row['phoneNumber'])
             ) {
                 $donor = new Donor(
-                    (int)$row['userID'],
                     $row['username'],
                     $row['firstName'],
                     $row['lastName'],
@@ -400,7 +399,8 @@ class Donor extends UserModel implements IObserver {
                     json_decode($row['locationList'], true),
                     (int)$row['phoneNumber'],
                     null, // paymentMethod
-                    null  // event
+                    null,
+                    (int)$row['userID'], 
                 );
     
                 $donor->donorID = (int)$row['donorID'];
@@ -554,8 +554,8 @@ class Donor extends UserModel implements IObserver {
     }
 
     // Observer status update
-    public function UpdateStatus(string $status): void {
-        echo "Donor {$this->donorID} has been notified about the event update: $status\n";
+    public function UpdateStatus(string $status): string {
+        return $status;
     }
 
     public function getDonorID(): int {
