@@ -124,7 +124,7 @@ require_once 'student.php';
 
 function main() {
     // Create campaigns
-    $campaign1 = new CampaignStrategy(
+    $campaign = new CampaignStrategy(
         new DateTime('2023-1-15 10:00:00'),
         'New York',
         10,
@@ -136,7 +136,7 @@ function main() {
         500.0
     );
 
-    $campaign2 = new CampaignStrategy(
+    $campaign1 = new CampaignStrategy(
         new DateTime('2023-1-11 10:00:00'),
         'Los Angeles',
         15,
@@ -148,7 +148,7 @@ function main() {
         1200.0
     );
 
-    // Create a volunteering event
+   // Create a volunteering event
     $volunteering = new VolunteeringEventStrategy(
         'Food Drive',
         new DateTime('2023-1-11 10:00:00'),
@@ -157,41 +157,37 @@ function main() {
         3
     );
 
-    // Add campaigns and volunteering event to the database
-    if (CampaignStrategy::create($campaign1)) {
-        echo "campaign1 created and added to the database successfully.\n";
-    } else {
-        echo "Failed to create campaign1.\n";
-    }
+    // if (CampaignStrategy::create($campaign)) {
+    //     echo "campaign1 created and added to the database successfully.\n";
+    // } else {
+    //     echo "Failed to create campaign1.\n";
+    // }
 
-    if (CampaignStrategy::create($campaign2)) {
-        echo "campaign2 created and added to the database successfully.\n";
-    } else {
-        echo "Failed to create campaign2.\n";
-    }
+    // if (CampaignStrategy::create($campaign1)) {
+    //     echo "campaign2 created and added to the database successfully.\n";
+    // } else {
+    //     echo "Failed to create campaign2.\n";
+    // }
 
     if (VolunteeringEventStrategy::create($volunteering)) {
         echo "volunteering created and added to the database successfully.\n";
     } else {
         echo "Failed to create volunteering.\n";
     }
-
-    // Retrieve and display campaigns
-    echo "\nRetrieving campaigns:\n";
-    $retrievedCampaign1 = CampaignStrategy::retrieve(1);
-    $retrievedCampaign2 = CampaignStrategy::retrieve(2);
-
-    if ($retrievedCampaign1) {
-        echo "Retrieved Campaign 1: " . $retrievedCampaign1->getName() . "\n";
-    } else {
-        echo "Failed to retrieve Campaign 1.\n";
-    }
-
-    if ($retrievedCampaign2) {
-        echo "Retrieved Campaign 2: " . $retrievedCampaign2->getName() . "\n";
-    } else {
-        echo "Failed to retrieve Campaign 2.\n";
-    }
+    // $retrievedcampaign = CampaignStrategy::retrieve(1);
+    // if ($retrievedcampaign) {
+    //     echo "Campaign retrieved successfully:\n";
+    //     echo "Event ID: " . $retrievedcampaign->getEventID() . "\n";
+    //     echo "Name: " . $retrievedcampaign->getName() . "\n";
+    //     echo "Location: " . $retrievedcampaign->getLocation() . "\n";
+    //     echo "Volunteers Needed: " . $retrievedcampaign->getVolunteersNeeded() . "\n";
+    //     echo "Target: " . $retrievedcampaign->getTarget() . "\n";
+    //     echo "Title: " . $retrievedcampaign->getTitle() . "\n";
+    //     echo "Description: " . $retrievedcampaign->getDescription() . "\n";
+    //     echo "Money Earned: " . $retrievedcampaign->getMoneyEarned() . "\n";
+    // } else {
+    //     echo "Failed to retrieve campaign.\n";
+    // }
 
     // Retrieve and display volunteering event
     echo "\nRetrieving volunteering event:\n";
@@ -204,18 +200,18 @@ function main() {
     }
 
     // Update Campaign 1
-    echo "\nUpdating Campaign 1...\n";
-    if ($retrievedCampaign1) {
-        $retrievedCampaign1->setName("Updated Charity Run");
-        $retrievedCampaign1->setLocation("Updated New York");
-        if (CampaignStrategy::update($retrievedCampaign1)) {
-            echo "Campaign 1 updated successfully.\n";
-        } else {
-            echo "Failed to update Campaign 1.\n";
-        }
-    }
+    // echo "\nUpdating Campaign 1...\n";
+    // if ($campaign) {
+    //     $campaign->setName("Updated Charity Run");
+    //     $campaign->setLocation("Updated New York");
+    //     if (CampaignStrategy::update($campaign)) {
+    //         echo "Campaign 1 updated successfully.\n";
+    //     } else {
+    //         echo "Failed to update Campaign 1.\n";
+    //     }
+    // }
 
-    // Update Volunteering Event
+    //Update Volunteering Event
     echo "\nUpdating Volunteering Event...\n";
     if ($retrievedVolunteering) {
         $retrievedVolunteering->setLocation("Updated Los Angeles");
@@ -227,20 +223,20 @@ function main() {
     }
 
     // Delete Campaign 2
-    echo "\nDeleting Campaign 2...\n";
-    if (CampaignStrategy::delete(2)) {
-        echo "Campaign 2 deleted successfully.\n";
-    } else {
-        echo "Failed to delete Campaign 2.\n";
-    }
+    // echo "\nDeleting Campaign 2...\n";
+    // if (CampaignStrategy::delete(2)) {
+    //     echo "Campaign 2 deleted successfully.\n";
+    // } else {
+    //     echo "Failed to delete Campaign 2.\n";
+    // }
 
     // Delete Volunteering Event
-    echo "\nDeleting Volunteering Event...\n";
-    if (VolunteeringEventStrategy::delete(3)) {
-        echo "Volunteering Event deleted successfully.\n";
-    } else {
-        echo "Failed to delete Volunteering Event.\n";
-    }
+    // echo "\nDeleting Volunteering Event...\n";
+    // if (VolunteeringEventStrategy::delete(3)) {
+    //     echo "Volunteering Event deleted successfully.\n";
+    // } else {
+    //     echo "Failed to delete Volunteering Event.\n";
+    // }
 
     // Verify deletion
     echo "\nVerifying deletion:\n";
@@ -1478,6 +1474,21 @@ main();
 // main();
 
 
+//function main(){
+    // Create an instructor
+// $instructor = new InstructorModel(
+//     "instructor_username",
+//     "Instructor",
+//     "Lastname",
+//     "instructor@example.com",
+//     "securepassword",
+//     ["City", "Country"],
+//     1234567890,
+//     50000,
+//     40,
+//     [],
+//     999 // userID
+// );
 // function main(){
 //     // Create an instructor
 // // $instructor = new InstructorModel(
@@ -1548,7 +1559,33 @@ main();
 //     [],
 //     66
 // );
+// $instructor1 = new InstructorModel(
+//     "instructor1",
+//     "Alice",
+//     "Johnson",
+//     "alice.johnson@example.com",
+//     "securepassword1",
+//     ["City1", "Country1"],
+//     9876543210,
+//     5000,
+//     40,
+//     [],
+//     66
+// );
 
+// $instructor2 = new InstructorModel(
+//     "instructor2",
+//     "Bob",
+//     "Smith",
+//     "bob.smith@example.com",
+//     "securepassword2",
+//     ["City2", "Country2"],
+//     8765432109,
+//     6000,
+//     35,
+//     [],
+//     77
+// );
 // $instructor2 = new InstructorModel(
 //     "instructor2",
 //     "Bob",
@@ -1566,7 +1603,17 @@ main();
 // // Create Instructors in the Database
 // InstructorModel::create($instructor1);
 // InstructorModel::create($instructor2);
+// // Create Instructors in the Database
+// InstructorModel::create($instructor1);
+// InstructorModel::create($instructor2);
 
+// $lesson1 = new LessonModel(
+//     "Math 101",
+//     "Mathematics",
+//     60,
+//     $instructor1, // Pass InstructorModel object
+//     111
+// );
 // $lesson1 = new LessonModel(
 //     "Math 101",
 //     "Mathematics",
@@ -1582,7 +1629,17 @@ main();
 //     $instructor2, // Pass InstructorModel object
 //     222
 // );
+// $lesson2 = new LessonModel(
+//     "Science Basics",
+//     "Science",
+//     45,
+//     $instructor2, // Pass InstructorModel object
+//     222
+// );
 
+// // Create Lessons in the Database
+// LessonModel::create($lesson1);
+// LessonModel::create($lesson2);
 // // Create Lessons in the Database
 // LessonModel::create($lesson1);
 // LessonModel::create($lesson2);
@@ -1599,10 +1656,27 @@ main();
 //     [],
 //     1000
 // );
+// $student = new StudentModel(
+//     "student1",
+//     "John",
+//     "Doe",
+//     "john.doe@example.com",
+//     "studentpassword",
+//     ["City", "Country"],
+//     1234567890,
+//     [$lesson1, $lesson2],
+//     [],
+//     1000
+// );
 
 // // Create Student in the Database
 // StudentModel::create($student);
+// // Create Student in the Database
+// StudentModel::create($student);
 
+// echo "Retrieving Student...\n";
+// $retrievedStudent = StudentModel::retrieve(1000); // Retrieve by userID
+// print_r($retrievedStudent);
 // echo "Retrieving Student...\n";
 // $retrievedStudent = StudentModel::retrieve(1000); // Retrieve by userID
 // print_r($retrievedStudent);
@@ -1611,11 +1685,20 @@ main();
 // // Update enrolled lessons
 // $retrievedStudent->setLessons([$lesson1]); // Remove one lesson
 // StudentModel::update($retrievedStudent);
+// echo "Updating Student...\n";
+// // Update enrolled lessons
+// $retrievedStudent->setLessons([$lesson1]); // Remove one lesson
+// StudentModel::update($retrievedStudent);
 
 // // Retrieve again to verify
 // $updatedStudent = StudentModel::retrieve(1000);
 // print_r($updatedStudent);
+// // Retrieve again to verify
+// $updatedStudent = StudentModel::retrieve(1000);
+// print_r($updatedStudent);
 
+// echo "Deleting Student...\n";
+// StudentModel::delete(1000);
 // echo "Deleting Student...\n";
 // StudentModel::delete(1000);
 
@@ -1625,5 +1708,7 @@ main();
 
 
 // }
+// }
 
+// main();
 // main();
