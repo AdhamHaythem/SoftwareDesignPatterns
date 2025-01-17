@@ -29,19 +29,25 @@ class UserModel implements IMaintainable {
         $this->username = $username;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->userID = $userID === 0 ? self::$counter++ : $userID;
+        $this->userID = $userID === 0 ? UserModel::useCounter() : $userID;
         $this->email = $email;
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
     }
 
-    // Set the database connection
-    public static function setDatabaseConnection(DatabaseConnection $dbConnection) {
-        self::$dbConnection = $dbConnection;
+    private static function useCounter(): int {
+        $ID = self::$counter;
+        self::$counter++;
+        $db_connection = DatabaseConnection::getInstance();
+        $sql = "UPDATE counters SET UserID = ? where CounterID = 1";
+        $params = [self::$counter];
+        $db_connection->execute($sql, $params);
+        return $ID;
     }
-    public static function getDatabaseConnection() {
-       return self::$dbConnection;
+
+    public static function setCounter(int $counter): void {
+        self::$counter = $counter;
     }
 
 

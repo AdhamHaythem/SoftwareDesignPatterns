@@ -24,11 +24,26 @@ class LessonModel {
         InstructorModel $instructor,
         int $lessonId = 0
     ) {
-        $this->lessonId = $lessonId===0 ? self::$counter++ : $lessonId;
+        $this->lessonId = $lessonId===0 ? LessonModel::useCounter() : $lessonId;
         $this->lessonName = $lessonName;
         $this->lessonSubject = $lessonSubject;
         $this->duration = $duration;
         $this->instructor = $instructor;
+    }
+
+
+    private static function useCounter(): int {
+        $ID = self::$counter;
+        self::$counter++;
+        $db_connection = DatabaseConnection::getInstance();
+        $sql = "UPDATE counters SET LessonID = ? where CounterID = 1";
+        $params = [self::$counter];
+        $db_connection->execute($sql, $params);
+        return $ID;
+    }
+
+    public static function setCounter(int $counter): void {
+        self::$counter = $counter;
     }
 
     // Getters
