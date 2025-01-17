@@ -10,39 +10,39 @@ class InstructorModel extends EmployeeModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
-        string $title,
         int $salary,
-        int $workingHours
+        int $workingHours,
+        array $lessons = [],
+        int $userID
     ) {
         // Call parent constructor to initialize User properties
         parent::__construct(
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
             $phoneNumber,
             "Instructor",
             $salary,
-            $workingHours
+            $workingHours,
+            $userID
         );
+
+        $this->lessons = $lessons;
     }
 
-    // Setter for database connection
-    public static function setDatabaseConnection(DatabaseConnection $dbConnection): void {
-        self::$dbConnection = $dbConnection;
-    }
+    public function addLessons(array $lessons) {
 
-    // Getter for database connection
-    public static function getDatabaseConnection(): DatabaseConnection {
-        return self::$dbConnection;
+        // Assuming $this->lessons is an array property that holds the lessons
+
+        $this->lessons = array_merge($this->lessons, $lessons);
+
     }
 
     // CRUD Methods for InstructorModel
@@ -119,68 +119,103 @@ class InstructorModel extends EmployeeModel {
 
     // Retrieve an Instructor record from the database by userID
     public static function retrieve($userID): ?InstructorModel {
-        $sql = "SELECT * FROM instructors WHERE userID = :userID";
-        $params = [':userID' => $userID];
-
-        $result = UserModel::getDatabaseConnection()->query($sql, $params);
+        $sql = "SELECT *
+                FROM user u
+                LEFT JOIN employee e ON u.userID = e.userID
+                LEFT JOIN instructor i ON u.userID = i.userID
+                WHERE u.userID = ?";
+        
+        $params = [$userID];
+        $dbConnection = DatabaseConnection::getInstance();
+        $result = $dbConnection->query($sql, $params);
+    
         if ($result && !empty($result)) {
+            $row = $result[0]; // Assuming only one record is fetched
+    
             return new InstructorModel(
-                $result['username'],
-                $result['firstname'],
-                $result['lastname'],
-                $result['userID'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['location'], true),
-                $result['phoneNumber'],
-                $result['title'],
-                $result['salary'],
-                $result['workingHours']
+                $row['username'],
+                $row['firstName'],
+                $row['lastName'],
+                $row['email'],
+                $row['password'],
+                json_decode($row['locationList'], true),
+                $row['phoneNumber'],
+                $row['salary'],
+                $row['workingHours'],
+                json_decode($row['lessons'], true),
+                $row['userID']
             );
         }
-
+    
         return null;
     }
+    
+    
 
     // Update an Instructor record in the database
     public static function update($instructor): bool {
-        $sql = "UPDATE instructors SET 
-                    username = :username, 
-                    firstname = :firstname, 
-                    lastname = :lastname, 
-                    email = :email, 
-                    password = :password, 
-                    location = :location, 
-                    phoneNumber = :phoneNumber, 
-                    title = :title, 
-                    salary = :salary, 
-                    workingHours = :workingHours 
-                WHERE userID = :userID";
-
-        $params = [
-            ':username' => $instructor->getUsername(),
-            ':firstname' => $instructor->getFirstname(),
-            ':lastname' => $instructor->getLastname(),
-            ':email' => $instructor->getEmail(),
-            ':password' => password_hash($instructor->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($instructor->getLocation()), // Assuming location is an array
-            ':phoneNumber' => $instructor->getPhoneNumber(),
-            ':title' => $instructor->getTitle(),
-            ':salary' => $instructor->getSalary(),
-            ':workingHours' => $instructor->getWorkingHours(),
-            ':userID' => $instructor->getUserID()
-        ];
-
-        return UserModel::getDatabaseConnection()->execute($sql, $params);
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            // Update the `user` table
+            $userSql = "UPDATE user SET 
+                            username = ?, 
+                            firstName = ?, 
+                            lastName = ?, 
+                            email = ?, 
+                            password = ?, 
+                            locationList = ?, 
+                            phoneNumber = ?
+                        WHERE userID = ?";
+            
+            $userParams = [
+                $instructor->getUsername(),
+                $instructor->getFirstname(),
+                $instructor->getLastname(),
+                $instructor->getEmail(),
+                password_hash($instructor->getPassword(), PASSWORD_DEFAULT),
+                json_encode($instructor->getLocation()),
+                $instructor->getPhoneNumber(),
+                $instructor->getUserID()
+            ];
+    
+            $userUpdated = $dbConnection->execute($userSql, $userParams);
+    
+            // Update the `employee` table
+            $employeeSql = "UPDATE employee SET 
+                                title = ?, 
+                                salary = ?, 
+                                workingHours = ?
+                            WHERE userID = ?";
+            
+            $employeeParams = [
+                $instructor->getTitle(),
+                $instructor->getSalary(),
+                $instructor->getHoursWorked(),
+                $instructor->getUserID()
+            ];
+    
+            $employeeUpdated = $dbConnection->execute($employeeSql, $employeeParams);
+    
+            // Update the `instructor` table
+            $instructorSql = "UPDATE instructor SET 
+                                  lessons = ?
+                              WHERE userID = ?";
+            
+            $instructorParams = [
+                json_encode($instructor->getLessons()),
+                $instructor->getUserID()
+            ];
+    
+            $instructorUpdated = $dbConnection->execute($instructorSql, $instructorParams);
+    
+            return $userUpdated && $employeeUpdated && $instructorUpdated;
+        } catch (Exception $e) {
+            error_log("Error updating Instructor: " . $e->getMessage());
+            return false;
+        }
     }
-
-    // Delete an Instructor record from the database by userID
-    public static function delete($userID): bool {
-        $sql = "DELETE FROM instructors WHERE userID = :userID";
-        $params = [':userID' => $userID];
-
-        return UserModel::getDatabaseConnection()->execute($sql, $params);
-    }
+    
 
     // Additional Methods for Lessons
 

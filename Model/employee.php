@@ -192,24 +192,5 @@ class EmployeeModel extends UserModel {
         }
     }
     
-    public static function delete($userID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-    
-        try {
-            $employeeSql = "DELETE FROM employee WHERE userID = :userID";
-            $employeeParams = [$userID];
-            $employeeDeleted = $dbConnection->execute($employeeSql, $employeeParams);
-    
-            $userSql = "DELETE FROM user WHERE userID = :userID";
-            $userParams = [$userID];
-            $userDeleted = $dbConnection->execute($userSql, $userParams);
-    
-            return $employeeDeleted && $userDeleted;
-        } catch (Exception $e) {
-            error_log("Error deleting employee: " . $e->getMessage());
-            return false;
-        }
-    }
-    
 }
 ?>
