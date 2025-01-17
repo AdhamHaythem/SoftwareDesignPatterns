@@ -23,49 +23,53 @@ class Admin extends UserModel {
     }
 
     // CRUD Methods
-    public static function create($adminObject): bool {
-        if (!$adminObject instanceof Admin) {
+    public static function create($admin): bool {
+        if (!$admin instanceof Admin) {
             throw new InvalidArgumentException("Expected instance of Admin");
         }
     
-        $dbConnection = UserModel::getDatabaseConnection();
+        $dbConnection = DatabaseConnection::getInstance();
     
         try {
-            $userSql = "INSERT IGNORE INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $userSql = "INSERT INTO user (userID, username, firstName, lastName, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE username = VALUES(username), email = VALUES(email)";
     
             $userParams = [
-                $adminObject->getUserID(),
-                $adminObject->getUsername(),
-                $adminObject->getFirstname(),
-                $adminObject->getLastname(),
-                $adminObject->getEmail(),
-                password_hash($adminObject->getPassword(), PASSWORD_DEFAULT), // Hash password
-                json_encode($adminObject->getLocation()),
-                $adminObject->getPhoneNumber(),
-                1 // Assuming new users are active by default
+                $admin->getUserID(), // userID
+                $admin->getUsername(), // username
+                $admin->getFirstname(), // firstName
+                $admin->getLastname(), // lastName
+                $admin->getEmail(), // email
+                password_hash($admin->getPassword(), PASSWORD_DEFAULT), // hashed password
+                json_encode($admin->getLocation()), // location as JSON
+                $admin->getPhoneNumber(), // phoneNumber
+                true // isActive
             ];
     
-            $userInserted = $dbConnection->execute($userSql, $userParams);
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert or update user record.");
+            }
     
             $adminSql = "INSERT INTO admin (userID, donation_manager)
-                         VALUES (? , ?)
-                         ON DUPLICATE KEY UPDATE 
-                         donation_manager = VALUES(donation_manager)";
+                         VALUES (?, ?)
+                         ON DUPLICATE KEY UPDATE donation_manager = VALUES(donation_manager)";
     
             $adminParams = [
-                $adminObject->getUserID(),
-            json_encode($adminObject->donationManager) // Serialize donation_manager as JSON
+                $admin->getUserID(), 
+                json_encode($admin->donationManager)
             ];
     
-            $adminInserted = $dbConnection->execute($adminSql, $adminParams);
-            return $userInserted && $adminInserted;
+            if (!$dbConnection->execute($adminSql, $adminParams)) {
+                throw new Exception("Failed to insert or update admin record.");
+            }
+    
+            return true;
         } catch (Exception $e) {
             error_log("Error creating admin: " . $e->getMessage());
             return false;
         }
     }
-
     public static function retrieve($userID): ?Admin {
         $sql = "SELECT * FROM admin WHERE userID = :userID";
         $params = [$userID];

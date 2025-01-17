@@ -16,7 +16,6 @@ class UserModel implements IMaintainable {
     private int $phoneNumber;
     private static DatabaseConnection $dbConnection;
 
-    // Constructor to initialize the properties
     public function __construct(
         string $username,
         string $firstname,
@@ -67,13 +66,13 @@ class UserModel implements IMaintainable {
                         isActive = VALUES(isActive)";
         
         $params = [
-            $object->userID, // Ensure this is not NULL unless auto-increment
+            $object->userID,
             $object->username,
             $object->firstname,
             $object->lastname,
             $object->email,
             password_hash($object->password, PASSWORD_DEFAULT),
-            json_encode($object->location), // Convert to JSON if it's an array
+            json_encode($object->location),
             $object->phoneNumber,
             1
         ];

@@ -9,7 +9,7 @@ require_once 'EventController.php';
 
 class DonationManagerController {
    
-    public function createCampaign(int $campaignID,
+    public function createCampaign(
     DateTime $time,
     string $location,
     int $volunteersNeeded,
@@ -17,10 +17,10 @@ class DonationManagerController {
     string $name,
     float $target,
     string $title,
-    float $moneyEarned
+    float $moneyEarned,
+    string $description
     ){
         $campaignModel = new CampaignStrategy(
-         $campaignID,
          $time,
          $location,
          $volunteersNeeded,
@@ -28,14 +28,16 @@ class DonationManagerController {
          $name,
          $target,
          $title,
+         $description,
          $moneyEarned
         );
         DonationManager::create($campaignModel);
-}
+
+    }
 
     public function createDonation($amount,$DonationID,$donorId){
         $currentDateTime = new DateTime('now');
-        $donationModel = new Donation($amount,$DonationID,$donorId,$currentDateTime);
+        $donationModel = new Donation($amount,$donorId,$currentDateTime,$DonationID);
         DonationManager::create($donationModel);
         
     }
@@ -110,7 +112,6 @@ class DonationManagerController {
 
     // Adds a new campaign with specific time and location
     public function addCampaign(        
-    int $campaignID,
     DateTime $time,
     string $location,
     int $volunteersNeeded,
@@ -118,10 +119,10 @@ class DonationManagerController {
     string $name,
     float $target,
     string $title,
-    float $moneyEarned
+    float $moneyEarned,
+    string $description
     ) {
         $campaignModel = new CampaignStrategy(       
-        $campaignID,
         $time,
         $location,
         $volunteersNeeded,
@@ -129,6 +130,7 @@ class DonationManagerController {
         $name,
         $target,
         $title,
+        $description,
         $moneyEarned
         );
         CampaignStrategy::create($campaignModel);
@@ -148,7 +150,7 @@ if (isset($_POST['createDonation'])) {
 
 if (isset($_POST['createCampaign'])) {
 
-    $donationManagerController->createCampaign($_POST['campaignId'],$_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0);
+    $donationManagerController->createCampaign($_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
     exit;
 }
 
@@ -205,7 +207,7 @@ if (isset($_POST['generateDonationReport'])) {
 }
 
 if (isset($_POST['addCampaign'])) {
-    $donationManagerController->addCampaign($_POST['campaignId'],$_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0);
+    $donationManagerController->addCampaign($_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
     echo json_encode(['success' => $result]);
     exit;
 }
