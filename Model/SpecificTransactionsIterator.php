@@ -27,6 +27,10 @@ class SpecificTransactionsIterator extends MyIterator {
     public function valid(): bool {
         return $this->position >= 0 && $this->position < $this->transactions->getSize();
     }
+    public function clear(): void {
+        for ($i = 0; $i < $this->transactions->getSize(); $i++) {
+            $this->transactions[$i] = null; 
+        }    }
 }
 
 ?>

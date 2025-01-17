@@ -27,6 +27,9 @@ class TransactionsIterator extends MyIterator {
     public function valid(): bool {
         return isset($this->transactions[$this->position]);
     }
+    public function clear(): void {
+        $this->transactions = [];
+    }
 }
 
 ?>

@@ -12,6 +12,7 @@ abstract class MyIterator {
     abstract public function key(): int;
     abstract public function next(): mixed;
     abstract public function valid(): bool;
+    abstract public function clear(): void;
 }
 
 ?>
