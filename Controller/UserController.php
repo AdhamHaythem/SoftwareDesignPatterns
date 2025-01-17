@@ -17,12 +17,14 @@ class UserController{
 
         $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
         Donor::create($donor);
+        header('Location: ../View/DonorView.php');
     }
 
     function createAdmin($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber)
     {
         $admin = new Admin($userId,$username , $firstname,$lastname ,$email,$password,$location,$phoneNumber);
         Admin::create($admin);
+        header('Location: ../View/AdminView.php');
     }
 
     function createEmployee($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber,$title,$salary,$workingHours,$vehicleType,$skills,$certifications,$EmployeeType)
@@ -54,6 +56,7 @@ class UserController{
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
+        header('Location: ../View/DonorView.php');
         $view = new DonorView();
         $view->displayDonorProfile($donor);
         $this->sendLoginMail($donor);
@@ -62,6 +65,7 @@ class UserController{
     function retrieveuser($userId)
     {
         $admin = Admin::retrieve($userId);
+        header('Location: ../View/AdminView.php');
         $view = new AdminView();
         $view->displayUsers($admin);
     }
