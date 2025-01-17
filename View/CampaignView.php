@@ -21,7 +21,7 @@ class CampaignView
             <nav>
                 <label class="logo">Campaign Manager</label>
                 <ul>
-                    <li><a href="#" onclick="campaignDetails(2)">Campaign Details</a></li>
+                    <li><a href="#" onclick="campaignDetails(1)">Campaign Details</a></li>
                     <li><a href="#" onclick="fundProgress(1)">Fund Progress</a></li>
                     <li><a href="#" onclick="campaignDetails(1)">All Campaigns</a></li>
                 </ul>
@@ -51,7 +51,7 @@ class CampaignView
                             <li><strong>Campaign Name:</strong> ' . $campaign->getTitle() . '</li>
                             <li><strong>Money Earned:</strong> $' . number_format($campaign->getMoneyEarned(), 2) . '</li>
                             <li><strong>Start Date:</strong> ' . date('d/m/Y H:i:s', $campaign->getTime()->getTimestamp()) . '</li>
-                            <li><strong>Location:</strong> $' . $campaign->getLocation(). '</li>
+                            <li><strong>Location:</strong> $' . $campaign->getLocation()[0]. '</li>
                         </ul>
                     </div>
                 </section>
