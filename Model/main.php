@@ -20,6 +20,7 @@ require_once 'statisticsGenerator.php';
 require_once 'AdminModel.php';
 require_once 'DonationManager.php';
 require_once 'CampaignStrategy.php';
+require_once 'student.php';
 
 
 // function main(){
@@ -795,9 +796,12 @@ main();
 // ............Main to test Report Generator for Instructor
 
 // function main() {
+// function main() {
 
 //     $config = require 'configurations.php';
+//     $config = require 'configurations.php';
 
+//     $db = new DatabaseConnection($config);
 //     $db = new DatabaseConnection($config);
 
     // Technical Object 1
@@ -1248,6 +1252,102 @@ main();
 // }
 
 // main();
+// Include necessary files or autoloaders
+// $personnel1 = new DeliveryPersonnel(
+//     'delivery_guy1',
+//     'John',
+//     'Doe',
+//     'example@example.com',
+//     'securepassword',
+//     ['New York', 'USA'],
+//     1234567890,
+//     4000,
+//     40,
+//     'Motorbike',
+//     99
+// );
+
+// $personnel2 = new DeliveryPersonnel(
+//     'delivery_guy2',
+//     'Jane',
+//     'Smith',
+//     'john.doe@example.com',
+//     'securepassword123',
+//     ['San Francisco', 'USA'],
+//     9876543210,
+//     4500,
+//     35,
+//     'Bicycle',
+//     100
+// );
+
+// echo "Creating delivery personnel...\n";
+// if (DeliveryPersonnel::create($personnel1)) {
+//     echo "Delivery Personnel 1 created successfully.\n";
+// } else {
+//     echo "Failed to create Delivery Personnel 1.\n";
+// }
+
+// if (DeliveryPersonnel::create($personnel2)) {
+//     echo "Delivery Personnel 2 created successfully.\n";
+// } else {
+//     echo "Failed to create Delivery Personnel 2.\n";
+// }
+
+// // Step 2: Retrieve and Print
+// echo "Retrieving Delivery Personnel 1...\n";
+// $retrievedPersonnel = DeliveryPersonnel::retrieve(99);
+// if ($retrievedPersonnel) {
+//     echo "Retrieved Delivery Personnel 1:\n";
+//     print_r($retrievedPersonnel);
+// } else {
+//     echo "Failed to retrieve Delivery Personnel 1.\n";
+// }
+
+// // Step 3: Update Data
+// if ($retrievedPersonnel) {
+//     echo "Updating Delivery Personnel 1...\n";
+//     $retrievedPersonnel->setFirstname('Updated John');
+//     $retrievedPersonnel->setLastname('Updated Doe');
+//     $retrievedPersonnel->setVehicleType('Truck');
+//     $retrievedPersonnel->setDeliveriesCompleted(50);
+
+//     if (DeliveryPersonnel::update($retrievedPersonnel)) {
+//         echo "Delivery Personnel 1 updated successfully.\n";
+
+//         // Verify the update
+//         echo "Verifying update for Delivery Personnel 1...\n";
+//         $updatedPersonnel = DeliveryPersonnel::retrieve(1);
+//         if ($updatedPersonnel) {
+//             echo "Updated Delivery Personnel 1:\n";
+//             print_r($updatedPersonnel);
+//         } else {
+//             echo "Failed to retrieve updated Delivery Personnel 1.\n";
+//         }
+//     } else {
+//         echo "Failed to update Delivery Personnel 1.\n";
+//     }
+
+//     echo "Deleting Delivery Personnel...\n";
+// if (DeliveryPersonnel::delete(100)) {
+//     echo "Delivery Personnel deleted successfully.\n";
+// } else {
+//     echo "Failed to delete Delivery Personnel.\n";
+// }
+// }
+
+
+// Step 5: Clean up (optional, for testing purposes only)
+// You can delete test data after testing if required.
+
+
+
+
+
+
+// }
+
+// main();
 
 //...................Main to test EventUndo/RedoCommand (volunteeringggg orrrr Campaign)
 
@@ -1373,3 +1473,153 @@ main();
 
 // main();
 
+
+function main(){
+    // Create an instructor
+// $instructor = new InstructorModel(
+//     "instructor_username",
+//     "Instructor",
+//     "Lastname",
+//     "instructor@example.com",
+//     "securepassword",
+//     ["City", "Country"],
+//     1234567890,
+//     50000,
+//     40,
+//     [],
+//     999 // userID
+// );
+
+// // Ensure the instructor exists in the database
+// InstructorModel::create($instructor);
+
+// // Create a lesson
+// $lesson = new LessonModel(
+//     "PHP Basics",
+//     "Programming",
+//     120,
+//     $instructor // Pass the instructor object
+// );
+
+// if (LessonModel::create($lesson)) {
+//     echo "Lesson created successfully.\n";
+// } else {
+//     echo "Failed to create lesson.\n";
+// }
+
+// // Retrieve the lesson
+// $retrievedLesson = LessonModel::retrieve(1);
+// if ($retrievedLesson) {
+//     echo "Lesson retrieved: " . $retrievedLesson->getLessonName() . "\n";
+//     echo "Instructor: " . $retrievedLesson->getInstructor()->getFirstname() . "\n";
+// } else {
+//     echo "Failed to retrieve lesson.\n";
+// }
+
+// // Update the lesson
+// $retrievedLesson ->setLessonName("Advanced PHP");
+// if (LessonModel::update($retrievedLesson)) {
+//     echo "Lesson updated successfully.\n";
+// } else {
+//     echo "Failed to update lesson.\n";
+// }
+
+// // Delete the lesson
+// if (LessonModel::delete($retrievedLesson->getLessonId())) {
+//     echo "Lesson deleted successfully.\n";
+// } else {
+//     echo "Failed to delete lesson.\n";
+// }
+
+$instructor1 = new InstructorModel(
+    "instructor1",
+    "Alice",
+    "Johnson",
+    "alice.johnson@example.com",
+    "securepassword1",
+    ["City1", "Country1"],
+    9876543210,
+    5000,
+    40,
+    [],
+    66
+);
+
+$instructor2 = new InstructorModel(
+    "instructor2",
+    "Bob",
+    "Smith",
+    "bob.smith@example.com",
+    "securepassword2",
+    ["City2", "Country2"],
+    8765432109,
+    6000,
+    35,
+    [],
+    77
+);
+
+// Create Instructors in the Database
+InstructorModel::create($instructor1);
+InstructorModel::create($instructor2);
+
+$lesson1 = new LessonModel(
+    "Math 101",
+    "Mathematics",
+    60,
+    $instructor1, // Pass InstructorModel object
+    111
+);
+
+$lesson2 = new LessonModel(
+    "Science Basics",
+    "Science",
+    45,
+    $instructor2, // Pass InstructorModel object
+    222
+);
+
+// Create Lessons in the Database
+LessonModel::create($lesson1);
+LessonModel::create($lesson2);
+
+$student = new StudentModel(
+    "student1",
+    "John",
+    "Doe",
+    "john.doe@example.com",
+    "studentpassword",
+    ["City", "Country"],
+    1234567890,
+    [$lesson1, $lesson2],
+    [],
+    1000
+);
+
+// Create Student in the Database
+StudentModel::create($student);
+
+echo "Retrieving Student...\n";
+$retrievedStudent = StudentModel::retrieve(1000); // Retrieve by userID
+print_r($retrievedStudent);
+
+echo "Updating Student...\n";
+// Update enrolled lessons
+$retrievedStudent->setLessons([$lesson1]); // Remove one lesson
+StudentModel::update($retrievedStudent);
+
+// Retrieve again to verify
+$updatedStudent = StudentModel::retrieve(1000);
+print_r($updatedStudent);
+
+echo "Deleting Student...\n";
+StudentModel::delete(1000);
+
+
+
+
+
+
+}
+
+main();

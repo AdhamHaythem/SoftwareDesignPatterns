@@ -8,6 +8,8 @@ class DonorView
         <head>
             <meta charset="utf-8">
             <title>Donor</title>
+            <script src="javascript.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="style2.css">
@@ -29,7 +31,7 @@ class DonorView
                 <label class="logo">Donor Information</label>
                 <ul>
                     <li><a href="#" onclick="loadHome()">Home</a></li>
-                    <li><a href="#" onclick="donorProfile()">Donor Information</a></li>
+                    <li><a href="#" onclick="donorProfile(1)">Donor Information</a></li>
                     <li><a href="#" onclick="donationHistory()">History</a></li>
                     <li><a href="#" onclick="totalDonations()">Total Donations</a></li>
                     <li><a href="#" onclick="eventList()">Events</a></li>
@@ -130,6 +132,7 @@ $donor = (object)[
 
 $donorView = new DonorView();
 $donorView->DonorViewDetails("Sample Data");
+$donorView->displayDonorProfile($donor);
 $donorView->displayEventList($donor);
 $donorView->displayTotalDonations($donor)
 ?>

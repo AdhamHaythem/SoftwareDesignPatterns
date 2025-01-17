@@ -56,6 +56,14 @@ class DonorController{
         $donor->redo();
     }
 
+    public function getEventList($id)
+    {
+        $donor = Donor::retrieve($id);
+        $events = $donor->getEvents();
+        $view = new DonorView();
+        $view->displayEventList($events);
+    }
+
 }
 
     $donorController= new DonorController();
@@ -133,6 +141,11 @@ class DonorController{
 
     if (isset($_POST['joinEvent'])) {
         $donorController->joinEvent($_POST['donorId']);
+    }
+
+    if(isset($_POST['eventList']))
+    {
+        $donorController->getEventList($_POST['donorId']);
     }
 
 

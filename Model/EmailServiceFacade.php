@@ -9,7 +9,7 @@ class EmailServiceFacade {
 
     public function sendLoginMail(String $donorEmail) {
         $email = new \SendGrid\Mail\Mail(); 
-        $email->setFrom(From); // Fetch from env variables
+        $email->setFrom(From); 
         $email->setSubject("Account Login");
         $email->addTo($donorEmail);
         $email->addContent("text/plain", "You Have just logged in");
@@ -17,9 +17,8 @@ class EmailServiceFacade {
 
         try {
             $response = $this->sendgrid->send($email);
-            return $response->statusCode(); // Return status for logging or confirmation
+            return $response->statusCode(); 
         } catch (Exception $e) {
-            // Handle the exception, e.g., log it
             error_log('Email sending failed: ' . $e->getMessage());
             return false;
         }

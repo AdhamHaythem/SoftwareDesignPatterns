@@ -8,6 +8,7 @@ class UserView
         <head>
             <meta charset="utf-8">
             <title>User</title>
+            <script src="javascript.js"></script>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="style.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -38,7 +39,7 @@ class UserView
         echo '
         <link rel="stylesheet" href="style.css">
         <div class="container">
-            <form action="UserController.php" method="POST">
+            <form>
                 <h2>Sign In</h2>
                 <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
@@ -52,7 +53,7 @@ class UserView
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label class="form-check-label" for="exampleCheck1">Remember me</label>
                 </div>
-                <button type="submit" name="login" class="btn btn-primary" onclick= login()>Sign In</button>
+                <button type="submit" name="login" class="btn btn-primary" onclick= "login()">Sign In</button>
             </form>
         </div>';
     }
@@ -60,9 +61,10 @@ class UserView
 public function signUp()
 {
     echo '
+    <script src="javascript.js"></script>
     <link rel="stylesheet" href="style.css">
     <div class="container">
-        <form class="row g-3" action="UserController.php" method="POST">
+        <form class="row g-3">
             <h2>Sign Up</h2>
             <div class="col-md-6">
                 <label for="validationServer01" class="form-label">First name</label>
@@ -98,9 +100,10 @@ public function signUp()
                     <label class="form-check-label" for="invalidCheck3">Agree to terms and conditions</label>
                 </div>
             </div>
-            <button class="btn btn-primary" type="submit" name="signup" onclick= signup()>Sign Up</button>
+            <button class="btn btn-primary" type="submit" name="signup" onclick= "signup()">Sign Up</button>
         </form>
     </div>';
+
     }
 
 }
