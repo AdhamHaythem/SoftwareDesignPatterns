@@ -9,7 +9,6 @@ class Visa implements IPaymentStrategy {
         $fee = $this->calculateFee($amount);
         $totalAmount = $amount + $fee;
         // Process the Visa payment logic
-        echo "Paid $" . $totalAmount . " using Visa (including a fee of $" . $fee . ").\n";
         return true;
     }
 

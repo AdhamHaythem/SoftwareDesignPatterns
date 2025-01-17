@@ -224,7 +224,7 @@ $sql_event = "CREATE TABLE IF NOT EXISTS event (
     `eventID` INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
     `name` VARCHAR(255) NOT NULL,                  
     `time` DATETIME NOT NULL,                         
-    `location` VARCHAR(255) NOT NULL,                  
+    `location` TEXT NOT NULL,                  
     `volunteers_needed` INT NOT NULL,                
     `volunteersList` TEXT
 

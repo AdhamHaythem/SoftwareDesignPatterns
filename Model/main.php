@@ -23,7 +23,170 @@ require_once 'CampaignStrategy.php';
 require_once 'student.php';
 
 
+//................Main to test AdminModel with Dmanager
+// function main() {
+//     $config = require 'configurations.php';
+//     $db = new DatabaseConnection($config);
 
+//     $admin = new Admin(
+//         'admin_user', // username
+//         'Admin', // firstName
+//         'User', // lastName
+//         'admin@example.com', // email
+//         'password123', // password
+//         ['New York', 'Los Angeles'], // location
+//         '1234567890', // phoneNumber
+//         900.0, // goalamount
+//         1 // userID
+//     );
+
+//     if (Admin::create($admin)) {
+//         echo "Admin created successfully.\n";
+//     } else {
+//         echo "Failed to create admin.\n";
+//         return;
+//     }
+
+//     // Step 2: Retrieve the Admin
+//     $retrievedAdmin = Admin::retrieve(1);
+//     if ($retrievedAdmin) {
+//         echo "\nRetrieved Admin:\n";
+//         echo "UserID: " . $retrievedAdmin->getUserID() . "\n";
+//         echo "Username: " . $retrievedAdmin->getUsername() . "\n";
+//         echo "First Name: " . $retrievedAdmin->getFirstname() . "\n";
+//         echo "Last Name: " . $retrievedAdmin->getLastname() . "\n";
+//         echo "Email: " . $retrievedAdmin->getEmail() . "\n";
+//         echo "Location: " . implode(", ", $retrievedAdmin->getLocation()) . "\n";
+//         echo "Phone Number: " . $retrievedAdmin->getPhoneNumber() . "\n";
+//         $donationManager = $retrievedAdmin->getDonationManager();
+//         echo "Donation Manager Goal Amount: " . $donationManager->getGoalAmount() . "\n";
+//         echo "Donation Manager Total Donations: " . $donationManager->getTotalDonations() . "\n";
+//     } else {
+//         echo "Failed to retrieve admin.\n";
+//         return; // Exit if admin retrieval fails
+//     }
+
+//     // Step 3: Update the Admin
+//     $retrievedAdmin->setUsername('updated_admin');
+//     $retrievedAdmin->setFirstname('Updated');
+//     $retrievedAdmin->setLastname('Admin');
+//     $retrievedAdmin->setEmail('updated_admin@example.com');
+//     $retrievedAdmin->setLocation(['London', 'Paris']);
+//     $retrievedAdmin->setPhoneNumber('0987654321');
+//     $newDonationManager = new DonationManager(
+//         $retrievedAdmin->getUserID(), // adminID
+//         15000.0, // goalAmount
+//         [], // donations
+//         [] // campaigns
+//     );
+    
+
+//     $retrievedAdmin->setDonationManager($newDonationManager);
+
+//     if (Admin::update($retrievedAdmin)) {
+//         echo "\nAdmin updated successfully.\n";
+//     } else {
+//         echo "\nFailed to update admin.\n";
+//         return; // Exit if admin update fails
+//     }
+
+//     // Step 4: Create a DonationManager
+//     $campaign1 = new CampaignStrategy(
+//         new DateTime('2023-01-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0
+//     );
+
+//     $campaign2 = new CampaignStrategy(
+//         new DateTime('2023-01-11 10:00:00'),
+//         'Los Angeles',
+//         15,
+//         2,
+//         'Food Drive',
+//         2000.0,
+//         'Winter Food Drive',
+//         'descriptionnnnnn',
+//         1200.0
+//     );
+
+//     $campaigns = [$campaign1, $campaign2];
+
+//     $donation1 = new Donation(1000.0, 1, new DateTime(), 1);
+//     $donation2 = new Donation(2000.0, 1, new DateTime(), 2);
+//     $donation3 = new Donation(3000.0, 2, new DateTime(), 3);
+
+//     $donations = [
+//         1 => [$donation1, $donation2], // Donor 1's donations
+//         2 => [$donation3], // Donor 2's donations
+//     ];
+
+//     $donationManager = new DonationManager(1, 10000.0, $donations, $campaigns);
+
+//     if (DonationManager::create($donationManager)) {
+//         echo "\nDonationManager created successfully.\n";
+//     } else {
+//         echo "\nFailed to create DonationManager.\n";
+//         return; // Exit if DonationManager creation fails
+//     }
+
+//     // Step 5: Retrieve the DonationManager
+//     $retrievedDonationManager = DonationManager::retrieve(1);
+//     if ($retrievedDonationManager) {
+//         echo "\nRetrieved DonationManager:\n";
+//         echo "AdminID: " . $retrievedDonationManager->getAdminID() . "\n";
+//         echo "Goal Amount: " . $retrievedDonationManager->getGoalAmount() . "\n";
+//         echo "Total Donations: " . $retrievedDonationManager->getTotalDonations() . "\n";
+//         echo "Number of Campaigns: " . count($retrievedDonationManager->getCampaigns()) . "\n";
+//     } else {
+//         echo "\nFailed to retrieve DonationManager.\n";
+//         return; // Exit if DonationManager retrieval fails
+//     }
+
+//     // Step 6: Update the DonationManager
+//     $retrievedDonationManager->setGoalAmount(15000.0);
+//     $retrievedDonationManager->setTotalDonations(7500.0);
+
+//     if (DonationManager::update($retrievedDonationManager)) {
+//         echo "\nDonationManager updated successfully.\n";
+//     } else {
+//         echo "\nFailed to update DonationManager.\n";
+//         return; // Exit if DonationManager update fails
+//     }
+
+//     // Step 7: Set a new DonationManager for the Admin
+//     $newDonationManager = new DonationManager(1, 20000.0, [], []);
+//     $retrievedAdmin->setDonationManager($newDonationManager);
+
+//     if (DonationManager::create($newDonationManager)) {
+//         echo "\nNew DonationManager created and set for Admin successfully.\n";
+//     } else {
+//         echo "\nFailed to create and set new DonationManager for Admin.\n";
+//         return; // Exit if setting new DonationManager fails
+//     }
+
+//     // Step 8: Delete the DonationManager
+//     if (DonationManager::delete(1)) {
+//         echo "\nDonationManager deleted successfully.\n";
+//     } else {
+//         echo "\nFailed to delete DonationManager.\n";
+//         return; // Exit if DonationManager deletion fails
+//     }
+
+//     // Step 9: Delete the Admin
+//     if (Admin::delete(1)) {
+//         echo "\nAdmin deleted successfully.\n";
+//     } else {
+//         echo "\nFailed to delete admin.\n";
+//     }
+// }
+
+// main();
 
 
 
@@ -268,61 +431,61 @@ require_once 'student.php';
 
 //.............Main to test campain&volunteeringEvents
 
-// function main(){
+function main(){
     
-//     $campaign1 = new CampaignStrategy(
-//         new DateTime('2023-1-15 10:00:00'),
-//         'New York',
-//         10,
-//         1,
-//         'Charity Run',
-//         1000.0,
-//         'Annual Charity Run',
-//         'descriptionnnnnn',
-//         500.0
-//     );
+    $campaign1 = new CampaignStrategy(
+        new DateTime('2023-1-15 10:00:00'),
+        ['berlin', 'Germany'],
+        10,
+        1,
+        'Charity Run',
+        1000.0,
+        'Annual Charity Run',
+        'descriptionnnnnn',
+        500.0
+    );
 
-//    $campaign2 = new CampaignStrategy(
-//         new DateTime('2023-1-11 10:00:00'),
-//         'Los Angeles',
-//         15,
-//         2,
-//         'Food Drive',
-//         2000.0,
-//         'Winter Food Drive',
-//         'descriptionnnnnn',
-//         1200.0
-//     );
+   $campaign2 = new CampaignStrategy(
+        new DateTime('2023-1-11 10:00:00'),
+        ['New York', 'Los Angeles'],
+        15,
+        2,
+        'Food Drive',
+        2000.0,
+        'Winter Food Drive',
+        'descriptionnnnnn',
+        1200.0
+    );
    
-//     $volunteering = new VolunteeringEventStrategy(
-//        'Food Drive',
-//         new DateTime('2023-1-11 10:00:00'),
-//         'Los Angeles',
-//         200,
-//         3
+    $volunteering = new VolunteeringEventStrategy(
+       'Food Drive',
+        new DateTime('2023-1-11 10:00:00'),
+        ['New York', 'Los Angeles'],
+        200,
+        3
        
-//     );
+    );
 
-//     if (CampaignStrategy::create($campaign1)) {
-//             echo "campaign1 created and added to the database successfully.\n";
-//                 } else {
-//                     echo "Failed to create campaign1.\n";
-//         }
+    if (CampaignStrategy::create($campaign1)) {
+            echo "campaign1 created and added to the database successfully.\n";
+                } else {
+                    echo "Failed to create campaign1.\n";
+        }
 
-//     if (CampaignStrategy::create($campaign2)) {
-//             echo "campaign2 created and added to the database successfully.\n";
-//             } else {
-//             echo "Failed to create campaign2.\n";
-//     }
+    if (CampaignStrategy::create($campaign2)) {
+            echo "campaign2 created and added to the database successfully.\n";
+            } else {
+            echo "Failed to create campaign2.\n";
+    }
 
-//     if (VolunteeringEventStrategy::create($volunteering)) {
-//         echo "volunteeringcreated and added to the database successfully.\n";
-//         } else {
-//         echo "Failed to create volunteering.\n";
-// }
+    if (VolunteeringEventStrategy::create($volunteering)) {
+        echo "volunteeringcreated and added to the database successfully.\n";
+        } else {
+        echo "Failed to create volunteering.\n";
+}
 
-// }
-// main();
+}
+main();
 
 
 
@@ -518,28 +681,28 @@ require_once 'student.php';
 //     }
 
 
-    //$donation = new Donation(100.0, 1, new DateTime('2023-10-15 10:00:00'),1);
+//     $donation = new Donation(100.0, 1, new DateTime('2023-10-15 10:00:00'),1);
 
-    // Insert the donation into the database
-    // if (Donation::create($donation)) {
-    //     echo "Donation created successfully!\n";
-    // } else {
-    //     echo "Failed to create donation.\n";
-    //     return;
+//    // Insert the donation into the database
+//     if (Donation::create($donation)) {
+//         echo "Donation created successfully!\n";
+//     } else {
+//         echo "Failed to create donation.\n";
+//         return;
     
-    // }
-    // $donation2 = new Donation(300.0, 2, new DateTime('2023-10-15 10:00:00'),2);
+//     }
+//     $donation2 = new Donation(300.0, 2, new DateTime('2023-10-15 10:00:00'),2);
 
-    // // Insert the donation into the database
-    // if (Donation::create($donation2)) {
-    //     echo "Donation created successfully!\n";
-    // } else {
-    //     echo "Failed to create donation.\n";
-    //     return;
+//     // Insert the donation into the database
+//     if (Donation::create($donation2)) {
+//         echo "Donation created successfully!\n";
+//     } else {
+//         echo "Failed to create donation.\n";
+//         return;
     
-    // }
-//}
-//main();
+//     }
+// }
+// main();
 
 
 //.............Main to test DManager without db

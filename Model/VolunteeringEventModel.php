@@ -8,7 +8,7 @@ class VolunteeringEventStrategy extends Event {
     private array $observers = [];
 
 
-    public function __construct(string $name, DateTime $time, string $location, int $volunteersNeeded, int $eventID) {
+    public function __construct(string $name, DateTime $time, array $location, int $volunteersNeeded, int $eventID) {
         parent::__construct($time, $location, $volunteersNeeded, $eventID, $name);
     }
     public function getVolunteerInfo(Donor $volunteer): array {
@@ -25,16 +25,6 @@ class VolunteeringEventStrategy extends Event {
     public function setListObservers(array $observers): void {
         $this->observers = $observers;
     }
-
-    // public function assignToEvent(Donor $volunteer): bool {
-    //     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){
-    //         $this->getVolunteersList()[] = $volunteer->getDonorID();
-    //         $this->notifyObservers();
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
     
     public static function create($object): bool {
 
@@ -45,7 +35,7 @@ class VolunteeringEventStrategy extends Event {
             $object->getEventID(),
             $object->getName(),
             $object->getTime()->format('Y-m-d H:i:s'),
-            $object->getLocation(),
+            json_encode($object->getLocation()),
             $object->getVolunteersNeeded(),
             json_encode($object->getVolunteersList())
         ];
@@ -77,11 +67,12 @@ class VolunteeringEventStrategy extends Event {
         }
     
         $row = $result[0];
+        $location = json_decode($row['location'], true);
     
         return new VolunteeringEventStrategy(
             $row['name'],
             new DateTime($row['time']),
-            $row['location'],
+            $location,
             $row['volunteers_needed'],
             $row['eventID']
         );
@@ -102,14 +93,12 @@ class VolunteeringEventStrategy extends Event {
             $eventParams = [
                 $volunteeringEvent->getName(),
                 $volunteeringEvent->getTime()->format('Y-m-d H:i:s'),
-                $volunteeringEvent->getLocation(),
+                json_encode($volunteeringEvent->getLocation()),
                 $volunteeringEvent->getVolunteersNeeded(),
                 json_encode($volunteeringEvent->getVolunteersList()),
                 $volunteeringEvent->getEventID()
             ];
-    
-            echo "Event SQL Query: $eventSql\n";
-            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+
     
             if (!$dbConnection->execute($eventSql, $eventParams)) {
                 throw new Exception("Failed to update event record.");
@@ -129,8 +118,7 @@ class VolunteeringEventStrategy extends Event {
             $sql = "DELETE FROM event WHERE eventID = ?";
             $params = [$eventID];
     
-            // echo "Campaign SQL Query: $sql\n";
-            // echo "Campaign Parameters: " . print_r($params, true) . "\n";
+
     
             if (!$dbConnection->execute($sql, $params)) {
                 throw new Exception("Failed to delete campaign record.");
@@ -163,15 +151,14 @@ class VolunteeringEventStrategy extends Event {
 
    public function signUp(int $donorID): bool {
     if (!isset($donorID)) {
-    //    echo "Volunteering SignUp: Donor ID is not provided.\n";
+
         return false;
     }
     
     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()) {
-     //   echo "Volunteering SignUp: Donor $donorID successfully signed up to volunteer for the event.\n";
         return $this->addVolunteer($donorID);
     }
-    // echo "Volunteering SignUp: No more spots available for volunteers.\n";
+
     return false;
 }
 
