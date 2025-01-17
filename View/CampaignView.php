@@ -85,6 +85,7 @@ class CampaignView
                 <strong>Campaign Name:</strong> ' . $campaign->name . '<br>
                 <strong>Money Earned:</strong> $' . number_format($campaign->moneyEarned, 2) . '<br>
                 <button onclick="campaignDetails(' . intval($campaign->id) . ')">View Details</button>
+                <button onclick="joinCampaign(1,1)">Join Campaign</button>
             </li>';
         }
         echo '</ul>

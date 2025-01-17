@@ -20,8 +20,8 @@ class EventView
                     <span class="close" onclick="closeModal()">&times;</span>
                     <h2>Event Options</h2>
                     <div class="modal-buttons">
-                        <button onclick="eventStatus()">View Event Status</button>
-                        <button onclick="eventReport()">View Event Report</button>
+                        <button onclick="eventStatus(1)">View Event Status</button>
+                        <button onclick="eventReport(1)">View Event Report</button>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@ class EventView
 // Usage example
 $eventView = new EventView();
 $eventView->EventViewDetails("Sample Data");
-$eventView->displayEventReport("ll");
+$eventView->displayEventReport("1");
 
 
 ?>

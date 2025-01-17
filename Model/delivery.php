@@ -104,30 +104,41 @@ class DeliveryPersonnel extends EmployeeModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
-        string $title,
         int $salary,
         int $workingHours,
-        string $vehicleType
+        string $vehicleType,
+        int $userID = 0 
     ) {
         parent::__construct(
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
             $phoneNumber,
             "Delivery",
             $salary,
-            $workingHours
+            $workingHours,
+            $userID
         );
         $this->vehicleType = $vehicleType;
+    }
+
+    public function setVehicleType($vehicleType) {
+
+        $this->vehicleType = $vehicleType;
+
+    }
+
+    public function setDeliveriesCompleted($deliveriesCompleted) {
+
+        $this->deliveriesCompleted = $deliveriesCompleted;
+
     }
 
     // CRUD Methods
@@ -200,82 +211,87 @@ class DeliveryPersonnel extends EmployeeModel {
             return false;
         }
     }
+
+    
     
     
 
     public static function retrieve($userID): ?DeliveryPersonnel {
-        $sql = "SELECT * FROM delivery_personnel WHERE userID = :userID";
-        $params = [':userID' => $userID];
+        $sql = "SELECT * FROM deliverypersonnel dp
+                JOIN employee e ON dp.userID = e.userID
+                JOIN user u ON dp.userID = u.userID
+                WHERE dp.userID = ?";
+        $params = [$userID];
     
-        // Get the database connection
-        $dbConnection = UserModel::getDatabaseConnection();
-    
-        // Use query instead of execute to fetch data
+        $dbConnection = DatabaseConnection::getInstance();
         $result = $dbConnection->query($sql, $params);
     
         if ($result && !empty($result)) {
+            $row = $result[0];
+    
             return new DeliveryPersonnel(
-                $result['username'],
-                $result['firstname'],
-                $result['lastname'],
-                $result['userID'],
-                $result['email'],
-                $result['password'],
-                json_decode($result['location'], true),
-                $result['phoneNumber'],
-                $result['title'],
-                $result['salary'],
-                $result['workingHours'],
-                $result['vehicleType']
+                $row['username'],
+                $row['firstName'],
+                $row['lastName'],
+                $row['email'],
+                $row['password'],
+                json_decode($row['locationList'], true),
+                $row['phoneNumber'],
+                $row['salary'],
+                $row['workingHours'],
+                $row['vehicleType'],
+                (int)$row['userID']
             );
         }
     
         return null;
     }
     
+    
 
     public static function update($personnel): bool {
-        $sql = "UPDATE delivery_personnel SET 
-                    username = :username, 
-                    firstname = :firstname, 
-                    lastname = :lastname, 
-                    email = :email, 
-                    password = :password, 
-                    location = :location, 
-                    phoneNumber = :phoneNumber,
-                    title = :title,
-                    salary = :salary,
-                    workingHours = :workingHours,
-                    vehicleType = :vehicleType,
-                    deliveriesCompleted = :deliveriesCompleted
-                WHERE userID = :userID";
-
+        if (!$personnel instanceof DeliveryPersonnel) {
+            throw new InvalidArgumentException("Expected instance of DeliveryPersonnel");
+        }
+    
+        $sql = "UPDATE user u
+                JOIN employee e ON u.userID = e.userID
+                JOIN deliverypersonnel dp ON e.userID = dp.userID
+                SET 
+                    u.username = ?, 
+                    u.firstName = ?, 
+                    u.lastName = ?, 
+                    u.email = ?, 
+                    u.password = ?, 
+                    u.locationList = ?, 
+                    u.phoneNumber = ?, 
+                    e.title = ?, 
+                    e.salary = ?, 
+                    e.workingHours = ?, 
+                    dp.vehicleType = ?, 
+                    dp.deliveriesCompleted = ?
+                WHERE u.userID = ?";
+    
         $params = [
-            ':userID' => $personnel->getUserID(),
-            ':username' => $personnel->getUsername(),
-            ':firstname' => $personnel->getFirstname(),
-            ':lastname' => $personnel->getLastname(),
-            ':email' => $personnel->getEmail(),
-            ':password' => password_hash($personnel->getPassword(), PASSWORD_DEFAULT),
-            ':location' => json_encode($personnel->getLocation()),
-            ':phoneNumber' => $personnel->getPhoneNumber(),
-            ':title' => $personnel->getTitle(),
-            ':salary' => $personnel->getSalary(),
-            ':workingHours' => $personnel->getHoursWorked(),
-            ':vehicleType' => $personnel->getVehicleType(),
-            ':deliveriesCompleted' => $personnel->getDeliveriesCompleted()
+            $personnel->getUsername(),
+            $personnel->getFirstname(),
+            $personnel->getLastname(),
+            $personnel->getEmail(),
+            password_hash($personnel->getPassword(), PASSWORD_DEFAULT),
+            json_encode($personnel->getLocation()),
+            $personnel->getPhoneNumber(),
+            $personnel->getTitle(),
+            $personnel->getSalary(),
+            $personnel->getHoursWorked(),
+            $personnel->getVehicleType(),
+            $personnel->getDeliveriesCompleted(),
+            $personnel->getUserID()
         ];
-        $dbConnection=UserModel::getDatabaseConnection();
+    
+        $dbConnection = DatabaseConnection::getInstance();
         return $dbConnection->execute($sql, $params);
     }
-
-    public static function delete($userID): bool {
-        $sql = "DELETE FROM delivery_personnel WHERE userID = :userID";
-        $params = [':userID' => $userID];
-
-        $dbConnection=UserModel::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
-    }
+    
 
     public function addDelivery(Delivery $delivery): void {
         $this->currentLoad[] = $delivery;

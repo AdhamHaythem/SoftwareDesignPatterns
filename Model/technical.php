@@ -216,15 +216,6 @@ class technicalModel extends EmployeeModel {
             return false;
         }
     }
-    
-
-    public static function delete($userID): bool {
-        $sql = "DELETE FROM user WHERE userID = ?";
-        $params = [$userID];
-
-        $dbConnection = DatabaseConnection::getInstance();
-        return $dbConnection->execute($sql, $params);
-    }
 
     
     public static function uploadReport(string $reportName, string $filePath): bool {
