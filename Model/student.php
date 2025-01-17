@@ -1,6 +1,6 @@
 <?php
 require_once 'UserModel.php';
-require_once 'LessonModel.php';
+require_once 'Lesson.php';
 
 class StudentModel extends UserModel implements IObserver { 
     private array $enrolledLessons = [];
@@ -17,6 +17,7 @@ class StudentModel extends UserModel implements IObserver {
         array $location,
         int $phoneNumber,
         array $enrolledLessons=[],
+        array $completedLessons=[],
         int $userID = 0 
     ) {
         parent::__construct(
@@ -24,20 +25,27 @@ class StudentModel extends UserModel implements IObserver {
             $firstname,
             $lastname,
             $email,
-            $location,
             $password,
+            $location,
             $phoneNumber,
             $userID);
             $this->studentID = $userID;
             $this->enrolledLessons = $enrolledLessons;
-            $this->lessonSubject = new LessonModel();
-            $this->lessonSubject->registerObserver($this);
+            $this->lessonCompletionStatus = $completedLessons;
     }
 
     public function enrollInLesson(LessonModel $lesson): void {
         $this->enrolledLessons[] = $lesson;
         $this->lessonCompletionStatus[$lesson->getLessonId()] = false; 
         $lesson->registerObserver($this);
+    }
+
+    public function setLessons(array $lessons): void {
+        $this->enrolledLessons = $lessons;
+        foreach ($lessons as $lesson) {
+            $this->lessonCompletionStatus[$lesson->getLessonId()] = false;
+            $lesson->registerObserver($this);
+        }
     }
 
     public function completeLesson(LessonModel $lesson): void {
@@ -92,150 +100,143 @@ class StudentModel extends UserModel implements IObserver {
     }
 
     // Create a new Student record in the database
-public static function create($student): bool {
-    if (!$student instanceof StudentModel) {
-        throw new InvalidArgumentException("Expected instance of StudentModel");
-    }
 
-    $dbConnection = DatabaseConnection::getInstance();
-
-    try {
-        // 1. Insert into the `user` table
-        $userSql = "INSERT INTO user (username, firstname, lastname, userID, email, password, locationList, phoneNumber, isActive)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $userParams = [
-            $student->getUsername(),
-            $student->getFirstname(),
-            $student->getLastname(),
-            $student->getUserID(),
-            $student->getEmail(),
-            password_hash($student->getPassword(), PASSWORD_DEFAULT), // Securely hash the password
-            json_encode($student->getLocation()), // Serialize location list as JSON
-            $student->getPhoneNumber(),
-            1 // isActive (true)
-        ];
-
-        if (!$dbConnection->execute($userSql, $userParams)) {
-            throw new Exception("Failed to insert into `user` table.");
+    public static function create($student): bool {
+        if (!$student instanceof StudentModel) {
+            throw new InvalidArgumentException("Expected instance of StudentModel");
         }
-
-        // 2. Insert into the `student` table
-        $studentSql = "INSERT INTO student (userID, studentID, lessonSubject)
-                       VALUES (?, ?, ?)";
-
-        $studentParams = [
-            $student->getUserID(),
-            $student->getStudentID(),
-            json_encode($student->getLessonSubject()) // Serialize lessonSubject as JSON
-        ];
-
-        if (!$dbConnection->execute($studentSql, $studentParams)) {
-            throw new Exception("Failed to insert into `student` table.");
+    
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            // Insert into the `user` table
+            $userSql = "INSERT INTO user (username, firstname, lastname, userID, email, password, locationList, phoneNumber, isActive)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $userParams = [
+                $student->getUsername(),
+                $student->getFirstname(),
+                $student->getLastname(),
+                $student->getUserID(),
+                $student->getEmail(),
+                password_hash($student->getPassword(), PASSWORD_DEFAULT),
+                json_encode($student->getLocation()),
+                $student->getPhoneNumber(),
+                1
+            ];
+    
+            if (!$dbConnection->execute($userSql, $userParams)) {
+                throw new Exception("Failed to insert into `user` table.");
+            }
+    
+            // Insert into the `student` table
+            $studentSql = "INSERT INTO student (userID, enrolledLessons, completedLessons)
+                           VALUES (?, ?, ?)";
+            $studentParams = [
+                $student->getUserID(),
+                json_encode(array_map(fn($lesson) => $lesson->getLessonId(), $student->getEnrolledLessons())),
+                json_encode(array_map(fn($lesson) => $lesson->getLessonId(), $student->getCompletedLessons()))
+            ];
+    
+            if (!$dbConnection->execute($studentSql, $studentParams)) {
+                throw new Exception("Failed to insert into `student` table.");
+            }
+    
+            return true;
+    
+        } catch (Exception $e) {
+            error_log("Error creating student: " . $e->getMessage());
+            return false;
         }
-
-        // If all insertions are successful, return true
-        return true;
-
-    } catch (Exception $e) {
-        // Log the error and return false
-        error_log("Error creating student: " . $e->getMessage());
-        return false;
     }
-}
-
-// Retrieve a Student record from the database by userID
-public static function retrieve($userID): ?StudentModel {
-    $dbConnection = DatabaseConnection::getInstance();
-
-    // Query to retrieve student details joined with user
-    $sql = "SELECT * FROM student s
-            JOIN user u ON s.userID = u.userID
-            WHERE s.userID = ?";
-    $params = [$userID];
-
-    // Execute the query
-    $result = $dbConnection->query($sql, $params);
-
-    if ($result && !empty($result)) {
-        $row = $result[0];
-
-        // Validate required fields
-        if (
-            isset(
-                $row['userID'], $row['username'], $row['firstName'], $row['lastName'], 
-                $row['email'], $row['password'], $row['locationList'], $row['phoneNumber'],
-                $row['lessonSubject']
-            )
-        ) {
-            // Create a new StudentModel instance
-            $student = new StudentModel(
-                $row['username'],                              // username
-                $row['firstName'],                             // firstname
-                $row['lastName'],                              // lastname
-                $row['email'],                                 // email
-                $row['password'],                              // password
-                json_decode($row['locationList'], true),       // location
-                (int)$row['phoneNumber'],                      // phoneNumber
-                json_decode($row['lessonSubject'], true),      // lessonSubject (JSON decoded)
-                (int)$row['userID']                            // userID
+    
+    public static function retrieve($userID): ?StudentModel {
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        // Query to retrieve student details joined with user
+        $sql = "SELECT * FROM student s
+                JOIN user u ON s.userID = u.userID
+                WHERE s.userID = ?";
+        $params = [$userID];
+    
+        $result = $dbConnection->query($sql, $params);
+    
+        if ($result && !empty($result)) {
+            $row = $result[0];
+    
+            // Fetch enrolled and completed lessons
+            $enrolledLessonIDs = json_decode($row['enrolledLessons'], true) ?? [];
+            $completedLessonIDs = json_decode($row['completedLessons'], true) ?? [];
+    
+            $enrolledLessons = array_map(fn($lessonID) => LessonModel::retrieve($lessonID), $enrolledLessonIDs);
+            $completedLessons = array_map(fn($lessonID) => LessonModel::retrieve($lessonID), $completedLessonIDs);
+    
+            return new StudentModel(
+                $row['username'],
+                $row['firstName'],
+                $row['lastName'],
+                $row['email'],
+                $row['password'],
+                json_decode($row['locationList'], true),
+                (int)$row['phoneNumber'],
+                $enrolledLessons,
+                $completedLessons,
+                (int)$row['userID']
             );
-
-            return $student;
-        } else {
-            throw new Exception("Missing required fields in the query result.");
+        }
+    
+        return null;
+    }
+    
+    public static function update($student): bool {
+        if (!$student instanceof StudentModel) {
+            throw new InvalidArgumentException("Expected instance of StudentModel");
+        }
+    
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            // Update the `user` table
+            $userSql = "UPDATE user SET 
+                            username = ?, 
+                            firstname = ?, 
+                            lastname = ?, 
+                            email = ?, 
+                            password = ?, 
+                            locationList = ?, 
+                            phoneNumber = ?
+                        WHERE userID = ?";
+            $userParams = [
+                $student->getUsername(),
+                $student->getFirstname(),
+                $student->getLastname(),
+                $student->getEmail(),
+                password_hash($student->getPassword(), PASSWORD_DEFAULT),
+                json_encode($student->getLocation()),
+                $student->getPhoneNumber(),
+                $student->getUserID()
+            ];
+            $userUpdated = $dbConnection->execute($userSql, $userParams);
+    
+            // Update the `student` table
+            $studentSql = "UPDATE student SET 
+                               enrolledLessons = ?, 
+                               completedLessons = ?
+                           WHERE userID = ?";
+            $studentParams = [
+                json_encode(array_map(fn($lesson) => $lesson->getLessonId(), $student->getEnrolledLessons())),
+                json_encode(array_map(fn($lesson) => $lesson->getLessonId(), $student->getCompletedLessons())),
+                $student->getUserID()
+            ];
+            $studentUpdated = $dbConnection->execute($studentSql, $studentParams);
+    
+            return $userUpdated && $studentUpdated;
+    
+        } catch (Exception $e) {
+            error_log("Error updating student: " . $e->getMessage());
+            return false;
         }
     }
-
-    // Return null if no result is found
-    return null;
-}
-
-// Update a Student record in the database
-public static function update($student): bool {
-    if (!$student instanceof StudentModel) {
-        throw new InvalidArgumentException("Expected instance of StudentModel");
-    }
-
-    // SQL query to update the student table and relevant fields
-    $sql = "UPDATE student s
-            JOIN user u ON s.userID = u.userID
-            SET 
-                u.username = ?, 
-                u.firstName = ?, 
-                u.lastName = ?, 
-                u.email = ?, 
-                u.password = ?, 
-                u.locationList = ?, 
-                u.phoneNumber = ?,
-                s.lessonSubject = ?
-            WHERE s.userID = ?";
-
-    // Bind parameters
-    $params = [
-        $student->getUsername(),                              // username
-        $student->getFirstname(),                             // firstname
-        $student->getLastname(),                              // lastname
-        $student->getEmail(),                                 // email
-        password_hash($student->getPassword(), PASSWORD_DEFAULT), // password (hashed)
-        json_encode($student->getLocation()),                // location (JSON encoded)
-        $student->getPhoneNumber(),                          // phoneNumber
-        json_encode($student->getLessonSubject()),           // lessonSubject (JSON encoded)
-        $student->getUserID()                                // userID (where condition)
-    ];
-
-    // Get the database connection
-    $dbConnection = DatabaseConnection::getInstance();
-
-    // Execute the query
-    try {
-        return $dbConnection->execute($sql, $params);
-    } catch (Exception $e) {
-        // Log the error for debugging
-        error_log("Error updating student record: " . $e->getMessage());
-        return false;
-    }
-}
+    
 
     
 }
