@@ -59,46 +59,90 @@ class VolunteeringEventStrategy extends Event {
         $Vresult= $dbConnection->execute($VolunteerSql, $VolunteerParams);
 
         return $Vresult && $Eresult ;
-
     }
 
-    public static function retrieve($key): ?VolunteeringEventStrategy {
-        $sql = "SELECT * FROM volunteering_events WHERE eventID = :eventID";
-        $params = [':eventID' => $key];
+    public static function retrieve($eventID): ?VolunteeringEventStrategy {
         $dbConnection = DatabaseConnection::getInstance();
+    
+        $sql = "SELECT e.*, v.eventID 
+                FROM event e 
+                JOIN volunteeringeventstrategy v ON e.eventID = v.eventID 
+                WHERE e.eventID = ?";
+        $params = [$eventID];
+    
         $result = $dbConnection->query($sql, $params);
-
-        if ($result) {
-            return new VolunteeringEventStrategy(
-                $result['name'],
-                new DateTime($result['eventTime']),
-                $result['location'],
-                $result['volunteersNeeded'],
-                $result['eventID'],
-            );
+    
+        if (!$result || empty($result)) {
+            return null; // Event not found
         }
-        return null;
+    
+        $row = $result[0];
+    
+        return new VolunteeringEventStrategy(
+            $row['name'],
+            new DateTime($row['time']),
+            $row['location'],
+            $row['volunteers_needed'],
+            $row['eventID']
+        );
     }
 
-    public static function update($object): bool {
-        $sql = "UPDATE volunteering_events SET name = :name, eventTime = :eventTime, location = :location, volunteersNeeded = :volunteersNeeded WHERE eventID = :eventID";
-        $params = [
-            ':name' => $object->name,
-            ':eventTime' => $object->getTime()->format('Y-m-d H:i:s'),
-            ':location' => $object->getLocation(),
-            ':volunteersNeeded' => $object->getVolunteersNeeded(),
-            ':eventID' => $object->getEventID()
-        ];
-        return $object->dbConnection->execute($sql, $params);
+    public static function update($volunteeringEvent): bool {
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            // Update the event table
+            $eventSql = "UPDATE event SET 
+                            name = ?, 
+                            time = ?, 
+                            location = ?, 
+                            volunteers_needed = ?, 
+                            volunteersList = ?
+                        WHERE eventID = ?";
+            $eventParams = [
+                $volunteeringEvent->getName(),
+                $volunteeringEvent->getTime()->format('Y-m-d H:i:s'),
+                $volunteeringEvent->getLocation(),
+                $volunteeringEvent->getVolunteersNeeded(),
+                json_encode($volunteeringEvent->getVolunteersList()),
+                $volunteeringEvent->getEventID()
+            ];
+    
+            echo "Event SQL Query: $eventSql\n";
+            echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+    
+            if (!$dbConnection->execute($eventSql, $eventParams)) {
+                throw new Exception("Failed to update event record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating volunteering event: " . $e->getMessage());
+            return false;
+        }
     }
 
     public static function delete($eventID): bool {
-        $sql = "DELETE FROM volunteering_events WHERE eventID = :eventID";
-        $params = [':eventID' => $eventID];
-        
-        $dbConnection= Event::getDatabaseConnection();
-        return $dbConnection->execute($sql, $params);
+        $dbConnection = DatabaseConnection::getInstance();
+    
+        try {
+            $sql = "DELETE FROM event WHERE eventID = ?";
+            $params = [$eventID];
+    
+            // echo "Campaign SQL Query: $sql\n";
+            // echo "Campaign Parameters: " . print_r($params, true) . "\n";
+    
+            if (!$dbConnection->execute($sql, $params)) {
+                throw new Exception("Failed to delete campaign record.");
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            error_log("Error deleting campaign: " . $e->getMessage());
+            return false;
+        }
     }
+      
 
     public function registerObserver(IObserver $observer): void {
         $this->observers[] = $observer;
