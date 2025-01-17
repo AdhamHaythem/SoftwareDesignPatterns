@@ -4,8 +4,10 @@ class DatabaseConnection {
     private static ?DatabaseConnection $instance = null; // Hold the single instance
     public $conn;
 
+    public static array $config=[];
+
     // Private constructor to prevent direct instantiation
-    private function __construct($config) {
+    public function __construct($config) {
         $this->conn = new mysqli($config['DB_HOST'], $config['DB_USER'], $config['DB_PASS'], $config['DB_NAME']);
 
         // Check for connection errors
@@ -25,7 +27,8 @@ class DatabaseConnection {
     // Method to get the single instance of the class
     public static function getInstance(): DatabaseConnection {
         if (self::$instance === null) {
-            return NULL ;
+            self::$config = require 'configurations.php';
+            self::$instance = new DatabaseConnection(self::$config);
         }
         return self::$instance;
     }

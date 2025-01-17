@@ -11,24 +11,24 @@ class EmployeeModel extends UserModel {
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
         int $phoneNumber,
         string $title,
         int $salary,
-        int $workingHours
+        int $workingHours,
+        int $userID=0
     ) {
         parent::__construct(
             $username,
             $firstname,
             $lastname,
-            $userID,
             $email,
             $password,
             $location,
-            $phoneNumber
+            $phoneNumber,
+            $userID
         );
 
         $this->title = $title;
@@ -54,6 +54,12 @@ class EmployeeModel extends UserModel {
 
     public function getSalary() {
         return $this->salary;
+    }
+
+    public function setSalary($salary) {
+
+        $this->salary = $salary;
+
     }
 
     public static function create($employee): bool {
@@ -182,25 +188,6 @@ class EmployeeModel extends UserModel {
             return $userUpdated && $employeeUpdated;
         } catch (Exception $e) {
             error_log("Error updating employee: " . $e->getMessage());
-            return false;
-        }
-    }
-    
-    public static function delete($userID): bool {
-        $dbConnection = UserModel::getDatabaseConnection();
-    
-        try {
-            $employeeSql = "DELETE FROM employee WHERE userID = :userID";
-            $employeeParams = [$userID];
-            $employeeDeleted = $dbConnection->execute($employeeSql, $employeeParams);
-    
-            $userSql = "DELETE FROM user WHERE userID = :userID";
-            $userParams = [$userID];
-            $userDeleted = $dbConnection->execute($userSql, $userParams);
-    
-            return $employeeDeleted && $userDeleted;
-        } catch (Exception $e) {
-            error_log("Error deleting employee: " . $e->getMessage());
             return false;
         }
     }

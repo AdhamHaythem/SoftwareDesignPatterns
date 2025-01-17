@@ -1,7 +1,6 @@
 <?php
 require_once '../Model/instructor.php';
 require_once '../Model/Lesson.php';
-require_once '../View/LessonView.php';
 class LessonController 
 {
     function createLesson($lessonId,$lessonName,$lessonSubject,$duration,$instructorId)
@@ -17,13 +16,13 @@ class LessonController
        $instructor->deleteLesson($lessonId);
     }
 
-    function retrieveLesson($lessonId,$instructorId)
-    {
-        $instructor = InstructorModel::retrieve($instructorId);
-        $lesson = $instructor->retrieveLesson($lessonId);
-        $lessonView = new LessonView();
-        $lessonView->displayLessonDetails($lesson);
-    }
+    // function retrieveLesson($lessonId,$instructorId)
+    // {
+    //     $instructor = InstructorModel::retrieve($instructorId);
+    //     $lesson = $instructor->retrieveLesson($lessonId);
+    //     $lessonView = new LessonView();
+    //     $lessonView->displayLessonDetails($lesson);
+    // }
 
 
 }

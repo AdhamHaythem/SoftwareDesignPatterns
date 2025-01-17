@@ -133,8 +133,8 @@ abstract class Event implements IMaintainable, ISubject {
         $dbConnection = Event::getDatabaseConnection();
     
         try {
-            $Eventsql = "INSERT INTO event (eventID, name, time, location, volunteers_needed, volunteersList) 
-                         VALUES (?, ?, ?, ?, ?, ?)";
+            $Eventsql = "INSERT INTO event (eventID,name,time,location,volunteers_needed,volunteersList) 
+            VALUES (?, ?, ?, ?, ?, ?)";
     
             $Eventparams = [
                 $object->getEventID(),
@@ -142,7 +142,7 @@ abstract class Event implements IMaintainable, ISubject {
                 $object->getTime()->format('Y-m-d H:i:s'),
                 $object->getLocation(),
                 $object->getVolunteersNeeded(),
-                json_encode($object->getVolunteersList())
+                json_encode($object->getVolunteersList()),
             ];
     
             $Eresult = $dbConnection->execute($Eventsql, $Eventparams);

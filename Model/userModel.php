@@ -16,26 +16,24 @@ class UserModel implements IMaintainable {
     private int $phoneNumber;
     private static DatabaseConnection $dbConnection;
 
-    // Constructor to initialize the properties
     public function __construct(
         string $username,
         string $firstname,
         string $lastname,
-        int $userID,
         string $email,
         string $password,
         array $location,
-        int $phoneNumber
+        int $phoneNumber,
+        int $userID=0
     ) {
         $this->username = $username;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->userID = self::$counter;
+        $this->userID = $userID === 0 ? self::$counter++ : $userID;
         $this->email = $email;
         $this->password = $password;
         $this->location = $location;
         $this->phoneNumber = $phoneNumber;
-        self::$counter++;
     }
 
     // Set the database connection
@@ -67,13 +65,13 @@ class UserModel implements IMaintainable {
                         isActive = VALUES(isActive)";
         
         $params = [
-            $object->userID, // Ensure this is not NULL unless auto-increment
+            $object->userID,
             $object->username,
             $object->firstname,
             $object->lastname,
             $object->email,
             password_hash($object->password, PASSWORD_DEFAULT),
-            json_encode($object->location), // Convert to JSON if it's an array
+            json_encode($object->location),
             $object->phoneNumber,
             1
         ];
@@ -97,11 +95,11 @@ class UserModel implements IMaintainable {
                 $result['username'],
                 $result['firstname'],
                 $result['lastname'],
-                $result['userID'],
                 $result['email'],
                 $result['password'],
                 [],
-                $result['phoneNumber']
+                $result['phoneNumber'],
+                $result['userID']
             );
         }
         return null;
@@ -134,15 +132,12 @@ class UserModel implements IMaintainable {
         return self::$dbConnection->execute($sql, $params);
     }
 
-    public static function delete($key): bool {
-        // Update SQL query to use positional placeholders
+    public static function delete($userID): bool {
         $sql = "DELETE FROM user WHERE userID = ?";
-    
-        // Bind parameters in the correct order
-        $params = [$key];
-    
-        // Execute the query using the DatabaseConnection
-        return self::$dbConnection->execute($sql, $params);
+        $params = [$userID];
+
+        $dbConnection = DatabaseConnection::getInstance();
+        return $dbConnection->execute($sql, $params);
     }
     
 

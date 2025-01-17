@@ -9,7 +9,7 @@ require_once 'EventController.php';
 
 class DonationManagerController {
    
-    public function createCampaign(int $campaignID,
+    public function createCampaign(
     DateTime $time,
     string $location,
     int $volunteersNeeded,
@@ -17,10 +17,10 @@ class DonationManagerController {
     string $name,
     float $target,
     string $title,
-    float $moneyEarned
+    float $moneyEarned,
+    string $description
     ){
         $campaignModel = new CampaignStrategy(
-         $campaignID,
          $time,
          $location,
          $volunteersNeeded,
@@ -28,14 +28,17 @@ class DonationManagerController {
          $name,
          $target,
          $title,
+         $description,
          $moneyEarned
         );
         DonationManager::create($campaignModel);
-}
+
+    }
 
     public function createDonation($amount,$DonationID,$donorId){
-            $donationModel = new Donation($amount,$DonationID,$donorId);
-            DonationManager::create($donationModel);
+        $currentDateTime = new DateTime('now');
+        $donationModel = new Donation($amount,$donorId,$currentDateTime,$DonationID);
+        DonationManager::create($donationModel);
         
     }
 
@@ -96,16 +99,19 @@ class DonationManagerController {
 
 
     // Generates a report of all donations
-    public function generateDonationReport($managerId) {
+    public function generateDonationReport($managerId,$id) {
         $manager =  DonationManager::retrieve($managerId);
         $report = $manager->generateDonationReport();
+
+        $proxy= new ReportsGenerationProxy("DonationManager",new ReportGenerator());
+        $results= [];
+        $finalizedReports= $proxy->finalizeReport($id,$results);
         $view=new DonationManagerView();
         $view->displayDonationReport(); //TODO needs parameter
     }
 
     // Adds a new campaign with specific time and location
     public function addCampaign(        
-    int $campaignID,
     DateTime $time,
     string $location,
     int $volunteersNeeded,
@@ -113,10 +119,10 @@ class DonationManagerController {
     string $name,
     float $target,
     string $title,
-    float $moneyEarned
+    float $moneyEarned,
+    string $description
     ) {
         $campaignModel = new CampaignStrategy(       
-        $campaignID,
         $time,
         $location,
         $volunteersNeeded,
@@ -124,6 +130,7 @@ class DonationManagerController {
         $name,
         $target,
         $title,
+        $description,
         $moneyEarned
         );
         CampaignStrategy::create($campaignModel);
@@ -143,7 +150,7 @@ if (isset($_POST['createDonation'])) {
 
 if (isset($_POST['createCampaign'])) {
 
-    $donationManagerController->createCampaign($_POST['campaignId'],$_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0);
+    $donationManagerController->createCampaign($_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
     exit;
 }
 
@@ -194,13 +201,13 @@ if (isset($_POST['editCampaign'])) {
 }
 
 if (isset($_POST['generateDonationReport'])) {
-    $donationManagerController->generateDonationReport($_POST['managerId']);
+    $donationManagerController->generateDonationReport($_POST['managerId'],$_POST['id']);
     echo json_encode(['success' => true, 'report' => $report]);
     exit;
 }
 
 if (isset($_POST['addCampaign'])) {
-    $donationManagerController->addCampaign($_POST['campaignId'],$_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0);
+    $donationManagerController->addCampaign($_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
     echo json_encode(['success' => $result]);
     exit;
 }
