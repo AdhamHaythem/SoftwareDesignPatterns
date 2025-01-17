@@ -142,7 +142,7 @@ if (isset($_POST['createEvent'])) {
         if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
             && !empty($_POST['location']) && !empty($_POST['time']) && !empty($_POST['target'])) {
 
-            $object = new CampaignStrategy($_POST['time'],['cairo','eg'],$_POST['volunteers_needed'],$_POST['eventId'],$_POST['eventName'],$_POST['target'],$_POST['eventName'],$_POST['description'],0);
+            $object = new CampaignStrategy($_POST['eventId'],$_POST['time'],$_POST['location'],$_POST['volunteers_needed'],$_POST['eventId'],$_POST['eventName'],$_POST['target'],$_POST['eventName'],0);
             $result = $eventController->createCampaign($object);
             echo json_encode(['success' => !empty($result)]);
         }
@@ -150,7 +150,7 @@ if (isset($_POST['createEvent'])) {
     } elseif (isset($_POST['VolunteeringEvent'])) {
         if (!empty($_POST['eventId']) && !empty($_POST['eventName']) && !empty($_POST['volunteers_needed'])
             && !empty($_POST['location']) && !empty($_POST['time'])) {
-            $object = new VolunteeringEventStrategy($_Post['eventName'],$_Post['time'],['cairo','eg'],$_Post['volunteers_needed'],$_Post['eventId']);
+            $object = new VolunteeringEventStrategy($_Post['eventName'],$_Post['time'],$_Post['location'],$_Post['volunteers_needed'],$_Post['eventId']);
             $result = $eventController->createVolunteeringEvent($object);
             echo json_encode(['success' => !empty($result)]);
         }
@@ -200,7 +200,7 @@ if (isset($_POST['updateEvent'])) {
             $event->setVolunteersNeeded($_POST['volunteers_needed']);
         }
         if (isset($_POST['location'])) {
-            $event->setLocation(['cairo','eg']);
+            $event->setLocation($_POST['location']);
         }
         if (isset($_POST['time'])) {
             $event->setTime($_POST['time']);
@@ -226,7 +226,7 @@ if (isset($_POST['updateEvent'])) {
                 $event->setVolunteersNeeded($_POST['volunteers_needed']);
             }
             if (isset($_POST['location'])) {
-                $event->setLocation(['cairo','eg']);
+                $event->setLocation($_POST['location']);
             }
             if (isset($_POST['time'])) {
                 $event->setTime($_POST['time']);
