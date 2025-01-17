@@ -145,7 +145,7 @@ if (isset($_POST['createUser'])) {
         if (!empty($_POST['userId']) && !empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname'])
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
-            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
+            $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber']);
         }
     }
 elseif(isset($_POST['Admin']))
@@ -153,7 +153,7 @@ elseif(isset($_POST['Admin']))
     if (!empty($_POST['userId']) && !empty($_POST['username']) && !empty($_POST['firstname']) && !empty($_POST['lastname'])
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber']) 
         ) {
-            $x->createAdmin($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
+            $x->createAdmin($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber']);
 
     }
 }
@@ -166,22 +166,22 @@ elseif(isset($_POST['Employee']))
     {
     if(isset($_POST["HR"]))
     {
-        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"HR");
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"HR");
     }
 
         if(isset($_POST["Delivery"]))
     {
-        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],"Car",null,null,"Delivery");
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],"Car",null,null,"Delivery");
     }
 
         if(isset($_POST["Technical"]))
     {
-        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,[1,2,3],[1,2,3],"Technical");
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,[1,2,3],[1,2,3],"Technical");
     }
 
         if(isset($_POST["Instructor"]))
     {
-        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"Instructor");
+        $x->createEmployee($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],['cairo','eg'],$_POST['phoneNumber'],$_POST['title'],$_POST['salary'],$_POST['workingHours'],null,null,null,"Instructor");
     }
     }
 }
@@ -277,7 +277,7 @@ if(isset($_POST['updateAdmin']))
         }
         if(isset($_POST['Location']))
         {
-            $admin->setLocation($_POST['Location']);
+            $admin->setLocation(['cairo','eg']);
         }   
         if(isset($_POST['phoneNumber']))
         {
@@ -314,7 +314,7 @@ if(isset($_POST['updateDonor']))
         }
         if(isset($_Location))
         {
-            $donor->setLocation($_POST['Location']);
+            $donor->setLocation(['cairo','eg']);
         }   
         if(isset($_POST['phoneNumber']))
         {
@@ -351,7 +351,7 @@ if(isset($_POST['updateEmployee']))
         }
         if(isset($_Location))
         {
-            $hr->setLocation($_POST['Location']);
+            $hr->setLocation(['cairo','eg']);
         }   
         if(isset($_POST['phoneNumber']))
         {
@@ -384,7 +384,7 @@ if(isset($_POST['updateEmployee']))
             }
             if(isset($_Location))
             {
-                $technical->setLocation($_POST['Location']);
+                $technical->setLocation(['cairo','eg']);
             }   
             if(isset($_POST['phoneNumber']))
             {
@@ -417,7 +417,7 @@ if(isset($_POST['updateEmployee']))
             }
             if(isset($_Location))
             {
-                $delivery->setLocation($_POST['Location']);
+                $delivery->setLocation(['cairo','eg']);
             }   
             if(isset($_POST['phoneNumber']))
             {
