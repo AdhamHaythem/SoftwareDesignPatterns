@@ -40,13 +40,28 @@ class Donor extends UserModel implements IObserver {
 
     ) {
         parent::__construct($username, $firstname, $lastname, $email, $password, $location, $phoneNumber,$userID);
-        $this->donorID = self::$counter++;     //lazem yb2a hwa w el user same IDDDDDDDDDDD
+        $this->donorID = Donor::useCounter() ;     //lazem yb2a hwa w el user same IDDDDDDDDDDD
         $this->donationsHistory = [];
         $this->totalDonations = 0.0;
         if ($event !== null) {
             $this->campaignsJoined[] = $event;
         }
         $this->paymentMethod = $paymentMethod;
+    }
+
+
+    private static function useCounter(): int {
+        $ID = self::$counter;
+        self::$counter++;
+        $db_connection = DatabaseConnection::getInstance();
+        $sql = "UPDATE counters SET DonorID = ? where CounterID = 1";
+        $params = [self::$counter];
+        $db_connection->execute($sql, $params);
+        return $ID;
+    }
+
+    public static function setCounter(int $counter): void {
+        self::$counter = $counter;
     }
 
     //WORKEDDDDDDDD WITH DONATION AND AMOUNT AS A PARAMETER
