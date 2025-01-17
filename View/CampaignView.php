@@ -58,19 +58,36 @@ class CampaignView
         </div>';
     }
 
+    // public function displayFundProgress($campaign)
+    // {
+    //     echo '<div class="container">
+    //         <div class="content-container">
+    //             <section>
+    //                 <div class="campaign-progress">
+    //                     <h2>Fund Progress for ' . $campaign->name . '</h2>
+    //                     <p><strong>Amount Raised:</strong> $' . number_format($campaign->moneyEarned, 2) . '</p>
+    //                 </div>
+    //             </section>
+    //         </div>
+    //     </div>';
+    // }
     public function displayFundProgress($campaign)
-    {
-        echo '<div class="container">
-            <div class="content-container">
-                <section>
-                    <div class="campaign-progress">
-                        <h2>Fund Progress for ' . $campaign->name . '</h2>
-                        <p><strong>Amount Raised:</strong> $' . number_format($campaign->moneyEarned, 2) . '</p>
-                    </div>
-                </section>
-            </div>
-        </div>';
-    }
+{
+    echo '<div class="container">
+        <div class="content-container">
+            <section>
+                <div class="campaign-progress">
+                    <h2>Fund Progress for ' . htmlspecialchars($campaign->name) . '</h2>
+                    <p><strong>Amount Raised:</strong> 
+                        <input type="text" id="amountRaised" value="' . htmlspecialchars(number_format($campaign->moneyEarned, 2)) . '" />
+                    </p>
+                <button type="submit" class="submit-button" onClick="addfundProgress(1)" >Submit Fund</button>
+                </div>
+            </section>
+        </div>
+    </div>';
+}
+
 
     public function displayAllCampaigns($campaigns)
     {
