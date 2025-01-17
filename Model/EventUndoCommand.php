@@ -10,16 +10,16 @@ class EventUndoCommand implements ICommand {
     public function __construct() {}
 
     public function execute(): void {
-        echo "Executing EventUndoCommand\n";
+        // echo "Executing EventUndoCommand\n";
 
         if ($this->donor === null || $this->event === null) {
-            echo "Undo failed: No donor or event set.\n";
+            // echo "Undo failed: No donor or event set.\n";
             return;
         }
 
         // Remove the event from the donor's joined events
         $this->donor->removeEvent($this->event);
-        echo "Undo successful: Event '{$this->event->getName()}' removed from donor.\n";
+        // echo "Undo successful: Event '{$this->event->getName()}' removed from donor.\n";
     }
 
     public function setDonor(Donor $donor): void {
