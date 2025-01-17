@@ -167,18 +167,6 @@ class CampaignStrategy extends Event {
         return true;
     }
 
-    // public static function retrieve($donorID): ?Donor {
-    //     $dbConnection = DatabaseConnection::getInstance();
-    //     $sql = "SELECT * FROM donor d
-    //             JOIN user u ON d.userID = u.userID
-    //             WHERE d.donorID = ?";
-    //     $params = [$donorID];
-    
-    //     $result = $dbConnection->query($sql, $params);
-
-    //     echo "Query Result:\n";
-    //     print_r($result);
-
     public static function retrieve($eventID): ?CampaignStrategy {
         $dbConnection = DatabaseConnection::getInstance();
     

@@ -122,9 +122,6 @@ class PaymentAdmin {
         $paymentStrategy = new Visa();
         $fee = $paymentStrategy->calculateFee($transaction['amount']);
         $refundAmount = $transaction['amount'] - $fee;
-    
-        echo "Refunded $" . $refundAmount . " using Visa (after deducting a fee of $" . $fee . ").\n";
-    
         // Update the status of the transaction (if your TransactionsIterator supports it)
         $this->transactions[$transactionKey]['status'] = 'refunded';
         

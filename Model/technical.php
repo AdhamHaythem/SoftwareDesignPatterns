@@ -120,9 +120,6 @@ class technicalModel extends EmployeeModel {
         // Execute the query
         $result = $dbConnection->query($sql, $params);
     
-        echo "Query Result:\n";
-        print_r($result);
-    
         if ($result && !empty($result)) {
             $row = $result[0];
     

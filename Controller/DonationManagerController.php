@@ -11,7 +11,7 @@ class DonationManagerController {
    
     public function createCampaign(
     DateTime $time,
-    string $location,
+    array $location,
     int $volunteersNeeded,
     int $eventID,
     string $name,
@@ -113,7 +113,7 @@ class DonationManagerController {
     // Adds a new campaign with specific time and location
     public function addCampaign(        
     DateTime $time,
-    string $location,
+    array $location,
     int $volunteersNeeded,
     int $eventID,
     string $name,
@@ -150,7 +150,7 @@ if (isset($_POST['createDonation'])) {
 
 if (isset($_POST['createCampaign'])) {
 
-    $donationManagerController->createCampaign($_POST['time'],$_POST['location'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
+    $donationManagerController->createCampaign($_POST['time'],['cairo','eg'],$_POST['volunteersNeeded'],$_POST['eventId'],$_POST['name'],$_POST['target'],$_POST['title'],0,$_POST['description']);
     exit;
 }
 
