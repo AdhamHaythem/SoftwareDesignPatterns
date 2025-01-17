@@ -1,21 +1,31 @@
 <?php
-require_once "../Model/DonorModel.php";
-require_once "../Model/AdminModel.php";
-require_once "../Model/EmployeeModel.php";
-require_once "../View/DonorView.php";
-require_once "../Model/userModel.php";
-require_once "../Model/cash.php";
- require_once "../View/UserView.php";
+// require_once "../Model/DonorModel.php";
+// require_once "../Model/AdminModel.php";
+// require_once "../Model/EmployeeModel.php";
+// require_once "../View/DonorView.php";
+// require_once "../Model/userModel.php";
+// require_once "../Model/cash.php";
+//  require_once "../View/UserView.php";
 
- require_once '../emailSetup/config.php';
+//  require_once '../emailSetup/config.php';
  
-require 'vendor/autoload.php'; 
+// require 'vendor/autoload.php'; 
 
 class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
     {
 
-        $donor = new Donor($userId,$username , $firstname,$lastname  ,$email,$password,$location,$phoneNumber,new Cash());
+        $donor = new Donor(
+         username: $username,
+         firstname:$firstname,
+         lastname: $lastname,
+         email:$email,
+         password:$password,
+         location:$location,
+         phoneNumber:$phoneNumber,
+         paymentMethod: new Cash(),
+         userID:$userId
+        );
         Donor::create($donor);
         header('Location: ../View/DonorView.php');
     }
@@ -35,31 +45,19 @@ class UserController{
     }
 
     function sendLoginMail(Donor $donor){
-        $email = new \SendGrid\Mail\Mail(); 
-        $email->setFrom(From);
-        $email->setSubject("Account Login");
-        $email->addTo($donor->getEmail());
-        $email->addContent("text/plain", "You Have just logged in");
-        $email->addContent(
-            "text/html", "<strong>You Have just logged in</strong>"
-        );
+        $donorEmail= $donor->getEmail();
         $sendgrid = new \SendGrid(SENDGRID_API_KEY);
-        try {
-            $response = $sendgrid->send($email);
-            // print $response->statusCode() . "\n";
-            // print_r($response->headers());
-            // print $response->body() . "\n";
-        } catch (Exception $e) {
-            echo 'Caught exception: '. $e->getMessage() ."\n";
-        }
+        $facade= new EmailServiceFacade($sendgrid);
+        $facade->sendLoginMail($donorEmail);
 }
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
-        header('Location: ../View/DonorView.php');
+        // header('Location: ../View/DonorView.php');
         $view = new DonorView();
         $view->displayDonorProfile($donor);
-        $this->sendLoginMail($donor);
+        
+        // $this->sendLoginMail($donor);
     }
 
     function retrieveuser($userId)
@@ -106,12 +104,14 @@ class UserController{
 $x = new UserController();
 if(isset($_POST['displaysignUp']))
 {
+    require_once "../View/UserView.php";
    $view = new UserView();
    $view->signUp();
 }
 
 if(isset($_POST['displayLogin']))
 {
+    require_once "../View/UserView.php";
    $view = new UserView();
    $view->signIn();
 }
@@ -124,7 +124,7 @@ if (isset($_POST['createUser'])) {
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
             $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
-    }
+        }
     }
 elseif(isset($_POST['Admin']))
 {

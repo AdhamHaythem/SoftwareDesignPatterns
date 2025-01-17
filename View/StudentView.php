@@ -63,7 +63,7 @@ class StudentView{
                             <li><strong>Instructor:</strong> ' . $lessonId->instructor . '</li>
                             <li><strong>Views:</strong> ' . $lessonId->lessonViews . '</li>
                         </ul>
-                        <button onclick="enrollLesson()" class="enroll-button">Enroll</button>
+                        <button onclick="enrollLesson(1,1,1)" class="enroll-button">Enroll</button>
                     </div>
                 </section>
             </div>

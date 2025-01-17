@@ -22,6 +22,40 @@ require_once 'DonationManager.php';
 require_once 'CampaignStrategy.php';
 require_once 'student.php';
 
+
+// function main(){
+//     $donor = new Donor(
+//         'mariam', // username
+//         'mariaam', // firstName
+//         'badawy', // lastName
+//         'mariambadawy@gmail.com', // email
+//         '123456', // password
+//         ['Cairo', 'Dubai'], // location
+//         '01001449338', // phoneNumber,
+//         null,
+//         null,
+//         1 // userID
+//     );
+
+
+// $event = new CampaignStrategy(
+//         new DateTime('2023-1-15 10:00:00'),
+//         'New York',
+//         10,
+//         1,
+//         'Charity Run',
+//         1000.0,
+//         'Annual Charity Run',
+//         'descriptionnnnnn',
+//         500.0);
+
+// // Register the Donor as an observer of the Event
+// $event->registerObserver($donor);
+
+// // Change the status of the Event (this will trigger notifications)
+// $event->setStatus("Active");
+// }
+// main();
 //.............Main to test strategiessssssssssssss
 
 
@@ -83,6 +117,150 @@ require_once 'student.php';
 
 // }
 //  main();
+
+
+
+//................Main to test crud events
+
+function main() {
+    // Create campaigns
+    $campaign1 = new CampaignStrategy(
+        new DateTime('2023-1-15 10:00:00'),
+        'New York',
+        10,
+        1,
+        'Charity Run',
+        1000.0,
+        'Annual Charity Run',
+        'descriptionnnnnn',
+        500.0
+    );
+
+    $campaign2 = new CampaignStrategy(
+        new DateTime('2023-1-11 10:00:00'),
+        'Los Angeles',
+        15,
+        2,
+        'Food Drive',
+        2000.0,
+        'Winter Food Drive',
+        'descriptionnnnnn',
+        1200.0
+    );
+
+    // Create a volunteering event
+    $volunteering = new VolunteeringEventStrategy(
+        'Food Drive',
+        new DateTime('2023-1-11 10:00:00'),
+        'Los Angeles',
+        200,
+        3
+    );
+
+    // Add campaigns and volunteering event to the database
+    if (CampaignStrategy::create($campaign1)) {
+        echo "campaign1 created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create campaign1.\n";
+    }
+
+    if (CampaignStrategy::create($campaign2)) {
+        echo "campaign2 created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create campaign2.\n";
+    }
+
+    if (VolunteeringEventStrategy::create($volunteering)) {
+        echo "volunteering created and added to the database successfully.\n";
+    } else {
+        echo "Failed to create volunteering.\n";
+    }
+
+    // Retrieve and display campaigns
+    echo "\nRetrieving campaigns:\n";
+    $retrievedCampaign1 = CampaignStrategy::retrieve(1);
+    $retrievedCampaign2 = CampaignStrategy::retrieve(2);
+
+    if ($retrievedCampaign1) {
+        echo "Retrieved Campaign 1: " . $retrievedCampaign1->getName() . "\n";
+    } else {
+        echo "Failed to retrieve Campaign 1.\n";
+    }
+
+    if ($retrievedCampaign2) {
+        echo "Retrieved Campaign 2: " . $retrievedCampaign2->getName() . "\n";
+    } else {
+        echo "Failed to retrieve Campaign 2.\n";
+    }
+
+    // Retrieve and display volunteering event
+    echo "\nRetrieving volunteering event:\n";
+    $retrievedVolunteering = VolunteeringEventStrategy::retrieve(3);
+
+    if ($retrievedVolunteering) {
+        echo "Retrieved Volunteering Event: " . $retrievedVolunteering->getName() . "\n";
+    } else {
+        echo "Failed to retrieve Volunteering Event.\n";
+    }
+
+    // Update Campaign 1
+    echo "\nUpdating Campaign 1...\n";
+    if ($retrievedCampaign1) {
+        $retrievedCampaign1->setName("Updated Charity Run");
+        $retrievedCampaign1->setLocation("Updated New York");
+        if (CampaignStrategy::update($retrievedCampaign1)) {
+            echo "Campaign 1 updated successfully.\n";
+        } else {
+            echo "Failed to update Campaign 1.\n";
+        }
+    }
+
+    // Update Volunteering Event
+    echo "\nUpdating Volunteering Event...\n";
+    if ($retrievedVolunteering) {
+        $retrievedVolunteering->setLocation("Updated Los Angeles");
+        if (VolunteeringEventStrategy::update($retrievedVolunteering)) {
+            echo "Volunteering Event updated successfully.\n";
+        } else {
+            echo "Failed to update Volunteering Event.\n";
+        }
+    }
+
+    // Delete Campaign 2
+    echo "\nDeleting Campaign 2...\n";
+    if (CampaignStrategy::delete(2)) {
+        echo "Campaign 2 deleted successfully.\n";
+    } else {
+        echo "Failed to delete Campaign 2.\n";
+    }
+
+    // Delete Volunteering Event
+    echo "\nDeleting Volunteering Event...\n";
+    if (VolunteeringEventStrategy::delete(3)) {
+        echo "Volunteering Event deleted successfully.\n";
+    } else {
+        echo "Failed to delete Volunteering Event.\n";
+    }
+
+    // Verify deletion
+    echo "\nVerifying deletion:\n";
+    $deletedCampaign2 = CampaignStrategy::retrieve(2);
+    $deletedVolunteering = VolunteeringEventStrategy::retrieve(3);
+
+    if (!$deletedCampaign2) {
+        echo "Campaign 2 is successfully deleted.\n";
+    } else {
+        echo "Campaign 2 still exists.\n";
+    }
+
+    if (!$deletedVolunteering) {
+        echo "Volunteering Event is successfully deleted.\n";
+    } else {
+        echo "Volunteering Event still exists.\n";
+    }
+}
+
+main();
 
 
 
@@ -622,9 +800,12 @@ require_once 'student.php';
 // ............Main to test Report Generator for Instructor
 
 // function main() {
+// function main() {
 
 //     $config = require 'configurations.php';
+//     $config = require 'configurations.php';
 
+//     $db = new DatabaseConnection($config);
 //     $db = new DatabaseConnection($config);
 
     // Technical Object 1
@@ -935,7 +1116,33 @@ require_once 'student.php';
 //     ['Calculus', 'Algebra'], // lessons
 //     100         // userID
 // );
+// $instructor1 = new InstructorModel(
+//     'math_master',   // username
+//     'Alan',          // firstname
+//     'Turing',        // lastname
+//     'alan.turing@example.com', // email
+//     'securepass1',   // password
+//     ['London', 'UK'], // location
+//     987654321,       // phoneNumber
+//     75000,           // salary
+//     40,              // workingHours
+//     ['Calculus', 'Algebra'], // lessons
+//     100         // userID
+// );
 
+// $instructor2 = new InstructorModel(
+//     'science_genius', // username
+//     'Marie',          // firstname
+//     'Curie',          // lastname
+//     'marie.curie@example.com', // email
+//     'securepass2',    // password
+//     ['Paris', 'France'], // location
+//     123456789,        // phoneNumber
+//     80000,            // salary
+//     35,               // workingHours
+//     ['Physics', 'Chemistry'], // lessons
+//     200               // userID
+// );
 // $instructor2 = new InstructorModel(
 //     'science_genius', // username
 //     'Marie',          // firstname
@@ -963,7 +1170,33 @@ require_once 'student.php';
 //     ['History of Science', 'Philosophy'], // lessons
 //     300              // userID
 // );
+// $instructor3 = new InstructorModel(
+//     'history_pro',    // username
+//     'Isaac',          // firstname
+//     'Newton',         // lastname
+//     'isaac.newton@example.com', // email
+//     'securepass3',    // password
+//     ['Cambridge', 'UK'], // location
+//     456789123,        // phoneNumber
+//     90000,            // salary
+//     30,               // workingHours
+//     ['History of Science', 'Philosophy'], // lessons
+//     300              // userID
+// );
 
+// $instructor4 = new InstructorModel(
+//     'bio_teacher',    // username
+//     'Charles',        // firstname
+//     'Darwin',         // lastname
+//     'charles.darwin@example.com', // email
+//     'securepass4',    // password
+//     ['Kent', 'UK'],   // location
+//     789123456,        // phoneNumber
+//     85000,            // salary
+//     32,               // workingHours
+//     ['Biology', 'Evolution'], // lessons
+//     400             // userID
+// );
 // $instructor4 = new InstructorModel(
 //     'bio_teacher',    // username
 //     'Charles',        // firstname
@@ -980,36 +1213,36 @@ require_once 'student.php';
 
 // // Insert the instructors into the database
 // $instructors = [$instructor1, $instructor2, $instructor3, $instructor4];
-// foreach ($instructors as $instructor) {
-//     if (InstructorModel::create($instructor)) {
-//         echo "Instructor {$instructor->getUsername()} created successfully.\n";
-//     } else {
-//         echo "Failed to create Instructor {$instructor->getUsername()}.\n";
-//     }
-// }
+// // foreach ($instructors as $instructor) {
+// //     if (InstructorModel::create($instructor)) {
+// //         echo "Instructor {$instructor->getUsername()} created successfully.\n";
+// //     } else {
+// //         echo "Failed to create Instructor {$instructor->getUsername()}.\n";
+// //     }
+// // }
 
-// Test retrieval and update on one instructor
-// $retrievedInstructor = InstructorModel::retrieve(200);
-// if ($retrievedInstructor) {
-//     echo "\nRetrieved Instructor:\n";
-//     print_r($retrievedInstructor);
+// // Test retrieval and update on one instructor
+// // $retrievedInstructor = InstructorModel::retrieve(200);
+// // if ($retrievedInstructor) {
+// //     echo "\nRetrieved Instructor:\n";
+// //     print_r($retrievedInstructor);
 
-//     // Update the retrieved instructor
-//     $retrievedInstructor->setFirstname('Marie Updated');
-//     $retrievedInstructor->addLessons(['Physics Updated', 'Chemistry Updated']);
-//     if (InstructorModel::update($retrievedInstructor)) {
-//         echo "\nInstructor updated successfully.\n";
+// //     // Update the retrieved instructor
+// //     $retrievedInstructor->setFirstname('Marie Updated');
+// //     $retrievedInstructor->addLessons(['Physics Updated', 'Chemistry Updated']);
+// //     if (InstructorModel::update($retrievedInstructor)) {
+// //         echo "\nInstructor updated successfully.\n";
 
-//         // Verify the update
-//         $updatedInstructor = InstructorModel::retrieve(2);
-//         echo "\nUpdated Instructor:\n";
-//         print_r($updatedInstructor);
-//     } else {
-//         echo "\nFailed to update Instructor.\n";
-//     }
-// }
+// //         // Verify the update
+// //         $updatedInstructor = InstructorModel::retrieve(2);
+// //         echo "\nUpdated Instructor:\n";
+// //         print_r($updatedInstructor);
+// //     } else {
+// //         echo "\nFailed to update Instructor.\n";
+// //     }
+// // }
 
-// Clean up by deleting all test instructors
+// // Clean up by deleting all test instructors
 
 // foreach ($instructors as $instructor) {
 //     if (InstructorModel::delete($instructor->getUserID())) {
@@ -1020,6 +1253,9 @@ require_once 'student.php';
 // }
 
 
+// }
+
+// main();
 // Include necessary files or autoloaders
 // $personnel1 = new DeliveryPersonnel(
 //     'delivery_guy1',
