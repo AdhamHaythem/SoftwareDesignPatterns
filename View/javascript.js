@@ -57,7 +57,7 @@ function donorProfile($donorId) {
             retrieveDonor: '',
             },
         });
-};
+}
 
 function donationHistory(itemId) {
 $.ajax({
@@ -98,12 +98,12 @@ function login() {
         data: {
             email: getElementById("exampleInputEmail1").text,
             password: getElementById("exampleInputPassword1").text,
-            login: '',
+            retrieveDonor: '',
             },
         });
     };
 
-function signup(itemId) {
+function signup() {
     $.ajax({
         url: "../Controller/UserController.php",
         type: 'POST',
@@ -116,7 +116,8 @@ function signup(itemId) {
             password: getElementById("password").text,
             location: getElementById("validationServer01").text,
             phoneNumber: getElementById("phoneNumber").text,
-            signup: '',
+            createUser: '',
+            Donor: '',
             },
             success: function(response) {
                 $('.container').html(response);
@@ -244,7 +245,7 @@ function LessonDetails(itemId) {
         type: 'POST',
         data: {
             lessonId: itemId,
-            retrieveLesson: '',
+            retrieve: '',
         },
         success: function(response) {
             $('.container').html(response);

@@ -1,15 +1,15 @@
 <?php
-require_once "../Model/DonorModel.php";
-require_once "../Model/AdminModel.php";
-require_once "../Model/EmployeeModel.php";
-require_once "../View/DonorView.php";
-require_once "../Model/userModel.php";
-require_once "../Model/cash.php";
- require_once "../View/UserView.php";
+// require_once "../Model/DonorModel.php";
+// require_once "../Model/AdminModel.php";
+// require_once "../Model/EmployeeModel.php";
+// require_once "../View/DonorView.php";
+// require_once "../Model/userModel.php";
+// require_once "../Model/cash.php";
+//  require_once "../View/UserView.php";
 
- require_once '../emailSetup/config.php';
+//  require_once '../emailSetup/config.php';
  
-require 'vendor/autoload.php'; 
+// require 'vendor/autoload.php'; 
 
 class UserController{
     function createDonor($username , $lastname , $firstname , $userId,$email,$password,$location,$phoneNumber)
@@ -56,10 +56,11 @@ class UserController{
     function retrieveDonor($donorId)
     {
         $donor = Donor::retrieve($donorId);
-        header('Location: ../View/DonorView.php');
+        // header('Location: ../View/DonorView.php');
         $view = new DonorView();
         $view->displayDonorProfile($donor);
-        $this->sendLoginMail($donor);
+        
+        // $this->sendLoginMail($donor);
     }
 
     function retrieveuser($userId)
@@ -106,12 +107,14 @@ class UserController{
 $x = new UserController();
 if(isset($_POST['displaysignUp']))
 {
+    require_once "../View/UserView.php";
    $view = new UserView();
    $view->signUp();
 }
 
 if(isset($_POST['displayLogin']))
 {
+    require_once "../View/UserView.php";
    $view = new UserView();
    $view->signIn();
 }
@@ -124,7 +127,7 @@ if (isset($_POST['createUser'])) {
         && !empty($_POST['email']) && !empty($_POST['Password']) && !empty($_POST['Location']) && !empty($_POST['phoneNumber'])) 
     {
             $x->createDonor($_POST['username'],$_POST['lastname'],$_POST['firstname'],$_POST['userId'],$_POST['email'],$_POST['password'],$_POST['location'],$_POST['phoneNumber']);
-    }
+        }
     }
 elseif(isset($_POST['Admin']))
 {
