@@ -74,7 +74,7 @@ class UserController{
         $view = new DonorView();
         $view->displayDonorProfile($donor);
         
-        // $this->sendLoginMail($donor);
+        $this->sendLoginMail($donor);
     }
 
     function retrieveuser($userId)
