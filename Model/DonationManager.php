@@ -131,8 +131,8 @@ class DonationManager implements IMaintainable {
                 $manager->adminID
             ];
     
-            echo "Donation Manager SQL Query: $sql\n";
-            echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
+            // echo "Donation Manager SQL Query: $sql\n";
+            // echo "Donation Manager Parameters: " . print_r($params, true) . "\n";
     
             if (!$dbConnection->execute($sql, $params)) {
                 throw new Exception("Failed to update donation manager record.");

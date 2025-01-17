@@ -42,17 +42,17 @@ class DonationRedoCommand implements ICommand {
     public function __construct() {}
 
     public function execute(): void {
-        echo "Executing DonationRedoCommand\n";
+      //  echo "Executing DonationRedoCommand\n";
 
         if ($this->donation === null) {
-            echo "Redo failed: No donation set.\n";
+         //   echo "Redo failed: No donation set.\n";
             return;
         }
 
         // Restore the donation amount to the next state
         $this->donation->setAmount($this->nextAmount);
         Donation::update($this->donation);
-        echo "Redo successful: Donation updated to \${$this->nextAmount}.\n";
+      //  echo "Redo successful: Donation updated to \${$this->nextAmount}.\n";
     }
 
     public function setDonation(Donation $donation): void {
