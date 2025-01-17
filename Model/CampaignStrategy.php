@@ -24,7 +24,7 @@ class CampaignStrategy extends Event {
         float $moneyEarned
     ) {
         parent::__construct($time, $location, $volunteersNeeded, $eventID, $name, $description);
-        $this->campaignID = $eventID; //w henaaaaaaa
+        $this->campaignID = $eventID;
         $this->target = $target;
         $this->title = $title;
         $this->moneyEarned = $moneyEarned;

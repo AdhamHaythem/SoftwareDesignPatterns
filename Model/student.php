@@ -78,8 +78,10 @@ class StudentModel extends UserModel implements IObserver {
         return "In Progress";
     }
 
-    public function UpdateStatus(string $status): void {
-        echo "Student {$this->studentID} has been notified about the lesson update: $status\n";
+     // Observer status update
+
+    public function UpdateStatus(string $status): string {
+        return $status;
     }
 
     public function getStudentID(): int {
