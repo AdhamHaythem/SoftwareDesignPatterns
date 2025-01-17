@@ -89,23 +89,6 @@ class CampaignStrategy extends Event {
         $this->moneyEarned = $moneyEarned;
     }
     
-    // public function addVolunteer($donorID): bool {
-    //     foreach ($this->totalEvents as $event) {
-    //         if ($event->getDonorID() == $donorID) {
-    //             return $event->addVolunteer($donorID);
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // public function assignToEvent(Donor $volunteer): bool {
-    //     if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()){
-    //         $this->getVolunteersList()[] = $volunteer->getDonorID();
-    //         $this->notifyObservers();
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
 
     public function getDetails(): array {
@@ -220,8 +203,8 @@ class CampaignStrategy extends Event {
                 $campaign->getEventID()
             ];
     
-            // echo "Event SQL Query: $eventSql\n";
-            // echo "Event Parameters: " . print_r($eventParams, true) . "\n";
+
+      
     
             if (!$dbConnection->execute($eventSql, $eventParams)) {
                 throw new Exception("Failed to update event record.");
@@ -243,8 +226,7 @@ class CampaignStrategy extends Event {
                 $campaign->getEventID()
             ];
     
-            echo "Campaign SQL Query: $campaignSql\n";
-            echo "Campaign Parameters: " . print_r($campaignParams, true) . "\n";
+          
     
             if (!$dbConnection->execute($campaignSql, $campaignParams)) {
                 throw new Exception("Failed to update campaign record.");
@@ -264,8 +246,6 @@ public static function delete($eventID): bool {
         $sql = "DELETE FROM event WHERE eventID = ?";
         $params = [$eventID];
 
-        // echo "Campaign SQL Query: $sql\n";
-        // echo "Campaign Parameters: " . print_r($params, true) . "\n";
 
         if (!$dbConnection->execute($sql, $params)) {
             throw new Exception("Failed to delete campaign record.");
@@ -286,10 +266,8 @@ public static function delete($eventID): bool {
             return false;
         }
         if (count($this->getVolunteersList()) < $this->getVolunteersNeeded()) {
-            echo "Campaign SignUp: Donor $donorID is successfully signed up for the campaign event!\n";
             return $this->addVolunteer($donorID);
         }
-        echo "Campaign SignUp: No more spots available for the campaign event.\n";
         return false;
     }
     
