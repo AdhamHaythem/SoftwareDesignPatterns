@@ -1,6 +1,7 @@
 <?php
 require_once '../Model/AdminModel.php';
 require_once '../View/AdminView.php';
+require_once '../Model/RegularDonation.php';
 
 class AdminController {
     
@@ -30,7 +31,7 @@ class AdminController {
 
     public function changeState($donationId)
     {
-        $donation = Donation::retrieve($donationId);
+        $donation = RegularDonation::retrieve($donationId);
         $donation->handleChange();
     }
 }

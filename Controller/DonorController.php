@@ -11,6 +11,7 @@ require_once '../Model/MedicalSupplies.php';
 require_once '../Model/Cash.php';
 require_once '../Model/Visa.php';
 require_once '../View/DonorView.php';
+require_once '../Model/RegularDonation.php';
 class DonorController{
 
     public function getDonationHistory($donorId){
@@ -44,7 +45,7 @@ class DonorController{
     {
         $donationundo = new DonationUndoCommand();
         $donor = Donor::retrieve($Id);
-        $donation = Donation::retrieve($donationId);
+        $donation = RegularDonation::retrieve($donationId);
         $donor->setDonation($donation);
         $donor->setCommand($donationundo);
         $donor->undo();
@@ -54,7 +55,7 @@ class DonorController{
     {
         $donationredo = new DonationRedoCommand();
         $donor = Donor::retrieve($Id);
-        $donation = Donation::retrieve($donationId);
+        $donation = RegularDonation::retrieve($donationId);
         $donor->setDonation($donation);
         $donor->setCommand($donationredo);
         $donor->redo();

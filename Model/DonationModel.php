@@ -3,7 +3,7 @@
 require_once 'UserModel.php';
 require_once 'UnderReviewState.php';
 
-class Donation {
+abstract class Donation {
     private static int $counter = 1;
     private float $amount;
     private int $donationID;
@@ -80,6 +80,8 @@ class Donation {
         return $this->previousAmount; 
     }
 
+    abstract public function amountPaid(float $amount): float;
+
     // CRUD Operations
 
     // Create
@@ -110,26 +112,8 @@ class Donation {
         }
     }
     
-
-    // Read
-    public static function retrieve(int $donationID): ?Donation {
-        $dbConnection = DatabaseConnection::getInstance();
-        $sql = "SELECT * FROM donation WHERE donationID = ?";
-        $params = [$donationID];
-        $results = $dbConnection->query($sql, $params);
-        if (!empty($results)) {
-            $result = $results[0];
-            return new Donation(
-                (float) $result['amount'],               // amount
-                (int) $result['donorID'],                // donorID
-                new DateTime($result['donation_date']),  // date
-                (int) $result['donationID']              // donationID
-            );
-        }
-        return null; // Return null if no result found
-    }
     
-    
+    //retrieve
 
     // Update
     public static function update(Donation $donation): bool {
