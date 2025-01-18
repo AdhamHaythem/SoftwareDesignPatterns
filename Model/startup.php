@@ -21,7 +21,7 @@ class StartUp {
             UserModel::setCounter((int)$row['UserID']);
             Event::setCounter((int)$row['EventID']);
             LessonModel::setCounter((int)$row['LessonID']);
-            Donation::setCounter((int)$row['DonationID']);
+            Donation::setCounter((int)$row['donationID']);
         } else {
             // Handle the case where the row is not found
             throw new Exception("Counter row with CounterID = 1 not found.");

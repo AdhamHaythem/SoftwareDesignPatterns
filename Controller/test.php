@@ -35,8 +35,8 @@ $review = new UnderReviewState();
 $donation->setState($review);
 Donation::create($donation);
 $adminController->changeState($donation->getDonationID());
-$donorController->undoDonation(3);
-$donorController->redoDonation(3);
+// $donorController->undoDonation(3);
+// $donorController->redoDonation(3);
 $studentController->enrollLesson(1,6,5);
 
 
