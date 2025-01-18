@@ -7,7 +7,7 @@ class cashDonation extends DonationDecorator {
 
     public function __construct(float $amount, int $donorID,Donation $donation) {
         $this->donation = $donation;
-        parent::__construct($amount, $donorID);
+        parent::__construct($amount, $donorID, $donation);
     }
 
     public function amountPaid(float $amount): float {

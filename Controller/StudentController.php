@@ -2,6 +2,7 @@
 require_once "../Model/userModel.php";
 require_once '../Model/instructor.php';
 require_once '../Model/student.php';
+require_once '../Model/Lesson.php';
 
 class StudentController
 {
@@ -9,7 +10,7 @@ class StudentController
     {
         $instructor= InstructorModel::retrieve($instructorId);
         $student = StudentModel::retrieve($studentId);
-        $lesson = $instructor->retrieveLesson($lessonId);
+        $lesson = LessonModel::retrieve($lessonId);
         $student->enrollInLesson($lesson);
         $lesson->registerObserver($student);
     }

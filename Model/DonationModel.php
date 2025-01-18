@@ -33,7 +33,7 @@ class Donation {
         $ID = self::$counter;
         self::$counter++;
         $db_connection = DatabaseConnection::getInstance();
-        $sql = "UPDATE counters SET UserID = ? where CounterID = 1";
+        $sql = "UPDATE counters SET donationID = ? where CounterID = 1";
         $params = [self::$counter];
         $db_connection->execute($sql, $params);
         return $ID;
