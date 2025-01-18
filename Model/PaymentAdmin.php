@@ -32,7 +32,7 @@ class PaymentAdmin {
             }
         }
 
-        // Log the transaction
+        // Log the transactionnnnnnn
         $transaction = [
             'transactionID' => $transactionID,
             'donorID' => $donor->getDonorID(),
@@ -98,7 +98,7 @@ class PaymentAdmin {
     public function refundTransaction(int $transactionID): bool {
         $transaction = null;
     
-        // Iterate through the TransactionsIterator to find the transaction
+        //bn- Iterate through the TransactionsIterator to find the transactionnn
         foreach ($this->transactions as $key => $trans) {
             if ($trans['transactionID'] === $transactionID) {
                 $transaction = $trans;
@@ -122,7 +122,6 @@ class PaymentAdmin {
         $paymentStrategy = new Visa();
         $fee = $paymentStrategy->calculateFee($transaction['amount']);
         $refundAmount = $transaction['amount'] - $fee;
-        // Update the status of the transaction (if your TransactionsIterator supports it)
         $this->transactions[$transactionKey]['status'] = 'refunded';
         
         return true;

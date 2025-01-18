@@ -19,7 +19,6 @@ class Admin extends UserModel {
         ) {
         parent::__construct($username, $firstname, $lastname, $email, $password, $location, $phoneNumber, $userID);
         $this->donationManager = new DonationManager($userID,$goalAmount, [], []);
-       // DonationManager :: create($this->donationManager);
     }
 
     // CRUD Methods
