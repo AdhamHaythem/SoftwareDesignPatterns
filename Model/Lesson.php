@@ -116,7 +116,7 @@ class LessonModel {
         }
     }
 
-    public function SetStatus(string $newStatus): void {
+    public function setStatus(string $newStatus): void {
         $this->status = $newStatus;
         $this->notifyObservers();
     }

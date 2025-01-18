@@ -127,15 +127,15 @@ abstract class Event implements IMaintainable, ISubject {
         });
     }
 
-    public function notifyObservers($EventStatus): void {
+    public function notifyObservers(): void {
         foreach ($this->Eventobservers as $observer) {
-            $observer->UpdateStatus($EventStatus);
+            $observer->UpdateStatus($this->status);
         }
     }
 
     public function setStatus(string $EventStatus): void {
         $this->status = $EventStatus;
-        $this->notifyObservers($EventStatus);
+        $this->notifyObservers();
     }
 
     public static function create($object): bool {

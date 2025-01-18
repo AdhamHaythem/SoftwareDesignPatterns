@@ -24,6 +24,117 @@ require_once 'student.php';
 
 
 
+function main() {
+    // Create a donor
+    $donor = new Donor(
+        "john_doe",       // username
+        "John",           // firstname
+        "Doe",            // lastname
+        "john.doe@example.com", // email
+        "password123",    // password
+        ["New York", "NY"], // location
+        1234567890,       // phoneNumber
+        null,             // paymentMethod
+        null,             // event
+        1                 // userID
+    );
+
+    // Create a donation
+    $donation = new Donation(100.0, $donor->getDonorID(), new DateTime(), 4);
+    echo "Initial Donation: \${$donation->getAmount()}\n"; // Should print 100
+
+    // Set the donation for the donor
+    $donor->setDonation($donation); // Initialize the donation property
+
+    // Update the donation amount
+    $donation->paidAmount(100.0); // Add 100 to the donation amount
+    echo "Donation after update: \${$donation->getAmount()}\n"; // Should print 200
+
+    // Create the undo command
+    $undoCommand = new DonationUndoCommand();
+
+    $donor->setCommand($undoCommand);
+
+    // Perform an undo operation
+    echo "\nUndoing the donation...\n";
+    $donor->undo();
+    echo "Donation amount after undo: \${$donation->getAmount()}\n"; // Should print 100
+
+    // Perform a redo operation
+    echo "\nRedoing the donation...\n";
+    $donor->redo();
+    echo "Donation amount after redo: \${$donation->getAmount()}\n"; // Should print 200
+}
+
+
+main();
+
+
+
+// function main(): void {
+//     // Initialize database connection
+//     $dbConnection = DatabaseConnection::getInstance();
+
+//     // Create a donor
+//     $donor = new Donor(
+//         "john_doe",       // username
+//         "John",           // firstname
+//         "Doe",            // lastname
+//         "john.doe@example.com", // email
+//         "password123",    // password
+//         ["New York", "NY"], // location
+//         1234567890,       // phoneNumber
+//         null,             // paymentMethod
+//         null,             // event
+//         1                 // userID
+//     );
+//     //float $amount, int $donorID, DateTime $date, int $donationID = 0
+//     // Create a donation
+//     $donation = new Donation(100.0, $donor->getDonorID(), new DateTime(),3);
+
+//     // Add the donation to the donor's history
+//     $donor->addDonation($donation);
+
+//     // Save the donor and donation to the database
+//     if (Donor::create($donor) && Donation::create($donation)) {
+//         echo "Donor and donation created successfully.\n";
+//     } else {
+//         echo "Failed to create donor or donation.\n";
+//         return;
+//     }
+
+//     // Test undo/redo functionality
+//     echo "\nInitial donation amount: {$donation->getAmount()}\n";
+
+//     // Create an undo command
+//     $undoCommand = new DonationUndoCommand();
+//     $undoCommand->setDonation($donation);
+
+//     // Set the undo command (no need to manually configure it)
+//     $donor->setCommand($undoCommand);
+
+//     // Perform an undo operation
+//     echo "\nUndoing the donation...\n";
+//     $donor->undo();
+//     echo "Donation amount after undo: {$donation->getAmount()}\n";
+
+//     // Perform a redo operation
+//     echo "\nRedoing the donation...\n";
+//     $donor->redo();
+//     echo "Donation amount after redo: {$donation->getAmount()}\n";
+
+//     // Clean up (optional)
+//     if (Donor::delete($donor->getDonorID()) && Donation::delete($donation->getDonationID())) {
+//         echo "\nDonor and donation deleted successfully.\n";
+//     } else {
+//         echo "\nFailed to delete donor or donation.\n";
+//     }
+// }
+
+// // Run the main function
+// main();
+
+
 //................Main to test volunteerList
 
 
@@ -1772,42 +1883,52 @@ require_once 'student.php';
 //     echo "Final Events: " . implode(", ", array_map(fn($e) => $e->getName(), $donor->getEvents())) . "\n";
 // }
 
-// main();
+//main();
 
-//..................Main to test DonationUndo/RedoCommand
+//..................Main to test DonationUndo/RedoCommand without setcommand
 // function main() {
+ 
 //     $donor = new Donor(
-//         1, // userID
-//         'mariam', // username
-//         'mariaam', // firstName
-//         'badawy', // lastName
-//         'mariambadawy@gmail.com', // email
-//         '123456', // password
-//         ['Cairo', 'Dubai'], // location
-//         '01001449338' // phoneNumber
+//         "john_doe",       // username
+//         "John",           // firstname
+//         "Doe",            // lastname
+//         "john.doe@example.com", // email
+//         "password123",    // password
+//         ["New York", "NY"], // location
+//         1234567890,       // phoneNumber
+//         null,             // paymentMethod
+//         null,             // event
+//         1                 // userID
 //     );
 
 
-// $donation = new Donation(200.0, 1, 1);
-// echo "Initial Donation: \${$donation->getAmount()}\n";
+//     $donation = new Donation(100.0, $donor->getDonorID(), new DateTime(), 4);
+//     echo "Initial Donation: \${$donation->getAmount()}\n"; 
 
-// $donation->amountPaid(100.0); 
-// echo "Donation after update: \${$donation->getAmount()}\n";  // Should print 250
 
-// // Now, we create the undo command and execute it
-// $undoCommand = new DonationUndoCommand();
-// $undoCommand->setDonation($donation);  // Set the donation reference
-// $undoCommand->execute();  // Should revert to 200
-// echo "Donation after Undo: \${$donation->getAmount()}\n";  // Should print 200
+//     $donation->paidAmount(100.0); 
+//     echo "Donation after update: \${$donation->getAmount()}\n"; 
 
-// // Create the redo command and execute it
-// $redoCommand = new DonationRedoCommand();
-// $redoCommand->setDonation($donation);  // Set the donation reference
-// $redoCommand->execute();  // Should go back to 250
-// echo "Donation after Redo: \${$donation->getAmount()}\n";  // Should print 250
+
+//     $undoCommand = new DonationUndoCommand();
+//     $undoCommand->setDonation($donation); 
+//     $undoCommand->setPreviousAmount(100.0);
+
+
+//     $undoCommand->execute(); 
+//     echo "Donation after Undo: \${$donation->getAmount()}\n"; 
+
+
+//     $redoCommand = new DonationRedoCommand();
+//     $redoCommand->setDonation($donation); 
+//     $redoCommand->setNextAmount(200.0); 
+
+
+//     $redoCommand->execute(); 
+//     echo "Donation after Redo: \${$donation->getAmount()}\n";
 // }
 
-//main();
+// main();
 
  //.......................Main To test stateeeeee
 //  function main() {
@@ -2226,129 +2347,129 @@ require_once 'student.php';
 // // Run the test
 // testDonorCreateAndRetrieve();
 
-function main() {
-    $config = require 'configurations.php';
+// function main() {
+//     $config = require 'configurations.php';
 
-    $db = new DatabaseConnection($config);
+//     $db = new DatabaseConnection($config);
 
-    echo "==== Creating Donors ====\n";
+//     echo "==== Creating Donors ====\n";
 
-    // Donor 1
-    $donor1 = new Donor(
-        'Motabare3',              // username
-        'Motabare3',              // firstname
-        'Tabaro3at',              // lastname
-        'motabare3@example.com',  // email
-        '1234bnbb',               // password
-        ['Dubai', 'UFC'],         // location
-        1234567890                // phoneNumber
-    );
-    if (Donor::create($donor1)) echo "Donor 1 created successfully.\n";
+//     // Donor 1
+//     $donor1 = new Donor(
+//         'Motabare3',              // username
+//         'Motabare3',              // firstname
+//         'Tabaro3at',              // lastname
+//         'motabare3@example.com',  // email
+//         '1234bnbb',               // password
+//         ['Dubai', 'UFC'],         // location
+//         1234567890                // phoneNumber
+//     );
+//     if (Donor::create($donor1)) echo "Donor 1 created successfully.\n";
 
-    // Donor 2
-    $donor2 = new Donor(
-        'KindHeart',              // username
-        'Kind',                   // firstname
-        'Heart',                  // lastname
-        'kindheart@example.com',  // email
-        'mypassword',             // password
-        ['Abu Dhabi', 'UAE'],     // location
-        9876543210                // phoneNumber
-    );
-    if (Donor::create($donor2)) echo "Donor 2 created successfully.\n";
+//     // Donor 2
+//     $donor2 = new Donor(
+//         'KindHeart',              // username
+//         'Kind',                   // firstname
+//         'Heart',                  // lastname
+//         'kindheart@example.com',  // email
+//         'mypassword',             // password
+//         ['Abu Dhabi', 'UAE'],     // location
+//         9876543210                // phoneNumber
+//     );
+//     if (Donor::create($donor2)) echo "Donor 2 created successfully.\n";
 
-    // Donor 3
-    $donor3 = new Donor(
-        'HelpfulHero',            // username
-        'Helpful',                // firstname
-        'Hero',                   // lastname
-        'helpfulhero@example.com',// email
-        'secure123',              // password
-        ['Sharjah', 'UAE'],       // location
-        8765432109                // phoneNumber
-    );
-    if (Donor::create($donor3)) echo "Donor 3 created successfully.\n";
+//     // Donor 3
+//     $donor3 = new Donor(
+//         'HelpfulHero',            // username
+//         'Helpful',                // firstname
+//         'Hero',                   // lastname
+//         'helpfulhero@example.com',// email
+//         'secure123',              // password
+//         ['Sharjah', 'UAE'],       // location
+//         8765432109                // phoneNumber
+//     );
+//     if (Donor::create($donor3)) echo "Donor 3 created successfully.\n";
 
-    // Donor 4
-    $donor4 = new Donor(
-        'CharityChamp',           // username
-        'Charity',                // firstname
-        'Champ',                  // lastname
-        'charitychamp@example.com', // email
-        'charitypass',            // password
-        ['Cairo', 'Egypt'],       // location
-        7654321098                // phoneNumber
-    );
-    if (Donor::create($donor4)) echo "Donor 4 created successfully.\n";
+//     // Donor 4
+//     $donor4 = new Donor(
+//         'CharityChamp',           // username
+//         'Charity',                // firstname
+//         'Champ',                  // lastname
+//         'charitychamp@example.com', // email
+//         'charitypass',            // password
+//         ['Cairo', 'Egypt'],       // location
+//         7654321098                // phoneNumber
+//     );
+//     if (Donor::create($donor4)) echo "Donor 4 created successfully.\n";
 
-    echo "==== Creating Donations ====\n";
+//     echo "==== Creating Donations ====\n";
 
-    // Donations for Donor 1
-    $donations1 = [
-        new Donation(100.00, $donor1->getDonorID(), new DateTime('2025-01-16 10:00:00')),
-        new Donation(150.00, $donor1->getDonorID(), new DateTime('2025-01-17 11:00:00')),
-        new Donation(200.00, $donor1->getDonorID(), new DateTime('2025-01-18 12:00:00')),
-        new Donation(250.00, $donor1->getDonorID(), new DateTime('2025-01-19 13:00:00'))
-    ];
+//     // Donations for Donor 1
+//     $donations1 = [
+//         new Donation(100.00, $donor1->getDonorID(), new DateTime('2025-01-16 10:00:00')),
+//         new Donation(150.00, $donor1->getDonorID(), new DateTime('2025-01-17 11:00:00')),
+//         new Donation(200.00, $donor1->getDonorID(), new DateTime('2025-01-18 12:00:00')),
+//         new Donation(250.00, $donor1->getDonorID(), new DateTime('2025-01-19 13:00:00'))
+//     ];
 
-    foreach ($donations1 as $donation) {
-        if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
-    }
+//     foreach ($donations1 as $donation) {
+//         if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
+//     }
 
-    // Repeat for Donor 2
-    $donations2 = [
-        new Donation(120.00, $donor2->getDonorID(), new DateTime('2025-01-16 14:00:00')),
-        new Donation(130.00, $donor2->getDonorID(), new DateTime('2025-01-17 15:00:00')),
-        new Donation(140.00, $donor2->getDonorID(), new DateTime('2025-01-18 16:00:00')),
-        new Donation(150.00, $donor2->getDonorID(), new DateTime('2025-01-19 17:00:00'))
-    ];
+//     // Repeat for Donor 2
+//     $donations2 = [
+//         new Donation(120.00, $donor2->getDonorID(), new DateTime('2025-01-16 14:00:00')),
+//         new Donation(130.00, $donor2->getDonorID(), new DateTime('2025-01-17 15:00:00')),
+//         new Donation(140.00, $donor2->getDonorID(), new DateTime('2025-01-18 16:00:00')),
+//         new Donation(150.00, $donor2->getDonorID(), new DateTime('2025-01-19 17:00:00'))
+//     ];
 
-    foreach ($donations2 as $donation) {
-        if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
-    }
+//     foreach ($donations2 as $donation) {
+//         if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
+//     }
 
-    // Repeat for Donor 3
-    $donations3 = [
-        new Donation(180.00, $donor3->getDonorID(), new DateTime('2025-01-16 18:00:00')),
-        new Donation(190.00, $donor3->getDonorID(), new DateTime('2025-01-17 19:00:00')),
-        new Donation(200.00, $donor3->getDonorID(), new DateTime('2025-01-18 20:00:00')),
-        new Donation(210.00, $donor3->getDonorID(), new DateTime('2025-01-19 21:00:00'))
-    ];
+//     // Repeat for Donor 3
+//     $donations3 = [
+//         new Donation(180.00, $donor3->getDonorID(), new DateTime('2025-01-16 18:00:00')),
+//         new Donation(190.00, $donor3->getDonorID(), new DateTime('2025-01-17 19:00:00')),
+//         new Donation(200.00, $donor3->getDonorID(), new DateTime('2025-01-18 20:00:00')),
+//         new Donation(210.00, $donor3->getDonorID(), new DateTime('2025-01-19 21:00:00'))
+//     ];
 
-    foreach ($donations3 as $donation) {
-        if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
-    }
+//     foreach ($donations3 as $donation) {
+//         if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
+//     }
 
-    // Repeat for Donor 4
-    $donations4 = [
-        new Donation(50.00, $donor4->getDonorID(), new DateTime('2025-01-16 22:00:00')),
-        new Donation(60.00, $donor4->getDonorID(), new DateTime('2025-01-17 23:00:00')),
-        new Donation(70.00, $donor4->getDonorID(), new DateTime('2025-01-18 08:00:00')),
-        new Donation(80.00, $donor4->getDonorID(), new DateTime('2025-01-19 09:00:00'))
-    ];
+//     // Repeat for Donor 4
+//     $donations4 = [
+//         new Donation(50.00, $donor4->getDonorID(), new DateTime('2025-01-16 22:00:00')),
+//         new Donation(60.00, $donor4->getDonorID(), new DateTime('2025-01-17 23:00:00')),
+//         new Donation(70.00, $donor4->getDonorID(), new DateTime('2025-01-18 08:00:00')),
+//         new Donation(80.00, $donor4->getDonorID(), new DateTime('2025-01-19 09:00:00'))
+//     ];
 
-    foreach ($donations4 as $donation) {
-        if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
-    }
+//     foreach ($donations4 as $donation) {
+//         if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
+//     }
 
-    echo "==== Updating a Donation ====\n";
+//     echo "==== Updating a Donation ====\n";
 
-    // Update a donation for Donor 1
-    $donationToUpdate = Donation::retrieve(2);
-    if ($donationToUpdate) {
-        $donationToUpdate->setAmount(250.00);
-        $donationToUpdate->setDate(new DateTime('2025-02-01'));
+//     // Update a donation for Donor 1
+//     $donationToUpdate = Donation::retrieve(2);
+//     if ($donationToUpdate) {
+//         $donationToUpdate->setAmount(250.00);
+//         $donationToUpdate->setDate(new DateTime('2025-02-01'));
 
-        if (Donation::update($donationToUpdate)) {
-            echo "Donation updated successfully.\n";
-        } else {
-            echo "Failed to update the donation.\n";
-        }
-    } else {
-        echo "Donation not found for update.\n";
-    }
-}
+//         if (Donation::update($donationToUpdate)) {
+//             echo "Donation updated successfully.\n";
+//         } else {
+//             echo "Failed to update the donation.\n";
+//         }
+//     } else {
+//         echo "Donation not found for update.\n";
+//     }
+// }
 
-main();
+// main();
 ?>
 

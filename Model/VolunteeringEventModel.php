@@ -6,6 +6,7 @@ require_once 'DonorModel.php';
 
 class VolunteeringEventStrategy extends Event {
     private array $observers = [];
+    private string $status;
 
 
     public function __construct(string $name, DateTime $time, array $location, int $volunteersNeeded, int $eventID) {
@@ -140,9 +141,9 @@ class VolunteeringEventStrategy extends Event {
         unset($this->observers[$observerID]);
     }
     
-    public function notifyObservers($EventStatus): void {
+    public function notifyObservers(): void {
         foreach ($this->observers as $observer) {
-            $observer->UpdateStatus($EventStatus); 
+            $observer->UpdateStatus($this->status); 
         }
     }
 

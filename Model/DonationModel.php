@@ -45,9 +45,6 @@ class Donation {
 
 
 
- 
-    
-
     public function getDonorID(): int { 
         return $this->donorID;
     }
@@ -61,7 +58,7 @@ class Donation {
     }
 
     //for handling Stateeeeeeeeee
-    public function setState(iState $state): void {
+    public function setState(IState $state): void {
         $this->state = $state;
     }
 

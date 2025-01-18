@@ -67,11 +67,11 @@ class Donor extends UserModel implements IObserver {
         $this->event = $event;
     }
 
-    public function setCommand(ICommand $command): void {
+    public function setCommand(ICommand $command): void { //Sets a command to be executed and prepares it for undo/redo operations.
         
         if ($command instanceof DonationUndoCommand) {
             $command->setDonation($this->donation);
-            $command->setPreviousAmount($this->previousAmount);
+            $command->setPreviousAmount($this->previousAmount ?? 0.0);
         } elseif ($command instanceof DonationRedoCommand) {
             $command->setDonation($this->donation);
             $command->setNextAmount($this->donation->getAmount());
@@ -87,7 +87,7 @@ class Donor extends UserModel implements IObserver {
         $this->redoStack = [];
     }
 
-    public function undo(): void {
+    public function undo(): void { //Undoes the last executed command and prepares a redo command.
         if (count($this->undoStack) > 0) {
             $command = array_pop($this->undoStack);
 
@@ -109,7 +109,7 @@ class Donor extends UserModel implements IObserver {
         }
     }
 
-    public function redo(): void {
+    public function redo(): void {   //Redoes the last undone command and prepares an undo command.
         if (count($this->redoStack) > 0) {
             $command = array_pop($this->redoStack);
 
@@ -128,6 +128,11 @@ class Donor extends UserModel implements IObserver {
             $command->execute();
         } else {
         }
+    }
+
+    public function setDonation(Donation $donation): void {
+        $this->donation = $donation;
+        $this->previousAmount = $donation->getAmount();
     }
 
     public function addEvent(Event $event): void {
@@ -342,6 +347,11 @@ class Donor extends UserModel implements IObserver {
     // public function joinEvent() {
     //     $this->eventStrategy->signUp($this->donorID);
     // } 
+
+
+    
+
+
     public function joinEvent(): bool {
         if ($this->eventStrategy === null) {
             throw new Exception("Event strategy is not set.");
@@ -400,13 +410,16 @@ class Donor extends UserModel implements IObserver {
     }
 
     // Switching between strategies
-    public function setPaymentMethod(IPaymentStrategy $paymentMethod): void {
-        $this->paymentMethod = $paymentMethod;
-    }
 
     public function setEventMethod(Event $eventStrategy): void {
         $this->eventStrategy = $eventStrategy;
     }
+
+    public function setPaymentMethod(IPaymentStrategy $paymentMethod): void {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+
 
     // Observer status update
     public function UpdateStatus(string $status): string {
