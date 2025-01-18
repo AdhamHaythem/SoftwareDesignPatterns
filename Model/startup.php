@@ -27,5 +27,12 @@ class StartUp {
             throw new Exception("Counter row with CounterID = 1 not found.");
         }
     }
+    public static function resetDatabase() {
+        $dbConnection = DatabaseConnection::getInstance();
+        $sql = "DELETE FROM counters";
+        $dbConnection->execute($sql);
+        $sql = "INSERT INTO counters (CounterID, UserID, EventID, LessonID, donationID) VALUES (1, 1, 1, 1, 1)";
+        $dbConnection->execute($sql);
+    }
 }
 ?>

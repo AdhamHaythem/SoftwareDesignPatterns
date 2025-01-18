@@ -6,8 +6,8 @@ class DatabaseConnection {
 
     public static array $config=[];
 
-    // Private constructor to prevent direct instantiation
-    public function __construct($config) {
+    // Private constructor 3ashan ma3mel elconnection mn gowa 
+    private function __construct($config) {
         $this->conn = new mysqli($config['DB_HOST'], $config['DB_USER'], $config['DB_PASS'], $config['DB_NAME']);
 
         // Check for connection errors
@@ -16,15 +16,15 @@ class DatabaseConnection {
         }
     }
 
-    // Prevent cloning of the instance
+    // msh 3ayez clone fa empty 3ashan yb2a one instance 
     private function __clone() {}
 
-    // Prevent unserialization of the instance
+    // asha3'al elesrver
     public function __wakeup() {
         throw new Exception("Cannot unserialize a singleton.");
     }
 
-    // Method to get the single instance of the class
+    // A-Create singleton 3ashan yb2a one instance mn elclass
     public static function getInstance(): DatabaseConnection {
         if (self::$instance === null) {
             self::$config = require 'configurations.php';
@@ -33,7 +33,7 @@ class DatabaseConnection {
         return self::$instance;
     }
 
-    // Execute a query (used for INSERT, UPDATE, DELETE)
+    // law 3ayez a3mel 7aga mn dool (INSERT, UPDATE, DELETE)
     public function execute($sql, $params = []) {
         $stmt = $this->conn->prepare($sql);
 
@@ -55,7 +55,7 @@ class DatabaseConnection {
         return $result;
     }
 
-    // Retrieve query results (SELECT)
+    // Law hageeb 7aga mn eldatabase (SELECT)
     public function query($sql, $params = []) {
         $stmt = $this->conn->prepare($sql);
 

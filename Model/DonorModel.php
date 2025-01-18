@@ -8,6 +8,7 @@ require_once 'ISubject.php';
 require_once 'IObserver.php';
 require_once 'IEvent.php';
 require_once 'DonationUndoCommand.php';
+require_once 'DonationRedoCommand.php';
 
 class Donor extends UserModel implements IObserver {
     private static int $counter = 1;

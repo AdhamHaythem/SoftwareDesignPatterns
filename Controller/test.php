@@ -7,6 +7,8 @@ require_once "LessonController.php";
 require_once "EventController.php";
 require_once "../Model/startup.php";
 
+
+StartUp::resetDatabase();
 StartUp::initialize();
 $userController = new UserController();
 $donorController = new DonorController();
@@ -35,8 +37,8 @@ $review = new UnderReviewState();
 $donation->setState($review);
 Donation::create($donation);
 $adminController->changeState($donation->getDonationID());
-// $donorController->undoDonation(3);
-// $donorController->redoDonation(3);
+$donorController->undoDonation(3,2);
+$donorController->redoDonation(3,2);
 $studentController->enrollLesson(1,6,5);
 
 

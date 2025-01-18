@@ -40,18 +40,22 @@ class DonorController{
         return true;
     }
 
-    public function undoDonation($Id)
+    public function undoDonation($Id,$donationId)
     {
         $donationundo = new DonationUndoCommand();
         $donor = Donor::retrieve($Id);
+        $donation = Donation::retrieve($donationId);
+        $donor->setDonation($donation);
         $donor->setCommand($donationundo);
         $donor->undo();
     }
 
-    public function redoDonation($Id)
+    public function redoDonation($Id,$donationId)
     {
         $donationredo = new DonationRedoCommand();
         $donor = Donor::retrieve($Id);
+        $donation = Donation::retrieve($donationId);
+        $donor->setDonation($donation);
         $donor->setCommand($donationredo);
         $donor->redo();
     }
@@ -114,7 +118,7 @@ class DonorController{
         {
             if(!empty($_post['donorID']))
             {
-                $donorController->undoDonation($_POST['donorID']);
+                $donorController->undoDonation($_POST['donorID'],$_POST['donationID']);
             }
             
         }
@@ -122,7 +126,7 @@ class DonorController{
         {
             if(!empty($_post['donorID']))
             {
-                $donorController->redoDonation($_POST['donorID']);
+                $donorController->redoDonation($_POST['donorID'],$_POST['donationID']);
             }
         }
     }
