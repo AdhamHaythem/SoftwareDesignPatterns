@@ -6,7 +6,7 @@ abstract class DonationDecorator extends Donation {
 
     public function __construct(float $amount, int $donorID, Donation $donation) {
         $currentDateTime = new DateTime('now');
-        parent::__construct($amount, $donorID,$currentDateTime);
+        parent::__construct($amount, $donorID,$currentDateTime,$donation->getDonationID());
         $this->donation = $donation;
     }
     abstract public function amountPaid(float $amount): float;
