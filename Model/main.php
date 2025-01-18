@@ -2226,118 +2226,127 @@ require_once 'student.php';
 // // Run the test
 // testDonorCreateAndRetrieve();
 
-function main () {
+function main() {
+    $config = require 'configurations.php';
+
+    $db = new DatabaseConnection($config);
+
+    echo "==== Creating Donors ====\n";
 
     // Donor 1
-$donor1 = new Donor(                   // userID
-    'Motabare3',              // username
-    'Motabare3',              // firstname
-    'Tabaro3at',              // lastname
-    'motabare3@example.com',  // email
-    '1234bnbb',               // password
-    ['Dubai', 'UFC'],         // location
-    1234567890                // phoneNumber
-);
-if (Donor::create($donor1)) {
-    echo "Donor 1 created and added to the database successfully.\n";
-} else {
-    echo "Failed to create Donor 1.\n";
-}
+    $donor1 = new Donor(
+        'Motabare3',              // username
+        'Motabare3',              // firstname
+        'Tabaro3at',              // lastname
+        'motabare3@example.com',  // email
+        '1234bnbb',               // password
+        ['Dubai', 'UFC'],         // location
+        1234567890                // phoneNumber
+    );
+    if (Donor::create($donor1)) echo "Donor 1 created successfully.\n";
 
-// Donor 2
-$donor2 = new Donor(               // userID
-    'KindHeart',              // username
-    'Kind',                   // firstname
-    'Heart',                  // lastname
-    'kindheart@example.com',  // email
-    'mypassword',             // password
-    ['Abu Dhabi', 'UAE'],     // location
-    9876543210                // phoneNumber
-);
-if (Donor::create($donor2)) {
-    echo "Donor 2 created and added to the database successfully.\n";
-} else {
-    echo "Failed to create Donor 2.\n";
-}
+    // Donor 2
+    $donor2 = new Donor(
+        'KindHeart',              // username
+        'Kind',                   // firstname
+        'Heart',                  // lastname
+        'kindheart@example.com',  // email
+        'mypassword',             // password
+        ['Abu Dhabi', 'UAE'],     // location
+        9876543210                // phoneNumber
+    );
+    if (Donor::create($donor2)) echo "Donor 2 created successfully.\n";
 
-// Donor 3
-$donor3 = new Donor(                 // userID
-    'HelpfulHero',            // username
-    'Helpful',                // firstname
-    'Hero',                   // lastname
-    'helpfulhero@example.com',// email
-    'secure123',              // password
-    ['Sharjah', 'UAE'],       // location
-    8765432109                // phoneNumber
-);
-if (Donor::create($donor3)) {
-    echo "Donor 3 created and added to the database successfully.\n";
-} else {
-    echo "Failed to create Donor 3.\n";
-}
+    // Donor 3
+    $donor3 = new Donor(
+        'HelpfulHero',            // username
+        'Helpful',                // firstname
+        'Hero',                   // lastname
+        'helpfulhero@example.com',// email
+        'secure123',              // password
+        ['Sharjah', 'UAE'],       // location
+        8765432109                // phoneNumber
+    );
+    if (Donor::create($donor3)) echo "Donor 3 created successfully.\n";
 
-// Donor 4
-$donor4 = new Donor(                  // userID
-    'CharityChamp',           // username
-    'Charity',                // firstname
-    'Champ',                  // lastname
-    'charitychamp@example.com', // email
-    'charitypass',            // password
-    ['Cairo', 'Egypt'],       // location
-    7654321098                // phoneNumber
-);
-if (Donor::create($donor4)) {
-    echo "Donor 4 created and added to the database successfully.\n";
-} else {
-    echo "Failed to create Donor 4.\n";
-}
+    // Donor 4
+    $donor4 = new Donor(
+        'CharityChamp',           // username
+        'Charity',                // firstname
+        'Champ',                  // lastname
+        'charitychamp@example.com', // email
+        'charitypass',            // password
+        ['Cairo', 'Egypt'],       // location
+        7654321098                // phoneNumber
+    );
+    if (Donor::create($donor4)) echo "Donor 4 created successfully.\n";
 
+    echo "==== Creating Donations ====\n";
 
-// Donations for Donor 1 (donorID = $donor1->getUserID())
-$donations1 = [
-    new Donation(100.00, $donor1->getUserID(), new DateTime('2025-01-16 10:00:00')),
-    new Donation(150.00, $donor1->getUserID(), new DateTime('2025-01-17 11:00:00')),
-    new Donation(200.00, $donor1->getUserID(), new DateTime('2025-01-18 12:00:00')),
-    new Donation(250.00, $donor1->getUserID(), new DateTime('2025-01-19 13:00:00'))
-];
+    // Donations for Donor 1
+    $donations1 = [
+        new Donation(100.00, $donor1->getDonorID(), new DateTime('2025-01-16 10:00:00')),
+        new Donation(150.00, $donor1->getDonorID(), new DateTime('2025-01-17 11:00:00')),
+        new Donation(200.00, $donor1->getDonorID(), new DateTime('2025-01-18 12:00:00')),
+        new Donation(250.00, $donor1->getDonorID(), new DateTime('2025-01-19 13:00:00'))
+    ];
 
-// Donations for Donor 2 (donorID = $donor2->getUserID())
-$donations2 = [
-    new Donation(120.00, $donor2->getUserID(), new DateTime('2025-01-16 14:00:00')),
-    new Donation(130.00, $donor2->getUserID(), new DateTime('2025-01-17 15:00:00')),
-    new Donation(140.00, $donor2->getUserID(), new DateTime('2025-01-18 16:00:00')),
-    new Donation(150.00, $donor2->getUserID(), new DateTime('2025-01-19 17:00:00'))
-];
+    foreach ($donations1 as $donation) {
+        if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
+    }
 
-// Donations for Donor 3 (donorID = $donor3->getUserID())
-$donations3 = [
-    new Donation(180.00, $donor3->getUserID(), new DateTime('2025-01-16 18:00:00')),
-    new Donation(190.00, $donor3->getUserID(), new DateTime('2025-01-17 19:00:00')),
-    new Donation(200.00, $donor3->getUserID(), new DateTime('2025-01-18 20:00:00')),
-    new Donation(210.00, $donor3->getUserID(), new DateTime('2025-01-19 21:00:00'))
-];
+    // Repeat for Donor 2
+    $donations2 = [
+        new Donation(120.00, $donor2->getDonorID(), new DateTime('2025-01-16 14:00:00')),
+        new Donation(130.00, $donor2->getDonorID(), new DateTime('2025-01-17 15:00:00')),
+        new Donation(140.00, $donor2->getDonorID(), new DateTime('2025-01-18 16:00:00')),
+        new Donation(150.00, $donor2->getDonorID(), new DateTime('2025-01-19 17:00:00'))
+    ];
 
-// Donations for Donor 4 (donorID = $donor4->getUserID())
-$donations4 = [
-    new Donation(50.00, $donor4->getUserID(), new DateTime('2025-01-16 22:00:00')),
-    new Donation(60.00, $donor4->getUserID(), new DateTime('2025-01-17 23:00:00')),
-    new Donation(70.00, $donor4->getUserID(), new DateTime('2025-01-18 08:00:00')),
-    new Donation(80.00, $donor4->getUserID(), new DateTime('2025-01-19 09:00:00'))
-];
+    foreach ($donations2 as $donation) {
+        if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
+    }
 
-// Create Donations in Database
-foreach ($donations1 as $donation) {
-    if (Donation::create($donation)) echo "Donation for Donor 1 created successfully.\n";
-}
-foreach ($donations2 as $donation) {
-    if (Donation::create($donation)) echo "Donation for Donor 2 created successfully.\n";
-}
-foreach ($donations3 as $donation) {
-    if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
-}
-foreach ($donations4 as $donation) {
-    if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
-}
+    // Repeat for Donor 3
+    $donations3 = [
+        new Donation(180.00, $donor3->getDonorID(), new DateTime('2025-01-16 18:00:00')),
+        new Donation(190.00, $donor3->getDonorID(), new DateTime('2025-01-17 19:00:00')),
+        new Donation(200.00, $donor3->getDonorID(), new DateTime('2025-01-18 20:00:00')),
+        new Donation(210.00, $donor3->getDonorID(), new DateTime('2025-01-19 21:00:00'))
+    ];
+
+    foreach ($donations3 as $donation) {
+        if (Donation::create($donation)) echo "Donation for Donor 3 created successfully.\n";
+    }
+
+    // Repeat for Donor 4
+    $donations4 = [
+        new Donation(50.00, $donor4->getDonorID(), new DateTime('2025-01-16 22:00:00')),
+        new Donation(60.00, $donor4->getDonorID(), new DateTime('2025-01-17 23:00:00')),
+        new Donation(70.00, $donor4->getDonorID(), new DateTime('2025-01-18 08:00:00')),
+        new Donation(80.00, $donor4->getDonorID(), new DateTime('2025-01-19 09:00:00'))
+    ];
+
+    foreach ($donations4 as $donation) {
+        if (Donation::create($donation)) echo "Donation for Donor 4 created successfully.\n";
+    }
+
+    echo "==== Updating a Donation ====\n";
+
+    // Update a donation for Donor 1
+    $donationToUpdate = Donation::retrieve(2);
+    if ($donationToUpdate) {
+        $donationToUpdate->setAmount(250.00);
+        $donationToUpdate->setDate(new DateTime('2025-02-01'));
+
+        if (Donation::update($donationToUpdate)) {
+            echo "Donation updated successfully.\n";
+        } else {
+            echo "Failed to update the donation.\n";
+        }
+    } else {
+        echo "Donation not found for update.\n";
+    }
 }
 
 main();

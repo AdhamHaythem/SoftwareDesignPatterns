@@ -23,7 +23,7 @@ class Donation {
         $this->previousAmount = $this->amount; 
         $this->amount = $amount;
     }
-    public function amountPaid(float $amount): float {
+    public function paidAmount(float $amount): float {
         $this->previousAmount = $this->amount;
         $this->amount += $amount;
         return $this->amount;

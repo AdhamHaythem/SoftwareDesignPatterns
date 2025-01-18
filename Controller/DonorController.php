@@ -1,7 +1,7 @@
 <?php
 
 require_once '../Model/DonorModel.php';
-require_once '../Model/VolunteeringEventStrategy.php';
+require_once '../Model/VolunteeringEventModel.php';
 require_once '../Model/CampaignStrategy.php';
 require_once '../Model/RegularDonation.php';
 require_once '../Model/Clothes.php';

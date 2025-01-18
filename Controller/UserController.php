@@ -35,7 +35,7 @@ class UserController{
 
     function createAdmin($username,$lastname,$firstname,$userId,$email,$password,$location,$phoneNumber)
     {
-        $admin = new Admin($userId,$username , $firstname,$lastname ,$email,$password,$location,$phoneNumber);
+        $admin = new Admin($username , $firstname,$lastname ,$email,$password,$location,$phoneNumber,0,$userId);
         Admin::create($admin);
         header('Location: ../View/AdminView.php');
     }

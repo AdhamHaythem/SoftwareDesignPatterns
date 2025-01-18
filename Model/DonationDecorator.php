@@ -1,11 +1,14 @@
 <?php
 require_once 'DonationModel.php';
 
-abstract class DonationDecorator extends Donation{
-    public function __construct(float $amount, int $donorID) {
-        parent::__construct($amount,$donorID);
-    }
+abstract class DonationDecorator extends Donation {
+    protected Donation $donation;
 
-    public abstract function amountPaid(float $amount): float;
+    public function __construct(float $amount, int $donorID, Donation $donation) {
+        parent::__construct($amount, $donorID);
+        $this->donation = $donation;
+    }
+    abstract public function amountPaid(float $amount): float;
 }
+
 ?>
